@@ -1,0 +1,8 @@
+keras==2.7.0
+numpy==1.19.5
+librosa==0.8.1 
+mir-eval==0.6
+pretty-midi==0.2.9
+pydub==0.25.1
+scipy==1.7.3
+tensorflow==2.5.0
