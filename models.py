@@ -131,6 +131,7 @@ class DurationPredictor(nn.Module):
         x = self.proj(x * x_mask)
         return x * x_mask
 
+
 class PitchPredictor(nn.Module):
     def __init__(self,
                  n_vocab,
@@ -150,7 +151,6 @@ class PitchPredictor(nn.Module):
         self.n_layers = n_layers
         self.kernel_size = kernel_size
         self.p_dropout = p_dropout
-
 
         self.pitch_net = attentions.Encoder(
             hidden_channels,
@@ -190,8 +190,8 @@ class TextEncoder(nn.Module):
 
         # self.emb = nn.Embedding(n_vocab, hidden_channels)
         # nn.init.normal_(self.emb.weight, 0.0, hidden_channels**-0.5)
-        self.emb_pitch = nn.Embedding(128, hidden_channels) 
-        nn.init.normal_(self.emb_pitch.weight, 0.0, hidden_channels**-0.5)
+        self.emb_pitch = nn.Embedding(128, hidden_channels)
+        nn.init.normal_(self.emb_pitch.weight, 0.0, hidden_channels ** -0.5)
 
         self.encoder = attentions.Encoder(
             hidden_channels,
@@ -492,7 +492,8 @@ class SynthesizerTrn(nn.Module):
         self.enc_q = PosteriorEncoder(spec_channels, inter_channels, hidden_channels, 5, 1, 16,
                                       gin_channels=gin_channels)
         self.flow = ResidualCouplingBlock(inter_channels, hidden_channels, 5, 1, 4, gin_channels=gin_channels)
-        self.pitch_net = PitchPredictor(n_vocab, inter_channels, hidden_channels, filter_channels, n_heads, n_layers, kernel_size, p_dropout)
+        self.pitch_net = PitchPredictor(n_vocab, inter_channels, hidden_channels, filter_channels, n_heads, n_layers,
+                                        kernel_size, p_dropout)
 
         if use_sdp:
             self.dp = StochasticDurationPredictor(hidden_channels, 192, 3, 0.5, 4, gin_channels=gin_channels)
@@ -505,8 +506,11 @@ class SynthesizerTrn(nn.Module):
     def forward(self, x, x_lengths, y, y_lengths, pitch, sid=None):
 
         x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths, pitch)
-
+        # print(f"x: {x.shape}")
         pred_pitch, pitch_embedding = self.pitch_net(x, x_mask)
+        # print(f"pred_pitch: {pred_pitch.shape}")
+        # print(f"pitch_embedding: {pitch_embedding.shape}")
+        x = x + pitch_embedding
         lf0 = torch.unsqueeze(pred_pitch, -1)
         gt_lf0 = torch.log(440 * (2 ** ((pitch - 69) / 12)))
         gt_lf0 = gt_lf0.to(x.device)
@@ -514,15 +518,16 @@ class SynthesizerTrn(nn.Module):
         lf0 = lf0.squeeze()
         l_pitch = torch.sum((gt_lf0 - lf0) ** 2, 1) / x_mask_sum
 
-
-
         if self.n_speakers > 0:
             g = self.emb_g(sid).unsqueeze(-1)  # [b, h, 1]
         else:
             g = None
 
         z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
+        # print(f"z: {z.shape}")
+
         z_p = self.flow(z, y_mask, g=g)
+        # print(f"z_p: {z_p.shape}")
 
         with torch.no_grad():
             # negative cross-entropy
@@ -547,16 +552,30 @@ class SynthesizerTrn(nn.Module):
             l_length = torch.sum((logw - logw_) ** 2, [1, 2]) / torch.sum(x_mask)  # for averaging
 
         # expand prior
+        # print()
+        # print(f"attn: {attn.shape}")
+        # print(f"m_p: {m_p.shape}")
+        # print(f"logs_p: {logs_p.shape}")
+
         m_p = torch.matmul(attn.squeeze(1), m_p.transpose(1, 2)).transpose(1, 2)
         logs_p = torch.matmul(attn.squeeze(1), logs_p.transpose(1, 2)).transpose(1, 2)
+        # print(f"m_p: {m_p.shape}")
+        # print(f"logs_p: {logs_p.shape}")
 
         z_slice, ids_slice = commons.rand_slice_segments(z, y_lengths, self.segment_size)
+        # print(f"z_slice: {z_slice.shape}")
+
         o = self.dec(z_slice, g=g)
         return o, l_length, l_pitch, attn, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 
     def infer(self, x, x_lengths, pitch, sid=None, noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None):
-        x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths,pitch)
-        
+        x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths, pitch)
+        pred_pitch, pitch_embedding = self.pitch_net(x, x_mask)
+        x = x + pitch_embedding
+        # print(pred_pitch)
+        gt_lf0 = torch.log(440 * (2 ** ((pitch - 69) / 12)))
+
+        # print(gt_lf0)
         if self.n_speakers > 0:
             g = self.emb_g(sid).unsqueeze(-1)  # [b, h, 1]
         else:
