@@ -9,3 +9,4 @@ torch
 torchvision
 Unidecode==1.1.1
 torchaudio
+pyworld

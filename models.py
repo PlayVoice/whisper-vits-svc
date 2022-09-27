@@ -190,7 +190,7 @@ class TextEncoder(nn.Module):
 
         # self.emb = nn.Embedding(n_vocab, hidden_channels)
         # nn.init.normal_(self.emb.weight, 0.0, hidden_channels**-0.5)
-        self.emb_pitch = nn.Embedding(128, hidden_channels)
+        self.emb_pitch = nn.Embedding(256, hidden_channels)
         nn.init.normal_(self.emb_pitch.weight, 0.0, hidden_channels ** -0.5)
 
         self.encoder = attentions.Encoder(
