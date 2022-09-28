@@ -512,7 +512,7 @@ class SynthesizerTrn(nn.Module):
         # print(f"pitch_embedding: {pitch_embedding.shape}")
         x = x + pitch_embedding
         lf0 = torch.unsqueeze(pred_pitch, -1)
-        gt_lf0 = torch.log(440 * (2 ** ((pitch - 69) / 12)))
+        gt_lf0 = torch.log(440 * (2 ** ((pitch.float() - 69) / 12)))
         gt_lf0 = gt_lf0.to(x.device)
         x_mask_sum = torch.sum(x_mask)
         lf0 = lf0.squeeze()
@@ -572,10 +572,6 @@ class SynthesizerTrn(nn.Module):
         x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths, pitch)
         pred_pitch, pitch_embedding = self.pitch_net(x, x_mask)
         x = x + pitch_embedding
-        # print(pred_pitch)
-        gt_lf0 = torch.log(440 * (2 ** ((pitch - 69) / 12)))
-
-        # print(gt_lf0)
         if self.n_speakers > 0:
             g = self.emb_g(sid).unsqueeze(-1)  # [b, h, 1]
         else:
