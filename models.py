@@ -492,8 +492,8 @@ class SynthesizerTrn(nn.Module):
         self.enc_q = PosteriorEncoder(spec_channels, inter_channels, hidden_channels, 5, 1, 16,
                                       gin_channels=gin_channels)
         self.flow = ResidualCouplingBlock(inter_channels, hidden_channels, 5, 1, 4, gin_channels=gin_channels)
-        self.pitch_net = PitchPredictor(n_vocab, inter_channels, hidden_channels, filter_channels, n_heads, n_layers,
-                                        kernel_size, p_dropout)
+        # self.pitch_net = PitchPredictor(n_vocab, inter_channels, hidden_channels, filter_channels, n_heads, n_layers,
+        #                                 kernel_size, p_dropout)
 
         if use_sdp:
             self.dp = StochasticDurationPredictor(hidden_channels, 192, 3, 0.5, 4, gin_channels=gin_channels)
@@ -506,17 +506,6 @@ class SynthesizerTrn(nn.Module):
     def forward(self, x, x_lengths, y, y_lengths, pitch, sid=None):
 
         x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths, pitch)
-        # print(f"x: {x.shape}")
-        pred_pitch, pitch_embedding = self.pitch_net(x, x_mask)
-        # print(f"pred_pitch: {pred_pitch.shape}")
-        # print(f"pitch_embedding: {pitch_embedding.shape}")
-        x = x + pitch_embedding
-        lf0 = torch.unsqueeze(pred_pitch, -1)
-        gt_lf0 = torch.log(440 * (2 ** ((pitch.float() - 69) / 12)))
-        gt_lf0 = gt_lf0.to(x.device)
-        x_mask_sum = torch.sum(x_mask)
-        lf0 = lf0.squeeze()
-        l_pitch = torch.sum((gt_lf0 - lf0) ** 2, 1) / x_mask_sum
 
         if self.n_speakers > 0:
             g = self.emb_g(sid).unsqueeze(-1)  # [b, h, 1]
@@ -566,12 +555,10 @@ class SynthesizerTrn(nn.Module):
         # print(f"z_slice: {z_slice.shape}")
 
         o = self.dec(z_slice, g=g)
-        return o, l_length, l_pitch, attn, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
+        return o, l_length, attn, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 
     def infer(self, x, x_lengths, pitch, sid=None, noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None):
         x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths, pitch)
-        pred_pitch, pitch_embedding = self.pitch_net(x, x_mask)
-        x = x + pitch_embedding
         if self.n_speakers > 0:
             g = self.emb_g(sid).unsqueeze(-1)  # [b, h, 1]
         else:
