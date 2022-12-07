@@ -6,21 +6,6 @@
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
 
-## 数据集准备
-```shell
-仅需要以以下文件结构将数据集放入raw目录即可
-
-raw
-├───speaker0
-│   ├───xxx1-xxx1.wav
-│   ├───...
-│   └───Lxx-0xx8.wav
-└───speaker1
-    ├───xx2-0xxx2.wav
-    ├───...
-    └───xxx7-xxx007.wav
-```
-
 ## 预先下载的模型文件
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
   + 放在hubert目录下
@@ -37,6 +22,22 @@ wget -P logs/48k/ https://
 wget -P logs/48k/ https://
 
 ```
+
+
+## 数据集准备
+仅需要以以下文件结构将数据集放入raw目录即可
+```shell
+raw
+├───speaker0
+│   ├───xxx1-xxx1.wav
+│   ├───...
+│   └───Lxx-0xx8.wav
+└───speaker1
+    ├───xx2-0xxx2.wav
+    ├───...
+    └───xxx7-xxx007.wav
+```
+
 ## 数据预处理
 1. 重采样至 48khz
 
