@@ -9,7 +9,7 @@
 ## 预先下载的模型文件
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
   + 放在hubert目录下
-+ 预训练模型文件 [G_0.pth D_0.pth](https://)
++ 预训练模型文件 [G_0.pth D_0.pth](https://) (过几天发出来)
   + 放在logs/48k 目录下
   + 预训练模型为必选项，因为据测试从零开始训练有概率不收敛，同时也能加快训练速度
   + 预训练模型删除了optimizer flow speakerembedding 等无关权重，因此可以认为基本剔除了旧的音色信息
