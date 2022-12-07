@@ -62,9 +62,9 @@ python train.py -c configs/config.json -m 48k
 ## 推理
 
 使用[inference_main.py](inference_main.py)
-+ 更改模型文件为你自己训练的最新模型记录点
-+ 将待转化的音频放在raw文件夹下
-+ clean_names 写待转化的音频名称
-+ trans填写变调半音数量
-+ spk_list填写合成的说话人名称
++ 更改model_path为你自己训练的最新模型记录点
++ 将待转换的音频放在raw文件夹下
++ clean_names 写待转换的音频名称
++ trans 填写变调半音数量
++ spk_list 填写合成的说话人名称
 
