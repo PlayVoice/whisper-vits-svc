@@ -54,7 +54,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
             spec = torch.squeeze(spec, 0)
             torch.save(spec, spec_filename)
 
-        spk = filename.split("/")[-2]
+        spk = filename.split(os.sep)[-2]
         spk = torch.LongTensor([self.spk_map[spk]])
 
         c = torch.load(filename + ".soft.pt").squeeze(0)
@@ -106,7 +106,7 @@ class EvalDataLoader(torch.utils.data.Dataset):
         self.win_length = hparams.data.win_length
         self.sampling_rate = hparams.data.sampling_rate
         self.use_sr = hparams.train.use_sr
-        self.audiopaths = self.audiopaths[:10]
+        self.audiopaths = self.audiopaths[:5]
         self.spk_map = hparams.spk
 
 
@@ -127,7 +127,7 @@ class EvalDataLoader(torch.utils.data.Dataset):
             spec = torch.squeeze(spec, 0)
             torch.save(spec, spec_filename)
 
-        spk = filename.split("/")[-2]
+        spk = filename.split(os.sep)[-2]
         spk = torch.LongTensor([self.spk_map[spk]])
 
         c = torch.load(filename + ".soft.pt").squeeze(0)

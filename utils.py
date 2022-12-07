@@ -113,7 +113,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None):
 
 
 def save_checkpoint(model, optimizer, learning_rate, iteration, checkpoint_path):
-  # ckptname = checkpoint_path.split("/")[-1]
+  # ckptname = checkpoint_path.split(os.sep)[-1]
   # newest_step = int(ckptname.split(".")[0].split("_")[1])
   # val_steps = 2000
   # last_ckptname = checkpoint_path.replace(str(newest_step), str(newest_step - val_steps*3))
