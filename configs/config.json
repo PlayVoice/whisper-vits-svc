@@ -82,10 +82,13 @@
     "use_spectral_norm": false,
     "gin_channels": 256,
     "ssl_dim": 256,
-    "n_speakers": 4
+    "n_speakers": 10
   },
   "spk": {
-    "paimon": 0,
-    "nen": 1
+    "nen": 0,
+    "paimon": 1,
+    "yunhao": 2,
+    "huiyu":3,
+    "jishuang":4
   }
 }

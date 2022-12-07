@@ -33,7 +33,7 @@ def process(item):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--sr2", type=int, default=48000, help="sampling rate")
-    parser.add_argument("--in_dir", type=str, default="./raw", help="path to source dir")
+    parser.add_argument("--in_dir", type=str, default="./dataset_raw", help="path to source dir")
     parser.add_argument("--out_dir2", type=str, default="./dataset/48k", help="path to target dir")
     args = parser.parse_args()
     processs = cpu_count()-2 if cpu_count() >4 else 1

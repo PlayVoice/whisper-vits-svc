@@ -25,9 +25,9 @@ wget -P logs/48k/ https://
 
 
 ## 数据集准备
-仅需要以以下文件结构将数据集放入raw目录即可
+仅需要以以下文件结构将数据集放入dataset_raw目录即可
 ```shell
-raw
+dataset_raw
 ├───speaker0
 │   ├───xxx1-xxx1.wav
 │   ├───...
@@ -52,7 +52,7 @@ python preprocess_flist_config.py
 ```shell
 python preprocess_hubert_f0.py
 ```
-执行完以上步骤后 dataset 目录便是预处理完成的数据，可以删除raw文件夹了
+执行完以上步骤后 dataset 目录便是预处理完成的数据，可以删除dataset_raw文件夹了
 
 ## 训练
 ```shell
@@ -61,4 +61,10 @@ python train.py -c configs/config.json -m 48k
 
 ## 推理
 
+使用[inference_main.py](inference_main.py)
++ 更改模型文件为你自己训练的最新模型记录点
++ 将待转化的音频放在raw文件夹下
++ clean_names 写待转化的音频名称
++ trans填写变调半音数量
++ spk_list填写合成的说话人名称
 
