@@ -5,14 +5,83 @@ import argparse
 import logging
 import json
 import subprocess
+
+import librosa
 import numpy as np
+import torchaudio
 from scipy.io.wavfile import read
 import torch
-
+import torchvision
+from torch.nn import functional as F
+from commons import sequence_mask
+from hubert import hubert_model
 MATPLOTLIB_FLAG = False
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging
+
+f0_bin = 256
+f0_max = 1100.0
+f0_min = 50.0
+f0_mel_min = 1127 * np.log(1 + f0_min / 700)
+f0_mel_max = 1127 * np.log(1 + f0_max / 700)
+
+def f0_to_coarse(f0):
+  is_torch = isinstance(f0, torch.Tensor)
+  f0_mel = 1127 * (1 + f0 / 700).log() if is_torch else 1127 * np.log(1 + f0 / 700)
+  f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * (f0_bin - 2) / (f0_mel_max - f0_mel_min) + 1
+
+  f0_mel[f0_mel <= 1] = 1
+  f0_mel[f0_mel > f0_bin - 1] = f0_bin - 1
+  f0_coarse = (f0_mel + 0.5).long() if is_torch else np.rint(f0_mel).astype(np.int)
+  assert f0_coarse.max() <= 255 and f0_coarse.min() >= 1, (f0_coarse.max(), f0_coarse.min())
+  return f0_coarse
+
+
+def get_hubert_model(rank=None):
+
+  hubert_soft = hubert_model.hubert_soft("hubert/hubert-soft-0d54a1f4.pt")
+  if rank is not None:
+    hubert_soft = hubert_soft.cuda(rank)
+  return hubert_soft
+
+def get_hubert_content(hmodel, y=None, path=None):
+  if path is not None:
+    source, sr = torchaudio.load(path)
+    source = torchaudio.functional.resample(source, sr, 16000)
+    if len(source.shape) == 2 and source.shape[1] >= 2:
+      source = torch.mean(source, dim=0).unsqueeze(0)
+  else:
+    source = y
+  source = source.unsqueeze(0)
+  with torch.inference_mode():
+    units = hmodel.units(source)
+    return units.transpose(1,2)
+
+
+def get_content(cmodel, y):
+    with torch.no_grad():
+        c = cmodel.extract_features(y.squeeze(1))[0]
+    c = c.transpose(1, 2)
+    return c
+
+
+
+def transform(mel, height): # 68-92
+    #r = np.random.random()
+    #rate = r * 0.3 + 0.85 # 0.85-1.15
+    #height = int(mel.size(-2) * rate)
+    tgt = torchvision.transforms.functional.resize(mel, (height, mel.size(-1)))
+    if height >= mel.size(-2):
+        return tgt[:, :mel.size(-2), :]
+    else:
+        silence = tgt[:,-1:,:].repeat(1,mel.size(-2)-height,1)
+        silence += torch.randn_like(silence) / 10
+        return torch.cat((tgt, silence), 1)
+
+
+def stretch(mel, width): # 0.5-2
+    return torchvision.transforms.functional.resize(mel, (mel.size(-2), width))
 
 
 def load_checkpoint(checkpoint_path, model, optimizer=None):
@@ -22,10 +91,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None):
   learning_rate = checkpoint_dict['learning_rate']
   if optimizer is not None:
     optimizer.load_state_dict(checkpoint_dict['optimizer'])
-  # print(1111)
   saved_state_dict = checkpoint_dict['model']
-  # print(1111)
-
   if hasattr(model, 'module'):
     state_dict = model.module.state_dict()
   else:
@@ -47,6 +113,12 @@ def load_checkpoint(checkpoint_path, model, optimizer=None):
 
 
 def save_checkpoint(model, optimizer, learning_rate, iteration, checkpoint_path):
+  ckptname = checkpoint_path.split("/")[-1]
+  newest_step = int(ckptname.split(".")[0].split("_")[1])
+  val_steps = 2000
+  last_ckptname = checkpoint_path.replace(str(newest_step), str(newest_step - val_steps*3))
+  if newest_step >= val_steps*3:
+    os.system(f"rm {last_ckptname}")
   logger.info("Saving model and optimizer state at iteration {} to {}".format(
     iteration, checkpoint_path))
   if hasattr(model, 'module'):
@@ -88,7 +160,7 @@ def plot_spectrogram_to_numpy(spectrogram):
     mpl_logger.setLevel(logging.WARNING)
   import matplotlib.pylab as plt
   import numpy as np
-  
+
   fig, ax = plt.subplots(figsize=(10,2))
   im = ax.imshow(spectrogram, aspect="auto", origin="lower",
                   interpolation='none')
@@ -150,7 +222,7 @@ def get_hparams(init=True):
                       help='JSON file for configuration')
   parser.add_argument('-m', '--model', type=str, required=True,
                       help='Model name')
-  
+
   args = parser.parse_args()
   model_dir = os.path.join("./logs", args.model)
 
@@ -168,7 +240,7 @@ def get_hparams(init=True):
     with open(config_save_path, "r") as f:
       data = f.read()
   config = json.loads(data)
-  
+
   hparams = HParams(**config)
   hparams.model_dir = model_dir
   return hparams
@@ -218,7 +290,7 @@ def get_logger(model_dir, filename="train.log"):
   global logger
   logger = logging.getLogger(os.path.basename(model_dir))
   logger.setLevel(logging.DEBUG)
-  
+
   formatter = logging.Formatter("%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s")
   if not os.path.exists(model_dir):
     os.makedirs(model_dir)
@@ -235,7 +307,7 @@ class HParams():
       if type(v) == dict:
         v = HParams(**v)
       self[k] = v
-    
+
   def keys(self):
     return self.__dict__.keys()
 
@@ -259,3 +331,4 @@ class HParams():
 
   def __repr__(self):
     return self.__dict__.__repr__()
+
