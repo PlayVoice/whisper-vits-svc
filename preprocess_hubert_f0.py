@@ -108,7 +108,7 @@ def process(filename):
         c = torch.load(save_name)
     f0path = filename+".f0.npy"
     if not os.path.exists(f0path):
-        cf0, f0 = compute_f0(filename, c.shape[-1] * 3)
+        cf0, f0 = get_f0(filename, c.shape[-1] * 3)
         np.save(f0path, f0)
 
 

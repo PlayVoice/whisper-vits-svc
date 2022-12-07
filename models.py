@@ -280,6 +280,7 @@ class SynthesizerTrn(nn.Module):
     upsample_kernel_sizes,
     gin_channels,
     ssl_dim,
+    n_speakers,
     **kwargs):
 
     super().__init__()
@@ -300,7 +301,7 @@ class SynthesizerTrn(nn.Module):
     self.segment_size = segment_size
     self.gin_channels = gin_channels
     self.ssl_dim = ssl_dim
-    self.emb_g = nn.Embedding(10, gin_channels)
+    self.emb_g = nn.Embedding(n_speakers, gin_channels)
 
     self.enc_p_ = TextEncoder(ssl_dim, inter_channels, hidden_channels, 5, 1, 16,0, filter_channels, n_heads, p_dropout)
     hps = {
