@@ -42,6 +42,6 @@ if __name__ == "__main__":
     for speaker in os.listdir(args.in_dir):
         spk_dir = os.path.join(args.in_dir, speaker)
         if os.path.isdir(spk_dir):
-            print([(spk_dir, i) for i in os.listdir(spk_dir) if i.endswith("wav")])
+            print(spk_dir)
             for _ in tqdm(pool.imap_unordered(process, [(spk_dir, i, args) for i in os.listdir(spk_dir) if i.endswith("wav")])):
                 pass
