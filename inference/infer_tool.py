@@ -160,7 +160,8 @@ class Svc(object):
         self.spk2id = self.hps_ms.spk
         # 加载hubert
         self.hubert_soft = hubert_model.hubert_soft(hubert_path)
-
+        if torch.cuda.is_available():
+            self.hubert_soft = self.hubert_soft.cuda()
         self.load_model()
 
     def load_model(self):
