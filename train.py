@@ -208,17 +208,12 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
                     "slice/mel_gen": utils.plot_spectrogram_to_numpy(y_hat_mel[0].data.cpu().numpy()),
                     "all/mel": utils.plot_spectrogram_to_numpy(mel[0].data.cpu().numpy()),
                 }
-                audio_dict={
-                    f"train/gen": y_hat[0],
-                    f"train/gt": y[0],
-                }
+
                 utils.summarize(
                     writer=writer,
                     global_step=global_step,
                     images=image_dict,
-                    scalars=scalar_dict,
-                    audios=audio_dict,
-                    audio_sampling_rate = hps.data.sampling_rate
+                    scalars=scalar_dict
                 )
 
             if global_step % hps.train.eval_interval == 0:
