@@ -12,7 +12,7 @@ config_template = {
     "learning_rate": 2e-4,
     "betas": [0.8, 0.99],
     "eps": 1e-9,
-    "batch_size": 16,
+    "batch_size": 12,
     "fp16_run": False,
     "lr_decay": 0.999875,
     "segment_size": 17920,
