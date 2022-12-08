@@ -45,9 +45,14 @@ dataset_raw
 ```shell
 python resample.py
  ```
-2. 自动划分训练集 验证集 测试集 以及配置文件
+2. 自动划分训练集 验证集 测试集 以及自动生成配置文件
 ```shell
 python preprocess_flist_config.py
+# 注意
+# 自动生成的配置文件中，说话人数量n_speakers会自动按照数据集中的人数而定
+# 为了给之后添加说话人留下一定空间，n_speakers自动设置为 当前数据集人数乘2
+# 如果想多留一些空位可以在此步骤后 自行修改生成的config.json中n_speakers数量
+# 一旦模型开始训练后此项不可再更改
 ```
 3. 生成hubert与f0
 ```shell
@@ -59,6 +64,22 @@ python preprocess_hubert_f0.py
 ```shell
 python train.py -c configs/config.json -m 48k
 ```
+
+## 训练中追加说话人数据
+基本类似预处理过程
+1. 将新追加的说话人数据按之前的结构放入dataset_raw目录下，并重采样至48khz
+```shell
+python resample.py
+ ```
+2. 使用`add_speaker.py`重新生成训练集、验证集，重新生成配置文件
+```shell
+python add_speaker.py
+```
+3. 重新生成hubert与f0
+```shell
+python preprocess_hubert_f0.py
+```
+之后便可以删除dataset_raw文件夹了
 
 ## 推理
 
