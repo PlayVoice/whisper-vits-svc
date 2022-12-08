@@ -2,7 +2,8 @@
 ## Update
 > 断音问题已解决，音质提升了一个档次\
 > 2.0版本已经移至 sovits_2.0分支\
-> 3.0版本使用FreeVC的代码结构，与旧版本不通用
+> 3.0版本使用FreeVC的代码结构，与旧版本不通用\
+> 目前音质上依然与[DiffSVC](https://github.com/prophesier/diff-svc) 有较大的差距
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
 
