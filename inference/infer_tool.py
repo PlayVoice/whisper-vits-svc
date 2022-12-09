@@ -10,7 +10,6 @@ import maad
 import numpy as np
 # import onnxruntime
 import parselmouth
-import pyworld
 import soundfile
 import torch
 import torchaudio
@@ -90,20 +89,29 @@ def resize2d_f0(x, target_len):
     res = np.nan_to_num(target)
     return res
 
-def compute_f0(x, c_len,f0_up_key=0):
-    # x, sr = librosa.load(path, sr=48000)
-    f0, t = pyworld.dio(
-        x.astype(np.double),
-        fs=16000,
-        f0_ceil=800,
-        frame_period=1000 * 160 / 16000,
-    )
-    f0 = pyworld.stonemask(x.astype(np.double), f0, t, 16000)
-    for index, pitch in enumerate(f0):
-        f0[index] = round(pitch, 1)
-    assert abs(c_len - x.shape[0]//160) < 3, (c_len, f0.shape)
+def get_f0(x, p_len,f0_up_key=0):
+
+    time_step = 160 / 16000 * 1000
+    f0_min = 50
+    f0_max = 1100
+    f0_mel_min = 1127 * np.log(1 + f0_min / 700)
+    f0_mel_max = 1127 * np.log(1 + f0_max / 700)
+
+    f0 = parselmouth.Sound(x, 16000).to_pitch_ac(
+        time_step=time_step / 1000, voicing_threshold=0.6,
+        pitch_floor=f0_min, pitch_ceiling=f0_max).selected_array['frequency']
+
+    pad_size=(p_len - len(f0) + 1) // 2
+    if(pad_size>0 or p_len - len(f0) - pad_size>0):
+        f0 = np.pad(f0,[[pad_size,p_len - len(f0) - pad_size]], mode='constant')
+
     f0 *= pow(2, f0_up_key / 12)
-    return None, resize2d_f0(f0, c_len)
+    f0_mel = 1127 * np.log(1 + f0 / 700)
+    f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * 254 / (f0_mel_max - f0_mel_min) + 1
+    f0_mel[f0_mel <= 1] = 1
+    f0_mel[f0_mel > 255] = 255
+    f0_coarse = np.rint(f0_mel).astype(np.int)
+    return f0_coarse, f0
 
 def clean_pitch(input_pitch):
     num_nan = np.sum(input_pitch == 1)
@@ -195,7 +203,7 @@ class Svc(object):
         if len(source.shape) == 2 and source.shape[1] >= 2:
             source = torch.mean(source, dim=0).unsqueeze(0)
         soft = self.get_units(source, sr).squeeze(0).cpu().numpy()
-        f0_coarse, f0 = compute_f0(source.cpu().numpy()[0], soft.shape[0]*2, tran)
+        f0_coarse, f0 = get_f0(source.cpu().numpy()[0], soft.shape[0]*2, tran)
         f0 = resize2d_f0(f0, soft.shape[0]*3)
         return soft, f0
 
