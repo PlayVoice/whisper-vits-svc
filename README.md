@@ -1,6 +1,7 @@
 # SoftVC VITS Singing Voice Conversion
 ## Update
-> 断音问题已解决，音质提升了一个档次\
+> 目前发现一个较大问题，3.0推理时显存占用巨大，6G显存基本只能推理30s左右长度音频，正在尝试修复
+> 断音问题已解决，音质提升了不少\
 > 2.0版本已经移至 sovits_2.0分支\
 > 3.0版本使用FreeVC的代码结构，与旧版本不通用\
 > 目前音质上依然与[DiffSVC](https://github.com/prophesier/diff-svc) 有较大的差距
