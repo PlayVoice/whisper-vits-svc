@@ -204,7 +204,6 @@ class Svc(object):
             source = torch.mean(source, dim=0).unsqueeze(0)
         soft = self.get_units(source, sr).squeeze(0).cpu().numpy()
         f0_coarse, f0 = get_f0(source.cpu().numpy()[0], soft.shape[0]*2, tran)
-        f0 = resize2d_f0(f0, soft.shape[0]*3)
         return soft, f0
 
     def infer(self, speaker_id, tran, raw_path):
@@ -220,7 +219,7 @@ class Svc(object):
         with torch.no_grad():
             x_tst = stn_tst.unsqueeze(0).to(self.dev)
             start = time.time()
-            x_tst = torch.repeat_interleave(x_tst, repeats=3, dim=1).transpose(1, 2)
+            x_tst = torch.repeat_interleave(x_tst, repeats=2, dim=1).transpose(1, 2)
             audio = self.net_g_ms.infer(x_tst, f0=f0, g=sid)[0,0].data.float()
             use_time = time.time() - start
             print("vits use time:{}".format(use_time))

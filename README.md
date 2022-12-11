@@ -12,7 +12,7 @@
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
   + 放在hubert目录下
 + 预训练底模文件 [G_0.pth](https://huggingface.co/innnky/sovits_pretrained/resolve/main/G_0.pth) 与 [D_0.pth](https://huggingface.co/innnky/sovits_pretrained/resolve/main/D_0.pth)
-  + 放在logs/48k 目录下
+  + 放在logs/32k 目录下
   + 预训练底模为必选项，因为据测试从零开始训练有概率不收敛，同时底模也能加快训练速度
   + 预训练底模训练数据集包含云灏 即霜 辉宇·星AI 派蒙 绫地宁宁，覆盖男女生常见音域，可以认为是相对通用的底模
   + 底模删除了optimizer speaker_embedding 等无关权重, 只可以用于初始化训练，无法用于推理
@@ -21,8 +21,8 @@
 # hubert
 wget -P hubert/ https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt
 # G与D预训练模型
-wget -P logs/48k/ https://huggingface.co/innnky/sovits_pretrained/resolve/main/G_0.pth
-wget -P logs/48k/ https://huggingface.co/innnky/sovits_pretrained/resolve/main/D_0.pth
+wget -P logs/32k/ https://huggingface.co/innnky/sovits_pretrained/resolve/main/G_0.pth
+wget -P logs/32k/ https://huggingface.co/innnky/sovits_pretrained/resolve/main/D_0.pth
 
 ```
 
@@ -42,7 +42,7 @@ dataset_raw
 ```
 
 ## 数据预处理
-1. 重采样至 48khz
+1. 重采样至 32khz
 
 ```shell
 python resample.py
@@ -64,12 +64,12 @@ python preprocess_hubert_f0.py
 
 ## 训练
 ```shell
-python train.py -c configs/config.json -m 48k
+python train.py -c configs/config.json -m 32k
 ```
 
 ## 训练中追加说话人数据
 基本类似预处理过程
-1. 将新追加的说话人数据按之前的结构放入dataset_raw目录下，并重采样至48khz
+1. 将新追加的说话人数据按之前的结构放入dataset_raw目录下，并重采样至32khz
 ```shell
 python resample.py
  ```

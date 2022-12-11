@@ -58,7 +58,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         spk = torch.LongTensor([self.spk_map[spk]])
 
         c = torch.load(filename + ".soft.pt").squeeze(0)
-        c = torch.repeat_interleave(c, repeats=3, dim=1)
+        c = torch.repeat_interleave(c, repeats=2, dim=1)
 
         f0 = np.load(filename + ".f0.npy")
         f0 = torch.FloatTensor(f0)
@@ -132,7 +132,7 @@ class EvalDataLoader(torch.utils.data.Dataset):
 
         c = torch.load(filename + ".soft.pt").squeeze(0)
 
-        c = torch.repeat_interleave(c, repeats=3, dim=1)
+        c = torch.repeat_interleave(c, repeats=2, dim=1)
 
         f0 = np.load(filename + ".f0.npy")
         f0 = torch.FloatTensor(f0)

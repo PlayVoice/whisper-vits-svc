@@ -14,7 +14,7 @@ from inference.infer_tool import Svc
 logging.getLogger('numba').setLevel(logging.WARNING)
 chunks_dict = infer_tool.read_temp("inference/chunks_temp.json")
 
-model_path = "logs/48k/G_174000-Copy1.pth"
+model_path = "logs/32k/G_174000-Copy1.pth"
 config_path = "configs/config.json"
 svc_model = Svc(model_path, config_path)
 infer_tool.mkdir(["raw", "results"])

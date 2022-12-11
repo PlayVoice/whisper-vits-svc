@@ -18,44 +18,21 @@ logging.getLogger('numba').setLevel(logging.WARNING)
 import parselmouth
 import librosa
 import numpy as np
-def stft(y):
-    return librosa.stft(
-        y=y,
-        n_fft=1280,
-        hop_length=320,
-        win_length=1280,
-    )
-
-def energy(y):
-    # Extract energy
-    S = librosa.magphase(stft(y))[0]
-    e = np.sqrt(np.sum(S ** 2, axis=0))  # np.linalg.norm(S, axis=0)
-    return e.squeeze()  # (Number of frames) => (654,)
-
-def get_energy(path, p_len=None):
-    wav, sr = librosa.load(path, 48000)
-    e = energy(wav)
-    if p_len is None:
-        p_len = wav.shape[0] // 320
-    assert e.shape[0] -p_len <2 ,(e.shape[0] ,p_len)
-    e = e[: p_len]
-    return e
-
 
 
 def get_f0(path,p_len=None, f0_up_key=0):
-    x, _ = librosa.load(path, 48000)
+    x, _ = librosa.load(path, 32000)
     if p_len is None:
         p_len = x.shape[0]//320
     else:
         assert abs(p_len-x.shape[0]//320) < 3, (path, p_len, x.shape)
-    time_step = 320 / 48000 * 1000
+    time_step = 320 / 32000 * 1000
     f0_min = 50
     f0_max = 1100
     f0_mel_min = 1127 * np.log(1 + f0_min / 700)
     f0_mel_max = 1127 * np.log(1 + f0_max / 700)
 
-    f0 = parselmouth.Sound(x, 48000).to_pitch_ac(
+    f0 = parselmouth.Sound(x, 32000).to_pitch_ac(
         time_step=time_step / 1000, voicing_threshold=0.6,
         pitch_floor=f0_min, pitch_ceiling=f0_max).selected_array['frequency']
 
@@ -80,14 +57,14 @@ def resize2d(x, target_len):
     return res
 
 def compute_f0(path, c_len):
-    x, sr = librosa.load(path, sr=48000)
+    x, sr = librosa.load(path, sr=32000)
     f0, t = pyworld.dio(
         x.astype(np.double),
         fs=sr,
         f0_ceil=800,
         frame_period=1000 * 320 / sr,
     )
-    f0 = pyworld.stonemask(x.astype(np.double), f0, t, 48000)
+    f0 = pyworld.stonemask(x.astype(np.double), f0, t, 32000)
     for index, pitch in enumerate(f0):
         f0[index] = round(pitch, 1)
     assert abs(c_len - x.shape[0]//320) < 3, (c_len, f0.shape)
@@ -108,14 +85,14 @@ def process(filename):
         c = torch.load(save_name)
     f0path = filename+".f0.npy"
     if not os.path.exists(f0path):
-        cf0, f0 = compute_f0(filename, c.shape[-1] * 3)
+        cf0, f0 = compute_f0(filename, c.shape[-1] * 2)
         np.save(f0path, f0)
 
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--in_dir", type=str, default="dataset/48k", help="path to input dir")
+    parser.add_argument("--in_dir", type=str, default="dataset/32k", help="path to input dir")
     args = parser.parse_args()
 
     print("Loading hubert for content...")

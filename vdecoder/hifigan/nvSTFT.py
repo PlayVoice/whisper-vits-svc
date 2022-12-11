@@ -19,7 +19,7 @@ def load_wav_to_torch(full_path, target_sr=None, return_empty_on_exception=False
         print(f"'{full_path}' failed to load.\nException:")
         print(ex)
         if return_empty_on_exception:
-            return [], sampling_rate or target_sr or 48000
+            return [], sampling_rate or target_sr or 32000
         else:
             raise Exception(ex)
     
@@ -36,7 +36,7 @@ def load_wav_to_torch(full_path, target_sr=None, return_empty_on_exception=False
     data = torch.FloatTensor(data.astype(np.float32))/max_mag
     
     if (torch.isinf(data) | torch.isnan(data)).any() and return_empty_on_exception:# resample will crash with inf/NaN inputs. return_empty_on_exception will return empty arr instead of except
-        return [], sampling_rate or target_sr or 48000
+        return [], sampling_rate or target_sr or 32000
     if target_sr is not None and sampling_rate != target_sr:
         data = torch.from_numpy(librosa.core.resample(data.numpy(), orig_sr=sampling_rate, target_sr=target_sr))
         sampling_rate = target_sr

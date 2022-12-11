@@ -305,7 +305,7 @@ class SynthesizerTrn(nn.Module):
 
     self.enc_p_ = TextEncoder(ssl_dim, inter_channels, hidden_channels, 5, 1, 16,0, filter_channels, n_heads, p_dropout)
     hps = {
-        "sampling_rate": 48000,
+        "sampling_rate": 32000,
         "inter_channels": 192,
         "resblock": "1",
         "resblock_kernel_sizes": [3, 7, 11],
