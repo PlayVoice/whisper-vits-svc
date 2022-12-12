@@ -5,7 +5,7 @@
 ## 注意
 + 当前分支是32khz版本的分支，32khz模型推理更快，显存占用大幅减小，数据集所占硬盘空间也大幅降低，推荐训练该版本模型
 + 如果是使用git clone 下载的仓库需要先 git checkout 32k 切换至32k分支
-+ 如果你之前训练了48khz的模型想切换到32khz, 则需要重新执行完整的预处理过程（重采样、生成配置文件、生成f0）
++ 如果之前训练了48khz的模型想切换到32khz, 则需要重新执行完整的预处理过程（重采样、生成配置文件、生成f0）
 但是可以直接加载旧的48khz模型进行加训
 ## 预先下载的模型文件
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
