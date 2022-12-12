@@ -1,13 +1,12 @@
 # SoftVC VITS Singing Voice Conversion
-## Update
-> 目前发现一个较大问题，3.0推理时显存占用巨大，6G显存基本只能推理30s左右长度音频，正在尝试修复\
-> 断音问题已解决，音质提升了不少\
-> 2.0版本已经移至 sovits_2.0分支\
-> 3.0版本使用FreeVC的代码结构，与旧版本不通用\
-> 目前音质上依然与[DiffSVC](https://github.com/prophesier/diff-svc) 有较大的差距
+
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
-
+## 注意
++ 当前分支是32khz版本的分支，32khz模型推理更快，显存占用大幅减小，数据集所占硬盘空间也大幅降低，推荐训练该版本模型
++ 如果是使用git clone 下载的仓库需要先 git checkout 32k 切换至32k分支
++ 如果你之前训练了48khz的模型想切换到32khz, 则需要重新执行完整的预处理过程（重采样、生成配置文件、生成f0）
+但是可以直接加载旧的48khz模型进行加训
 ## 预先下载的模型文件
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
   + 放在hubert目录下
@@ -16,6 +15,7 @@
   + 预训练底模为必选项，因为据测试从零开始训练有概率不收敛，同时底模也能加快训练速度
   + 预训练底模训练数据集包含云灏 即霜 辉宇·星AI 派蒙 绫地宁宁，覆盖男女生常见音域，可以认为是相对通用的底模
   + 底模删除了optimizer speaker_embedding 等无关权重, 只可以用于初始化训练，无法用于推理
+  + 该底模和48khz底模通用
 ```shell
 # 一键下载
 # hubert
