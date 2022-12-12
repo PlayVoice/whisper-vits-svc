@@ -1,12 +1,15 @@
 # SoftVC VITS Singing Voice Conversion
 ## Update
-> 目前发现一个较大问题，3.0推理时显存占用巨大，6G显存基本只能推理30s左右长度音频，正在尝试修复\
+> 针对sovits3.0 48khz模型推理显存占用大的问题，可以切换到[32khz的分支](https://github.com/innnky/so-vits-svc/tree/32k) 版本训练32khz的模型\
+> 目前发现一个较大问题，3.0推理时显存占用巨大，6G显存基本只能推理30s左右长度音频\
 > 断音问题已解决，音质提升了不少\
 > 2.0版本已经移至 sovits_2.0分支\
 > 3.0版本使用FreeVC的代码结构，与旧版本不通用\
 > 目前音质上依然与[DiffSVC](https://github.com/prophesier/diff-svc) 有较大的差距
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
+## 注意
+当前分支是48khz的版本，推理时显存占用较大，经常会出现爆显存的问题，如果爆显存需要手动将音频切片逐片段转换，推荐切换到[32khz的分支](https://github.com/innnky/so-vits-svc/tree/32k) 训练32khz版本的模型
 
 ## 预先下载的模型文件
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
