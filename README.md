@@ -1,5 +1,6 @@
 # SoftVC VITS Singing Voice Conversion
 ## Update
+> 据不完全统计，多说话人似乎会导致**音色泄漏加重**，目前的建议是如果想炼出来更像目标音色，**尽可能炼单说话人的**\
 > 针对sovits3.0 48khz模型推理显存占用大的问题，可以切换到[32khz的分支](https://github.com/innnky/so-vits-svc/tree/32k) 版本训练32khz的模型\
 > 目前发现一个较大问题，3.0推理时显存占用巨大，6G显存基本只能推理30s左右长度音频\
 > 断音问题已解决，音质提升了不少\
