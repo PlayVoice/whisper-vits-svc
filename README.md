@@ -13,7 +13,7 @@
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
 ## 注意
-当前分支是48khz的版本，推理时显存占用较大，经常会出现爆显存的问题，如果爆显存需要手动将音频切片逐片段转换，推荐切换到[32khz的分支](https://github.com/innnky/so-vits-svc/tree/32k) 训练32khz版本的模型
+当前分支是48khz的版本，使用时需要先git checkout main，推理时显存占用较大，经常会出现爆显存的问题，如果爆显存需要手动将音频切片逐片段转换，推荐切换到[32khz的分支](https://github.com/innnky/so-vits-svc/tree/32k) 训练32khz版本的模型
 ## colab一键数据集制作、训练脚本
 [一键colab](https://colab.research.google.com/drive/1rCUOOVG7-XQlVZuWRAj5IpGrMM8t07pE?usp=sharing)
 
