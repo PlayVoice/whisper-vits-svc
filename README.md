@@ -1,4 +1,6 @@
 # SoftVC VITS Singing Voice Conversion
+## English docs
+[英语资料(非官方)](https://github.com/Archivoice/so-vits-svc/blob/main/Eng_docs.md)
 ## Update
 > 据不完全统计，多说话人似乎会导致**音色泄漏加重**，目前的建议是如果想炼出来更像目标音色，**尽可能炼单说话人的**\
 > 针对sovits3.0 48khz模型推理显存占用大的问题，可以切换到[32khz的分支](https://github.com/innnky/so-vits-svc/tree/32k) 版本训练32khz的模型\
@@ -97,4 +99,3 @@ python preprocess_hubert_f0.py
 + clean_names 写待转换的音频名称
 + trans 填写变调半音数量
 + spk_list 填写合成的说话人名称
-
