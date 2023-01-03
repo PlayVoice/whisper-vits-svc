@@ -9,7 +9,7 @@ config_template = {
     "eval_interval": 1000,
     "seed": 1234,
     "epochs": 10000,
-    "learning_rate": 2e-4,
+    "learning_rate": 1e-4,
     "betas": [0.8, 0.99],
     "eps": 1e-9,
     "batch_size": 12,
