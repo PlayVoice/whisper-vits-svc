@@ -2,7 +2,7 @@
 ## English docs
 [英语资料](Eng_docs.md)
 ## Update
-> 据不完全统计，多说话人似乎会导致**音色泄漏加重**，目前的建议是如果想炼出来更像目标音色，**尽可能炼单说话人的**\
+> 据不完全统计，多说话人似乎会导致**音色泄漏加重**，不建议训练超过10人的模型，目前的建议是如果想炼出来更像目标音色，**尽可能炼单说话人的**\
 > 针对sovits3.0 48khz模型推理显存占用大的问题，可以切换到[32khz的分支](https://github.com/innnky/so-vits-svc/tree/32k) 版本训练32khz的模型\
 > 目前发现一个较大问题，3.0推理时显存占用巨大，6G显存基本只能推理30s左右长度音频\
 > 断音问题已解决，音质提升了不少\
@@ -75,22 +75,6 @@ python preprocess_hubert_f0.py
 ```shell
 python train.py -c configs/config.json -m 48k
 ```
-
-## 训练中追加说话人数据
-基本类似预处理过程
-1. 将新追加的说话人数据按之前的结构放入dataset_raw目录下，并重采样至48khz
-```shell
-python resample.py
- ```
-2. 使用`add_speaker.py`重新生成训练集、验证集，重新生成配置文件
-```shell
-python add_speaker.py
-```
-3. 重新生成hubert与f0
-```shell
-python preprocess_hubert_f0.py
-```
-之后便可以删除dataset_raw文件夹了
 
 ## 推理
 

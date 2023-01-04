@@ -1,6 +1,6 @@
 # SoftVC VITS Singing Voice Conversion
 ## Updates
-> According to incomplete statistics, a multi-speaker dataset might cause **the timbre to be less stable**, currently **single speaker** datasets are recommended for training for the model to sound closer to the target voice.\
+> According to incomplete statistics, it seems that training with multiple speakers may lead to **worsened leaking of voice timbre**. It is not recommended to train models with more than 10 speakers. The current suggestion is to try to train models with only a single speaker if you want to achieve a voice timbre that is more similar to the target.
 > In light of the issue where inferencing sovits3.0 48kHz models take up high amounts of vram (video memory), you can switch to the [32kHz branch](https://github.com/innnky/so-vits-svc/tree/32k) and train a 32kHz model.\
 > Currently there's a larger issue where inferencing models trained on the 3.0 version code takes up a great deal of vram, with 6GB of vram it's only possible to inference audio that's around 30 seconds or so.\
 > Fixed the issue with unwanted staccato, improving audio quality by a decent amount.\
@@ -73,22 +73,6 @@ After running the step above, the `dataset` folder will contain all the pre-proc
 ```shell
 python train.py -c configs/config.json -m 48k
 ```
-
-## Adding more speaker data while training.
-Basically similar to pre-processing.
-1. Add the appended data under `dataset_raw` in the same format as before, and resample to 48kHz.
-```shell
-python resample.py
- ```
-2. Use `add_speaker.py` to regenerate the training set, validation set, and configuration file.
-```shell
-python add_speaker.py
-```
-3. Regenerate hubert and F0 features.
-```shell
-python preprocess_hubert_f0.py
-```
-You can delete the `dataset_raw` folder after this.
 
 ## Inferencing.
 
