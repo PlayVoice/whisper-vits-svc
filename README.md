@@ -32,7 +32,7 @@ wget -P logs/32k/ https://huggingface.co/innnky/sovits_pretrained/resolve/main/D
 
 ```
 ## colab一键数据集制作、训练脚本
-[一键colab](https://colab.research.google.com/drive/1rCUOOVG7-XQlVZuWRAj5IpGrMM8t07pE?usp=sharing)
+[一键colab](https://colab.research.google.com/drive/1_-gh9i-wCPNlRZw6pYF-9UufetcVrGBX?usp=sharing)
 ## 数据集准备
 仅需要以以下文件结构将数据集放入dataset_raw目录即可
 ```shell
