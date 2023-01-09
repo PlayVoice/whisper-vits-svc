@@ -9,7 +9,8 @@
 ## Model Overview
 A singing voice coversion (SVC) model, using the SoftVC encoder to extract features from the input audio, sent into VITS along with the F0 to replace the original input to acheive a voice conversion effect. Additionally, changing the vocoder to [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) to fix the issue with unwanted staccato.
 ## Notice
-The current branch is the 32kHz version, which requires more vram during inferencing, often causing OOM (Out Of Memory) errors, if this happens, it's required to manually splice the samples to convert them one by one, and so it's recommended to use the [32kHz branch](https://github.com/innnky/so-vits-svc/tree/32k) and train 32kHz variant models for use.
++ The current branch is the 32kHz version, which requires less vram during inferencing, as well as faster inferencing speeds, and datasets for said branch take up less disk space. Thus the 32 kHz branch is recommended for use.
++ If you want to train 48 kHz variant models, switch to the [main branch](https://github.com/innnky/so-vits-svc/tree/main).
 ## Colab notebook script for dataset creation and training.
 [colab training notebook](https://colab.research.google.com/drive/1rCUOOVG7-XQlVZuWRAj5IpGrMM8t07pE?usp=sharing)
 
