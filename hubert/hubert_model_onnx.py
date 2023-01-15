@@ -65,9 +65,7 @@ class HubertSoft(Hubert):
         return self.proj(x)
 
     def forward(self, x):
-        x_tst = self.units(x)
-        x_tst = torch.repeat_interleave(x_tst, repeats=2, dim=1)
-        return x_tst
+        return self.units(x)
 
 class FeatureExtractor(nn.Module):
     def __init__(self):
