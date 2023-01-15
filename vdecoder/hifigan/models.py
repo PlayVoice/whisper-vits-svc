@@ -95,6 +95,9 @@ class ResBlock2(torch.nn.Module):
             remove_weight_norm(l)
 
 
+def padDiff(x):
+    return F.pad(F.pad(x, (0,0,-1,1), 'constant', 0) - x, (0,0,0,-1), 'constant', 0)
+
 class SineGen(torch.nn.Module):
     """ Definition of sine generator
     SineGen(samp_rate, harmonic_num = 0,
@@ -152,7 +155,7 @@ class SineGen(torch.nn.Module):
             # Buffer tmp_over_one_idx indicates the time step to add -1.
             # This will not change F0 of sine because (x-1) * 2*pi = x * 2*pi
             tmp_over_one = torch.cumsum(rad_values, 1) % 1
-            tmp_over_one_idx = (torch.diff(tmp_over_one, dim=1)) < 0
+            tmp_over_one_idx = (padDiff(tmp_over_one)) < 0
             cumsum_shift = torch.zeros_like(rad_values)
             cumsum_shift[:, 1:, :] = tmp_over_one_idx * -1.0
 
