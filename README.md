@@ -2,7 +2,7 @@
 ## English docs
 [英语资料](Eng_docs.md)
 
----
+
 ## Update
 > 据不完全统计，多说话人似乎会导致**音色泄漏加重**，不建议训练超过5人的模型，目前的建议是如果想炼出来更像目标音色，**尽可能炼单说话人的**\
 > 断音问题已解决，音质提升了不少\
@@ -10,16 +10,16 @@
 > 3.0版本使用FreeVC的代码结构，与旧版本不通用\
 > 与[DiffSVC](https://github.com/prophesier/diff-svc) 相比，在训练数据质量非常高时diffsvc有着更好的表现，对于质量差一些的数据集，本仓库可能会有更好的表现，此外，本仓库推理速度上比diffsvc快很多
 
----
+
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
 
----
+
 ## 注意
 + 当前分支是32khz版本的分支，32khz模型推理更快，显存占用大幅减小，数据集所占硬盘空间也大幅降低，推荐训练该版本模型
 + 如果要训练48khz的模型请切换到[main分支](https://github.com/innnky/so-vits-svc/tree/main) 
 
----
+
 ## 预先下载的模型文件
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
   + 放在hubert目录下
@@ -39,11 +39,11 @@ wget -P logs/32k/ https://huggingface.co/innnky/sovits_pretrained/resolve/main/D
 
 ```
 
----
+
 ## colab一键数据集制作、训练脚本
 [一键colab](https://colab.research.google.com/drive/1_-gh9i-wCPNlRZw6pYF-9UufetcVrGBX?usp=sharing)
 
----
+
 ## 数据集准备
 仅需要以以下文件结构将数据集放入dataset_raw目录即可
 ```shell
@@ -58,7 +58,7 @@ dataset_raw
     └───xxx7-xxx007.wav
 ```
 
----
+
 ## 数据预处理
 1. 重采样至 32khz
 
@@ -80,13 +80,13 @@ python preprocess_hubert_f0.py
 ```
 执行完以上步骤后 dataset 目录便是预处理完成的数据，可以删除dataset_raw文件夹了
 
----
+
 ## 训练
 ```shell
 python train.py -c configs/config.json -m 32k
 ```
 
----
+
 ## 推理
 
 使用 [inference_main.py](inference_main.py)
@@ -96,7 +96,7 @@ python train.py -c configs/config.json -m 32k
 + trans 填写变调半音数量
 + spk_list 填写合成的说话人名称
 
----
+
 ## Onnx导出
 使用 [onnx_export.py](onnx_export.py)
 + 新建文件夹：checkpoints 并打开
@@ -107,7 +107,7 @@ python train.py -c configs/config.json -m 32k
 + 等待执行完毕，在你的项目文件夹下会生成一个model.onnx，即为导出的模型
    ### Onnx模型支持的UI
    + [MoeSS](https://github.com/NaruseMioShirakana/MoeSS)
----
+
 ## Gradio（WebUI）
 使用 [sovits_gradio.py](sovits_gradio.py)
 + 新建文件夹：checkpoints 并打开
@@ -115,4 +115,4 @@ python train.py -c configs/config.json -m 32k
 + 将你的模型更名为model.pth，配置文件更名为config.json，并放置到刚才创建的文件夹下
 + 运行 [sovits_gradio.py](sovits_gradio.py) 
 
----
+
