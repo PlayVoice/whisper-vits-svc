@@ -11,6 +11,9 @@ import utils
 from hubert import hubert_model_onnx
 
 def main(HubertExport,NetExport):
+
+    path = "NyaruTaffy"
+
     if(HubertExport):
         device = torch.device("cuda")
         hubert_soft = hubert_model_onnx.hubert_soft("hubert/model.pt")
@@ -30,7 +33,6 @@ def main(HubertExport,NetExport):
                         input_names=input_names,
                         output_names=output_names)
     if(NetExport):
-        path = "NyaruTaffy"
         device = torch.device("cuda")
         hps = utils.get_hparams_from_file(f"checkpoints/{path}/config.json")
         SVCVITS = SynthesizerTrn(
@@ -55,7 +57,7 @@ def main(HubertExport,NetExport):
                             test_pitch.to(device),
                             test_sid.to(device)
                         ),
-                        "a.onnx",
+                        f"checkpoints/{path}/model.onnx",
                         dynamic_axes={
                             "hidden_unit": [0, 1],
                             "pitch": [1]
