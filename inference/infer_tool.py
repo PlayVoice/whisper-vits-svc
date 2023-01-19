@@ -100,7 +100,8 @@ def get_f0(x, p_len,f0_up_key=0):
     f0 = parselmouth.Sound(x, 16000).to_pitch_ac(
         time_step=time_step / 1000, voicing_threshold=0.6,
         pitch_floor=f0_min, pitch_ceiling=f0_max).selected_array['frequency']
-
+    if len(f0) > p_len:
+        f0 = f0[:p_len]
     pad_size=(p_len - len(f0) + 1) // 2
     if(pad_size>0 or p_len - len(f0) - pad_size>0):
         f0 = np.pad(f0,[[pad_size,p_len - len(f0) - pad_size]], mode='constant')
