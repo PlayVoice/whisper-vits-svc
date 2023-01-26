@@ -105,11 +105,11 @@ python train.py -c configs/config.json -m 32k
 + 将 [onnx_export.py](onnx_export.py) 中path = "NyaruTaffy" 的 "NyaruTaffy" 修改为你的项目名称
 + 运行 [onnx_export.py](onnx_export.py) 
 + 等待执行完毕，在你的项目文件夹下会生成一个model.onnx，即为导出的模型
-   ### Onnx模型支持的UI
-   + [MoeSS](https://github.com/NaruseMioShirakana/MoeSS)
 + 注意：若想导出48K模型，请按照以下步骤修改文件
    + 请打开[model_onnx.py](model_onnx.py)，将其中最后一个class的hps中32000改为48000
    + 请打开[nvSTFT](/vdecoder/hifigan/nvSTFT.py)，将其中所有32000改为48000
+   ### Onnx模型支持的UI
+   + [MoeSS](https://github.com/NaruseMioShirakana/MoeSS)
 
 ## Gradio（WebUI）
 使用 [sovits_gradio.py](sovits_gradio.py)
