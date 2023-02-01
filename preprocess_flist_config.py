@@ -1,5 +1,7 @@
 import os
 import argparse
+import re
+
 from tqdm import tqdm
 from random import shuffle
 import json
@@ -63,6 +65,7 @@ config_template = {
   }
 }
 
+pattern = re.compile(r'^[\.a-zA-Z0-9_\/]+$')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -81,12 +84,17 @@ if __name__ == "__main__":
     for speaker in tqdm(os.listdir(args.source_dir)):
         spk_dict[speaker] = spk_id
         spk_id += 1
-        wavs = [os.path.join(args.source_dir, speaker, i)for i in os.listdir(os.path.join(args.source_dir, speaker))]
+        wavs = ["/".join([args.source_dir, speaker, i]) for i in os.listdir(os.path.join(args.source_dir, speaker))]
+        for wavpath in wavs:
+            if not pattern.match(wavpath):
+                print(f"warning：文件名{wavpath}中包含非字母数字下划线，可能会导致错误。（也可能不会）")
+        if len(wavs) < 10:
+            print(f"warning：{speaker}数据集数量小于10条，请补充数据")
         wavs = [i for i in wavs if i.endswith("wav")]
         shuffle(wavs)
-        train += wavs[2:-10]
+        train += wavs[2:-2]
         val += wavs[:2]
-        test += wavs[-10:]
+        test += wavs[-2:]
     n_speakers = len(spk_dict.keys())*2
     shuffle(train)
     shuffle(val)
