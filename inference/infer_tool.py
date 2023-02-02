@@ -32,7 +32,7 @@ def read_temp(file_name):
                 data = f.read()
             data_dict = json.loads(data)
             if os.path.getsize(file_name) > 50 * 1024 * 1024:
-                f_name = file_name.split("/")[-1]
+                f_name = file_name.replace("\\", "/").split("/")[-1]
                 print(f"clean {f_name}")
                 for wav_hash in list(data_dict.keys()):
                     if int(time.time()) - int(data_dict[wav_hash]["time"]) > 14 * 24 * 3600:

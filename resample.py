@@ -10,7 +10,7 @@ from tqdm import tqdm
 def process(item):
     spkdir, wav_name, args = item
     # speaker 's5', 'p280', 'p315' are excluded,
-    speaker = spkdir.split("/")[-1]
+    speaker = spkdir.replace("\\", "/").split("/")[-1]
     wav_path = os.path.join(args.in_dir, speaker, wav_name)
     if os.path.exists(wav_path) and '.wav' in wav_path:
         os.makedirs(os.path.join(args.out_dir2, speaker), exist_ok=True)
