@@ -1,9 +1,9 @@
 # SoftVC VITS Singing Voice Conversion
 ## English docs
-[英语资料](Eng_docs.md)
+[Check here](Eng_docs.md)
 
 
-## Update
+## Updates
 > 据不完全统计，多说话人似乎会导致**音色泄漏加重**，不建议训练超过5人的模型，目前的建议是如果想炼出来更像目标音色，**尽可能炼单说话人的**\
 > 断音问题已解决，音质提升了不少\
 > 2.0版本已经移至 sovits_2.0分支\
@@ -22,12 +22,12 @@
 
 ## 预先下载的模型文件
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
-  + 放在hubert目录下
+  + 放在`hubert`目录下
 + 预训练底模文件 [G_0.pth](https://huggingface.co/innnky/sovits_pretrained/resolve/main/G_0.pth) 与 [D_0.pth](https://huggingface.co/innnky/sovits_pretrained/resolve/main/D_0.pth)
-  + 放在logs/32k 目录下
+  + 放在`logs/32k`目录下
   + 预训练底模为必选项，因为据测试从零开始训练有概率不收敛，同时底模也能加快训练速度
   + 预训练底模训练数据集包含云灏 即霜 辉宇·星AI 派蒙 绫地宁宁，覆盖男女生常见音域，可以认为是相对通用的底模
-  + 底模删除了optimizer speaker_embedding 等无关权重, 只可以用于初始化训练，无法用于推理
+  + 底模删除了`optimizer speaker_embedding`等无关权重, 只可以用于初始化训练，无法用于推理
   + 该底模和48khz底模通用
 ```shell
 # 一键下载
@@ -90,24 +90,24 @@ python train.py -c configs/config.json -m 32k
 ## 推理
 
 使用 [inference_main.py](inference_main.py)
-+ 更改model_path为你自己训练的最新模型记录点
-+ 将待转换的音频放在raw文件夹下
-+ clean_names 写待转换的音频名称
-+ trans 填写变调半音数量
-+ spk_list 填写合成的说话人名称
++ 更改`model_path`为你自己训练的最新模型记录点
++ 将待转换的音频放在`raw`文件夹下
++ `clean_names` 写待转换的音频名称
++ `trans` 填写变调半音数量
++ `spk_list` 填写合成的说话人名称
 
 
 ## Onnx导出
 ### 重要的事情说三遍：导出Onnx时，请重新克隆整个仓库！！！导出Onnx时，请重新克隆整个仓库！！！导出Onnx时，请重新克隆整个仓库！！！
 使用 [onnx_export.py](onnx_export.py)
-+ 新建文件夹：checkpoints 并打开
-+ 在checkpoints文件夹中新建一个文件夹作为项目文件夹，文件夹名为你的项目名称
-+ 将你的模型更名为model.pth，配置文件更名为config.json，并放置到刚才创建的文件夹下
-+ 将 [onnx_export.py](onnx_export.py) 中path = "NyaruTaffy" 的 "NyaruTaffy" 修改为你的项目名称
++ 新建文件夹：`checkpoints` 并打开
++ 在`checkpoints`文件夹中新建一个文件夹作为项目文件夹，文件夹名为你的项目名称，比如`aziplayer`
++ 将你的模型更名为`model.pth`，配置文件更名为`config.json`，并放置到刚才创建的`aziplayer`文件夹下
++ 将 [onnx_export.py](onnx_export.py) 中`path = "NyaruTaffy"` 的 `"NyaruTaffy"` 修改为你的项目名称，`path = "aziplayer"`
 + 运行 [onnx_export.py](onnx_export.py) 
-+ 等待执行完毕，在你的项目文件夹下会生成一个model.onnx，即为导出的模型
-+ 注意：若想导出48K模型，请按照以下步骤修改文件，或者直接使用48K.py
-   + 请打开[model_onnx.py](model_onnx.py)，将其中最后一个class的hps中32000改为48000
++ 等待执行完毕，在你的项目文件夹下会生成一个`model.onnx`，即为导出的模型
++ 注意：若想导出48K模型，请按照以下步骤修改文件，或者直接使用`model_onnx_48k.py`
+   + 请打开[model_onnx.py](model_onnx.py)，将其中最后一个class`SynthesizerTrn`的hps中`sampling_rate`32000改为48000
    + 请打开[nvSTFT](/vdecoder/hifigan/nvSTFT.py)，将其中所有32000改为48000
    ### Onnx模型支持的UI
    + [MoeSS](https://github.com/NaruseMioShirakana/MoeSS)

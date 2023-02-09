@@ -1,4 +1,5 @@
 # SoftVC VITS Singing Voice Conversion
+
 ## Updates
 > According to incomplete statistics, it seems that training with multiple speakers may lead to **worsened leaking of voice timbre**. It is not recommended to train models with more than 5 speakers. The current suggestion is to try to train models with only a single speaker if you want to achieve a voice timbre that is more similar to the target.
 > Fixed the issue with unwanted staccato, improving audio quality by a decent amount.\
@@ -8,11 +9,11 @@
 
 ## Model Overview
 A singing voice coversion (SVC) model, using the SoftVC encoder to extract features from the input audio, sent into VITS along with the F0 to replace the original input to acheive a voice conversion effect. Additionally, changing the vocoder to [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) to fix the issue with unwanted staccato.
+
 ## Notice
 + The current branch is the 32kHz version, which requires less vram during inferencing, as well as faster inferencing speeds, and datasets for said branch take up less disk space. Thus the 32 kHz branch is recommended for use.
 + If you want to train 48 kHz variant models, switch to the [main branch](https://github.com/innnky/so-vits-svc/tree/main).
-## Colab notebook script for dataset creation and training.
-[colab training notebook](https://colab.research.google.com/drive/1rCUOOVG7-XQlVZuWRAj5IpGrMM8t07pE?usp=sharing)
+
 
 ## Required models
 + soft vc hubert：[hubert-soft-0d54a1f4.pt](https://github.com/bshall/hubert/releases/download/v0.1/hubert-soft-0d54a1f4.pt)
@@ -32,6 +33,8 @@ wget -P logs/32k/ https://huggingface.co/innnky/sovits_pretrained/resolve/main/D
 
 ```
 
+## Colab notebook script for dataset creation and training.
+[colab training notebook](https://colab.research.google.com/drive/1rCUOOVG7-XQlVZuWRAj5IpGrMM8t07pE?usp=sharing)
 
 ## Dataset preparation
 All that is required is that the data be put under the `dataset_raw` folder in the structure format provided below.
@@ -81,3 +84,26 @@ Use [inference_main.py](inference_main.py)
 + Change `clean_names` to the output file name.
 + Use `trans` to edit the pitch shifting amount (semitones). 
 + Change `spk_list` to the speaker name.
+
+## Onnx Exporting.
+### **When exporting Onnx, please make sure you re-clone the whole repository!!!**
+Use [onnx_export.py](onnx_export.py)
++ Create a new folder called `checkpoints`.
++ Create a project folder in `checkpoints` folder with the desired name for your project, let's use `myproject` as example. Folder structure looks like `./checkpoints/myproject`.
++ Rename your model to `model.pth`, rename your config file to `config.json` then move them into `myproject` folder.
++ Modify [onnx_export.py](onnx_export.py) where `path = "NyaruTaffy"`, change `NyaruTaffy` to your project name, here it will be `path = "myproject"`.
++ Run [onnx_export.py](onnx_export.py)
++ Once it finished, a `model.onnx` will be generated in `myproject` folder, that's the model you just exported.
++ Notice: if you want to export a 48K model, please follow the instruction below or use `model_onnx_48k.py` directly.
+    + Open [model_onnx.py](model_onnx.py) and change `hps={"sampling_rate": 32000...}` to `hps={"sampling_rate": 48000}` in class `SynthesizerTrn`.
+    + Open [nvSTFT](/vdecoder/hifigan/nvSTFT.py) and replace all `32000` with `48000`
+    ### Onnx Model UI Support
+    + [MoeSS](https://github.com/NaruseMioShirakana/MoeSS)
++ All training function and transformation are removed, only if they are all removed you are actually using Onnx.
+
+## Gradio (WebUI)
+Use [sovits_gradio.py](sovits_gradio.py) to run Gradio WebUI
++ Create a new folder called `checkpoints`.
++ Create a project folder in `checkpoints` folder with the desired name for your project, let's use `myproject` as example. Folder structure looks like `./checkpoints/myproject`.
++ Rename your model to `model.pth`, rename your config file to `config.json` then move them into `myproject` folder.
++ Run [sovits_gradio.py](sovits_gradio.py)
