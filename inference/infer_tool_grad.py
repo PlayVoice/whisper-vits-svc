@@ -88,7 +88,7 @@ class VitsSvc(object):
         self.SVCVITS = None
         self.hps = None
         self.speakers = None
-        self.hubert_soft = hubert_model.hubert_soft("hubert/model.pt")
+        self.hubert_soft = utils.get_hubert_model()
 
     def set_device(self, device):
         self.device = torch.device(device)
