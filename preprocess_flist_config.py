@@ -24,7 +24,8 @@ config_template = {
     "c_kl": 1.0,
     "use_sr": True,
     "max_speclen": 384,
-    "port": "8001"
+    "port": "8001",
+    "keep_ckpts": 5,  # Number of ckpts to keep, if 0, keep all
   },
   "data": {
     "training_files":"filelists/train.txt",
