@@ -224,9 +224,10 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
                 utils.save_checkpoint(net_d, optim_d, hps.train.learning_rate, epoch,
                                       os.path.join(hps.model_dir, "D_{}.pth".format(global_step)))
 
-                if hps.train.keep_ckpts > 0:
-                    utils.clean_checkpoints(path_to_models='logs/32k/', n_ckpts_to_keep=hps.train.keep_ckpts,
-                                            sort_by_time=True)
+                keep_ckpts = getattr(hps.train, 'keep_ckpts', 0)
+                if keep_ckpts > 0:
+                    utils.clean_checkpoints(path_to_models='logs/32k/', n_ckpts_to_keep=keep_ckpts, sort_by_time=True)
+
 
         global_step += 1
 
