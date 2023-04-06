@@ -1,4 +1,21 @@
-# SoftVC VITS Singing Voice Conversion
+# Singing Voice Conversion
+
+## 技术分支
+
+- [PlayVoice/so-vits-svc-5.0](https://github.com/PlayVoice/so-vits-svc-5.0) 有口音，辨识度高，适合非跨语言，跨语言会跑调
+  
+- [PlayVoice/lora-svc](https://github.com/PlayVoice/lora-svc) 无口音，辨识度略低，适合跨语言，跨语言不跑调
+
+## 本项目更新中，暂时不能使用，更新点
+
+- 内容提取器更新为OpenAI的whisper
+  
+- 音频解码器由HiFiGAN更新为NVIDA的BigVGAN
+  
+- VITS框架加入Micsoft的NatureSpeech优化
+  
+- 加入音色提取与说话人适配器
+
 ## English docs
 [英语资料](Eng_docs.md)
 ## Update
