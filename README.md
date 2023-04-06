@@ -84,3 +84,9 @@ python train.py -c configs/config.json -m 48k
 + clean_names 写待转换的音频名称
 + trans 填写变调半音数量
 + spk_list 填写合成的说话人名称
+
+## 贡献者
+
+<a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
+</a>
