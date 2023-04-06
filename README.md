@@ -102,6 +102,24 @@ python train.py -c configs/config.json -m 48k
 + trans 填写变调半音数量
 + spk_list 填写合成的说话人名称
 
+## 代码来源和参考文献
+
+https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
+
+https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
+
+https://github.com/openai/whisper/ [paper](https://arxiv.org/abs/2212.04356)
+
+https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
+
+https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
+
+[VI-SVC, Singing Voice Conversion based on VITS decoder](https://zhuanlan.zhihu.com/p/564060769)
+
+[Adapter-Based Extension of Multi-Speaker Text-to-Speech Model for New Speakers](https://arxiv.org/abs/2211.00585)
+
+[AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
+
 ## 贡献者
 
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
