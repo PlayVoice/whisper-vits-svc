@@ -10,7 +10,7 @@
 
 - 内容提取器更新为OpenAI的whisper
   
-- 音频解码器由HiFiGAN更新为NVIDA的BigVGAN
+- HiFiGAN更新为NVIDA的BigVGAN
   
 - VITS框架加入Micsoft的NatureSpeech优化
   
