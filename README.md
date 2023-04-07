@@ -14,7 +14,11 @@
   
 - VITS框架加入Micsoft的NatureSpeech优化
   
-- 加入音色提取与说话人适配器
+- 加入音色提取
+
+- 加入说话人适配器
+
+- 加入GRL阻止音色泄漏
 
 ## English docs
 [英语资料](Eng_docs.md)
