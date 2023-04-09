@@ -63,9 +63,12 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         f0 = np.load(filename + ".f0.npy")
         f0 = torch.FloatTensor(f0)
         lmin = min(c.size(-1), spec.size(-1), f0.shape[0])
-        assert abs(c.size(-1) - spec.size(-1)) < 4, (c.size(-1), spec.size(-1), f0.shape, filename)
-        assert abs(lmin - spec.size(-1)) < 4, (c.size(-1), spec.size(-1), f0.shape)
-        assert abs(lmin - c.size(-1)) < 4, (c.size(-1), spec.size(-1), f0.shape)
+        assert abs(c.size(-1) - spec.size(-1)) < 4, (c.size(-1),
+                                                     spec.size(-1), f0.shape, filename)
+        assert abs(lmin - spec.size(-1)) < 4, (c.size(-1),
+                                               spec.size(-1), f0.shape)
+        assert abs(lmin - c.size(-1)) < 4, (c.size(-1),
+                                            spec.size(-1), f0.shape)
         spec, c, f0 = spec[:, :lmin], c[:, :lmin], f0[:lmin]
         audio_norm = audio_norm[:, :lmin * self.hop_length]
         _spec, _c, _audio_norm, _f0 = spec, c, audio_norm, f0
@@ -79,7 +82,8 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         spec = spec[:, start:end]
         c = c[:, start:end]
         f0 = f0[start:end]
-        audio_norm = audio_norm[:, start * self.hop_length:end * self.hop_length]
+        audio_norm = audio_norm[:, start *
+                                self.hop_length:end * self.hop_length]
 
         return c, f0, spec, audio_norm, spk
 
@@ -109,7 +113,6 @@ class EvalDataLoader(torch.utils.data.Dataset):
         self.audiopaths = self.audiopaths[:5]
         self.spk_map = hparams.spk
 
-
     def get_audio(self, filename):
         audio, sampling_rate = load_wav_to_torch(filename)
         if sampling_rate != self.sampling_rate:
@@ -137,8 +140,10 @@ class EvalDataLoader(torch.utils.data.Dataset):
         f0 = np.load(filename + ".f0.npy")
         f0 = torch.FloatTensor(f0)
         lmin = min(c.size(-1), spec.size(-1), f0.shape[0])
-        assert abs(c.size(-1) - spec.size(-1)) < 4, (c.size(-1), spec.size(-1), f0.shape)
-        assert abs(f0.shape[0] - spec.shape[-1]) < 4, (c.size(-1), spec.size(-1), f0.shape)
+        assert abs(c.size(-1) - spec.size(-1)
+                   ) < 4, (c.size(-1), spec.size(-1), f0.shape)
+        assert abs(f0.shape[0] - spec.shape[-1]
+                   ) < 4, (c.size(-1), spec.size(-1), f0.shape)
         spec, c, f0 = spec[:, :lmin], c[:, :lmin], f0[:lmin]
         audio_norm = audio_norm[:, :lmin * self.hop_length]
 
@@ -149,4 +154,3 @@ class EvalDataLoader(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.audiopaths)
-

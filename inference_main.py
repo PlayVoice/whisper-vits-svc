@@ -39,8 +39,10 @@ for clean_name, tran in zip(clean_names, trans):
     for spk in spk_list:
         audio = []
         for (slice_tag, data) in audio_data:
-            print(f'#=====segment start, {round(len(data) / audio_sr, 3)}s======')
-            length = int(np.ceil(len(data) / audio_sr * svc_model.target_sample))
+            print(
+                f'#=====segment start, {round(len(data) / audio_sr, 3)}s======')
+            length = int(
+                np.ceil(len(data) / audio_sr * svc_model.target_sample))
             raw_path = io.BytesIO()
             soundfile.write(raw_path, data, audio_sr, format="wav")
             raw_path.seek(0)
@@ -53,4 +55,5 @@ for clean_name, tran in zip(clean_names, trans):
             audio.extend(list(_audio))
 
         res_path = f'./results/{clean_name}_{tran}key_{spk}.{wav_format}'
-        soundfile.write(res_path, audio, svc_model.target_sample, format=wav_format)
+        soundfile.write(res_path, audio,
+                        svc_model.target_sample, format=wav_format)

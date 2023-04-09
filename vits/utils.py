@@ -26,15 +26,20 @@ f0_min = 50.0
 f0_mel_min = 1127 * np.log(1 + f0_min / 700)
 f0_mel_max = 1127 * np.log(1 + f0_max / 700)
 
+
 def f0_to_coarse(f0):
   is_torch = isinstance(f0, torch.Tensor)
-  f0_mel = 1127 * (1 + f0 / 700).log() if is_torch else 1127 * np.log(1 + f0 / 700)
-  f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * (f0_bin - 2) / (f0_mel_max - f0_mel_min) + 1
+  f0_mel = 1127 * (1 + f0 / 700).log() if is_torch else 1127 * \
+      np.log(1 + f0 / 700)
+  f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * \
+      (f0_bin - 2) / (f0_mel_max - f0_mel_min) + 1
 
   f0_mel[f0_mel <= 1] = 1
   f0_mel[f0_mel > f0_bin - 1] = f0_bin - 1
-  f0_coarse = (f0_mel + 0.5).long() if is_torch else np.rint(f0_mel).astype(np.int)
-  assert f0_coarse.max() <= 255 and f0_coarse.min() >= 1, (f0_coarse.max(), f0_coarse.min())
+  f0_coarse = (
+      f0_mel + 0.5).long() if is_torch else np.rint(f0_mel).astype(np.int)
+  assert f0_coarse.max() <= 255 and f0_coarse.min(
+  ) >= 1, (f0_coarse.max(), f0_coarse.min())
   return f0_coarse
 
 
@@ -44,6 +49,7 @@ def get_hubert_model(rank=None):
   if rank is not None:
     hubert_soft = hubert_soft.cuda(rank)
   return hubert_soft
+
 
 def get_hubert_content(hmodel, y=None, path=None):
   if path is not None:
@@ -56,7 +62,7 @@ def get_hubert_content(hmodel, y=None, path=None):
   source = source.unsqueeze(0)
   with torch.inference_mode():
     units = hmodel.units(source)
-    return units.transpose(1,2)
+    return units.transpose(1, 2)
 
 
 def get_content(cmodel, y):
@@ -66,21 +72,20 @@ def get_content(cmodel, y):
     return c
 
 
-
-def transform(mel, height): # 68-92
-    #r = np.random.random()
-    #rate = r * 0.3 + 0.85 # 0.85-1.15
-    #height = int(mel.size(-2) * rate)
+def transform(mel, height):  # 68-92
+    # r = np.random.random()
+    # rate = r * 0.3 + 0.85 # 0.85-1.15
+    # height = int(mel.size(-2) * rate)
     tgt = torchvision.transforms.functional.resize(mel, (height, mel.size(-1)))
     if height >= mel.size(-2):
         return tgt[:, :mel.size(-2), :]
     else:
-        silence = tgt[:,-1:,:].repeat(1,mel.size(-2)-height,1)
+        silence = tgt[:, -1:, :].repeat(1, mel.size(-2)-height, 1)
         silence += torch.randn_like(silence) / 10
         return torch.cat((tgt, silence), 1)
 
 
-def stretch(mel, width): # 0.5-2
+def stretch(mel, width):  # 0.5-2
     return torchvision.transforms.functional.resize(mel, (mel.size(-2), width))
 
 
@@ -100,7 +105,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None):
     state_dict = model.module.state_dict()
   else:
     state_dict = model.state_dict()
-  new_state_dict= {}
+  new_state_dict = {}
   for k, v in state_dict.items():
     try:
       new_state_dict[k] = saved_state_dict[k]
@@ -112,7 +117,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None):
   else:
     model.load_state_dict(new_state_dict)
   logger.info("Loaded checkpoint '{}' (iteration {})" .format(
-    checkpoint_path, iteration))
+      checkpoint_path, iteration))
   return model, optimizer, learning_rate, iteration
 
 
@@ -124,7 +129,7 @@ def save_checkpoint(model, optimizer, learning_rate, iteration, checkpoint_path)
   # if newest_step >= val_steps*3:
   #   os.system(f"rm {last_ckptname}")
   logger.info("Saving model and optimizer state at iteration {} to {}".format(
-    iteration, checkpoint_path))
+      iteration, checkpoint_path))
   if hasattr(model, 'module'):
     state_dict = model.module.state_dict()
   else:
@@ -165,9 +170,9 @@ def plot_spectrogram_to_numpy(spectrogram):
   import matplotlib.pylab as plt
   import numpy as np
 
-  fig, ax = plt.subplots(figsize=(10,2))
+  fig, ax = plt.subplots(figsize=(10, 2))
   im = ax.imshow(spectrogram, aspect="auto", origin="lower",
-                  interpolation='none')
+                 interpolation='none')
   plt.colorbar(im, ax=ax)
   plt.xlabel("Frames")
   plt.ylabel("Channels")
@@ -193,7 +198,7 @@ def plot_alignment_to_numpy(alignment, info=None):
 
   fig, ax = plt.subplots(figsize=(6, 4))
   im = ax.imshow(alignment.transpose(), aspect='auto', origin='lower',
-                  interpolation='none')
+                 interpolation='none')
   fig.colorbar(im, ax=ax)
   xlabel = 'Decoder timestep'
   if info is not None:
@@ -256,7 +261,7 @@ def get_hparams_from_dir(model_dir):
     data = f.read()
   config = json.loads(data)
 
-  hparams =HParams(**config)
+  hparams = HParams(**config)
   hparams.model_dir = model_dir
   return hparams
 
@@ -266,7 +271,7 @@ def get_hparams_from_file(config_path):
     data = f.read()
   config = json.loads(data)
 
-  hparams =HParams(**config)
+  hparams = HParams(**config)
   return hparams
 
 
@@ -274,7 +279,7 @@ def check_git_hash(model_dir):
   source_dir = os.path.dirname(os.path.realpath(__file__))
   if not os.path.exists(os.path.join(source_dir, ".git")):
     logger.warn("{} is not a git repository, therefore hash value comparison will be ignored.".format(
-      source_dir
+        source_dir
     ))
     return
 
@@ -285,7 +290,7 @@ def check_git_hash(model_dir):
     saved_hash = open(path).read()
     if saved_hash != cur_hash:
       logger.warn("git hash values are different. {}(saved) != {}(current)".format(
-        saved_hash[:8], cur_hash[:8]))
+          saved_hash[:8], cur_hash[:8]))
   else:
     open(path, "w").write(cur_hash)
 
@@ -295,7 +300,8 @@ def get_logger(model_dir, filename="train.log"):
   logger = logging.getLogger(os.path.basename(model_dir))
   logger.setLevel(logging.DEBUG)
 
-  formatter = logging.Formatter("%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s")
+  formatter = logging.Formatter(
+      "%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s")
   if not os.path.exists(model_dir):
     os.makedirs(model_dir)
   h = logging.FileHandler(os.path.join(model_dir, filename))
@@ -335,4 +341,3 @@ class HParams():
 
   def __repr__(self):
     return self.__dict__.__repr__()
-
