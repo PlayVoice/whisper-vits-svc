@@ -6,6 +6,8 @@
   
 - [PlayVoice/lora-svc](https://github.com/PlayVoice/lora-svc) 无口音，辨识度略低，适合跨语言，跨语言不口糊
 
+- [PlayVoice/max-vc](https://github.com/PlayVoice/max-vc) 使用隐式F0，解决F0提取不准，丝滑的转换结果
+
 ## 本项目更新中，暂时不能使用，更新点
 
 - 内容提取器更新为OpenAI的whisper
