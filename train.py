@@ -1,15 +1,12 @@
-from mel_processing import mel_spectrogram_torch, spec_to_mel_torch
-from losses import (
+from vits.data_utils import TextAudioSpeakerLoader, EvalDataLoader
+from vits_decoder.discriminator import Discriminator
+from vits.models import SynthesizerTrn
+from vits.losses import (
     kl_loss,
     generator_loss, discriminator_loss, feature_loss
 )
-from models import (
-    SynthesizerTrn,
-    MultiPeriodDiscriminator,
-)
-from data_utils import TextAudioSpeakerLoader, EvalDataLoader
-import utils
-import commons
+from vits.mel_processing import mel_spectrogram_torch, spec_to_mel_torch
+import vits.utils
 from torch.cuda.amp import autocast, GradScaler
 from torch.nn.parallel import DistributedDataParallel as DDP
 import torch.distributed as dist
@@ -17,15 +14,14 @@ import torch.multiprocessing as mp
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 from torch.nn import functional as F
-from torch import nn, optim
+
 import torch
-import math
-import itertools
-import argparse
-import json
+
 import os
 import logging
 logging.getLogger('matplotlib').setLevel(logging.WARNING)
+
+
 
 
 torch.backends.cudnn.benchmark = True
@@ -52,7 +48,6 @@ def run(rank, n_gpus, hps):
     if rank == 0:
         logger = utils.get_logger(hps.model_dir)
         logger.info(hps)
-        utils.check_git_hash(hps.model_dir)
         writer = SummaryWriter(log_dir=hps.model_dir)
         writer_eval = SummaryWriter(
             log_dir=os.path.join(hps.model_dir, "eval"))
@@ -140,7 +135,7 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
         mel = spec_to_mel_torch(
             spec,
             hps.data.filter_length,
-            hps.data.n_mel_channels,
+            hps.data.mel_channels,
             hps.data.sampling_rate,
             hps.data.mel_fmin,
             hps.data.mel_fmax)
@@ -155,7 +150,7 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
             y_hat_mel = mel_spectrogram_torch(
                 y_hat.squeeze(1),
                 hps.data.filter_length,
-                hps.data.n_mel_channels,
+                hps.data.mel_channels,
                 hps.data.sampling_rate,
                 hps.data.hop_length,
                 hps.data.win_length,
@@ -255,7 +250,7 @@ def evaluate(hps, generator, eval_loader, writer_eval):
             mel = spec_to_mel_torch(
                 spec,
                 hps.data.filter_length,
-                hps.data.n_mel_channels,
+                hps.data.mel_channels,
                 hps.data.sampling_rate,
                 hps.data.mel_fmin,
                 hps.data.mel_fmax)
@@ -264,7 +259,7 @@ def evaluate(hps, generator, eval_loader, writer_eval):
             y_hat_mel = mel_spectrogram_torch(
                 y_hat.squeeze(1).float(),
                 hps.data.filter_length,
-                hps.data.n_mel_channels,
+                hps.data.mel_channels,
                 hps.data.sampling_rate,
                 hps.data.hop_length,
                 hps.data.win_length,

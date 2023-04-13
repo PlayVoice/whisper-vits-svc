@@ -1,18 +1,12 @@
-import copy
-import math
-import torch
-from torch import nn
-from torch.nn import functional as F
 
+import torch
 import attentions
 import commons
 import modules
 
-from torch.nn import Conv1d, ConvTranspose1d, AvgPool1d, Conv2d
-from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
-from commons import init_weights, get_padding
-from vdecoder.hifigan.models import Generator
-from utils import f0_to_coarse
+from torch import nn
+from vits.utils import f0_to_coarse
+from vits_decoder.generator import Generator
 
 
 class TextEncoder(nn.Module):
@@ -20,43 +14,34 @@ class TextEncoder(nn.Module):
                  in_channels,
                  out_channels,
                  hidden_channels,
-                 kernel_size,
-                 dilation_rate,
+                 filter_channels,
+                 n_heads,
                  n_layers,
-                 gin_channels=0,
-                 filter_channels=None,
-                 n_heads=None,
-                 p_dropout=None):
+                 kernel_size,
+                 p_dropout):
         super().__init__()
-        self.in_channels = in_channels
         self.out_channels = out_channels
-        self.hidden_channels = hidden_channels
-        self.kernel_size = kernel_size
-        self.dilation_rate = dilation_rate
-        self.n_layers = n_layers
-        self.gin_channels = gin_channels
-        self.pre = nn.Conv1d(in_channels, hidden_channels, 1)
-        self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1)
-        self.f0_emb = nn.Embedding(256, hidden_channels)
-
-        self.enc_ = attentions.Encoder(
+        self.pre = nn.Conv1d(in_channels, hidden_channels, 3)
+        self.pit = nn.Embedding(256, hidden_channels)
+        self.enc = attentions.Encoder(
             hidden_channels,
             filter_channels,
             n_heads,
             n_layers,
             kernel_size,
             p_dropout)
+        self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1)
 
-    def forward(self, x, x_lengths, f0=None):
-        x_mask = torch.unsqueeze(commons.sequence_mask(
-            x_lengths, x.size(2)), 1).to(x.dtype)
+    def forward(self, x, x_lengths, f0):
+        x_mask = torch.unsqueeze(commons.sequence_mask(x_lengths, x.size(2)), 1).to(
+            x.dtype
+        )
         x = self.pre(x) * x_mask
-        x = x + self.f0_emb(f0).transpose(1, 2)
-        x = self.enc_(x * x_mask, x_mask)
+        x = x + self.pit(f0).transpose(1, 2)
+        x = self.enc(x * x_mask, x_mask)
         stats = self.proj(x) * x_mask
         m, logs = torch.split(stats, self.out_channels, dim=1)
         z = (m + torch.randn_like(m) * torch.exp(logs)) * x_mask
-
         return z, m, logs, x_mask
 
 
@@ -72,14 +57,6 @@ class ResidualCouplingBlock(nn.Module):
         gin_channels=0,
     ):
         super().__init__()
-        self.channels = channels
-        self.hidden_channels = hidden_channels
-        self.kernel_size = kernel_size
-        self.dilation_rate = dilation_rate
-        self.n_layers = n_layers
-        self.n_flows = n_flows
-        self.gin_channels = gin_channels
-
         self.flows = nn.ModuleList()
         for i in range(n_flows):
             self.flows.append(
@@ -121,14 +98,7 @@ class PosteriorEncoder(nn.Module):
         gin_channels=0,
     ):
         super().__init__()
-        self.in_channels = in_channels
         self.out_channels = out_channels
-        self.hidden_channels = hidden_channels
-        self.kernel_size = kernel_size
-        self.dilation_rate = dilation_rate
-        self.n_layers = n_layers
-        self.gin_channels = gin_channels
-
         self.pre = nn.Conv1d(in_channels, hidden_channels, 1)
         self.enc = modules.WN(
             hidden_channels,
@@ -155,86 +125,46 @@ class PosteriorEncoder(nn.Module):
 
 
 class SynthesizerTrn(nn.Module):
-    """
-    Synthesizer for Training
-    """
-
     def __init__(
         self,
         spec_channels,
-        segment_size,
-        inter_channels,
-        hidden_channels,
-        filter_channels,
-        n_heads,
-        n_layers,
-        kernel_size,
-        p_dropout,
-        resblock,
-        resblock_kernel_sizes,
-        resblock_dilation_sizes,
-        upsample_rates,
-        upsample_initial_channel,
-        upsample_kernel_sizes,
-        gin_channels,
-        ssl_dim,
-        n_speakers,
-        **kwargs
+        hp
     ):
-
         super().__init__()
-        self.spec_channels = spec_channels
-        self.inter_channels = inter_channels
-        self.hidden_channels = hidden_channels
-        self.filter_channels = filter_channels
-        self.n_heads = n_heads
-        self.n_layers = n_layers
-        self.kernel_size = kernel_size
-        self.p_dropout = p_dropout
-        self.resblock = resblock
-        self.resblock_kernel_sizes = resblock_kernel_sizes
-        self.resblock_dilation_sizes = resblock_dilation_sizes
-        self.upsample_rates = upsample_rates
-        self.upsample_initial_channel = upsample_initial_channel
-        self.upsample_kernel_sizes = upsample_kernel_sizes
-        self.segment_size = segment_size
-        self.gin_channels = gin_channels
-        self.spk_embed_dim = 256
-        self.ssl_dim = ssl_dim
-        self.emb_g = nn.Linear(self.spk_embed_dim, gin_channels)
-
-        self.enc_p_ = TextEncoder(ssl_dim, inter_channels, hidden_channels,
-                                  5, 1, 16, 0, filter_channels, n_heads, p_dropout)
-        hps = {
-            "sampling_rate": 48000,
-            "inter_channels": 192,
-            "resblock": "1",
-            "resblock_kernel_sizes": [3, 7, 11],
-            "resblock_dilation_sizes": [[1, 3, 5], [1, 3, 5], [1, 3, 5]],
-            "upsample_rates": [10, 8, 2, 2],
-            "upsample_initial_channel": 512,
-            "upsample_kernel_sizes": [16, 16, 4, 4],
-            "gin_channels": 256,
-        }
-        self.dec = Generator(h=hps)
+        self.emb_g = nn.Linear(hp.vits.gin_channels, hp.vits.gin_channels)
+        self.enc_p_ = TextEncoder(
+            hp.vits.ppg_dim,
+            hp.vits.inter_channels,
+            hp.vits.hidden_channels,
+            hp.vits.filter_channels,
+            2,
+            6,
+            5,
+            0.1,
+        )
         self.enc_q = PosteriorEncoder(
             spec_channels,
-            inter_channels,
-            hidden_channels,
+            hp.vits.inter_channels,
+            hp.vits.hidden_channels,
             5,
             1,
             16,
-            gin_channels=gin_channels,
+            gin_channels=hp.vits.gin_channels,
         )
         self.flow = ResidualCouplingBlock(
-            inter_channels, hidden_channels, 5, 1, 4, gin_channels=gin_channels
+            hp.vits.inter_channels,
+            hp.vits.hidden_channels,
+            5,
+            1,
+            4,
+            gin_channels=hp.vits.gin_channels
         )
-        self.emb_g = nn.Linear(self.spk_embed_dim, gin_channels)
+        self.dec = Generator(h=hp)
 
     def remove_weight_norm(self):
-        self.dec.remove_weight_norm()
-        self.flow.remove_weight_norm()
         self.enc_q.remove_weight_norm()
+        self.flow.remove_weight_norm()
+        self.dec.remove_weight_norm()
 
     def forward(self, c, f0, spec, g=None, mel=None, c_lengths=None, spec_lengths=None):
         if c_lengths == None:
