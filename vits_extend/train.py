@@ -11,13 +11,14 @@ from torch.nn.parallel import DistributedDataParallel
 import itertools
 import traceback
 
-from utils.dataloader import create_dataloader
-from utils.writer import MyWriter
-from utils.stft import TacotronSTFT
-from utils.stft_loss import MultiResolutionSTFTLoss
-from model.generator import Generator
-from model.discriminator import Discriminator
-from .validation import validate
+from vits_extend.dataloader import create_dataloader
+from vits_extend.writer import MyWriter
+from vits_extend.stft import TacotronSTFT
+from vits_extend.stft_loss import MultiResolutionSTFTLoss
+from vits_extend.validation import validate
+from vits_decoder.discriminator import Discriminator
+from vits.models import SynthesizerTrn
+
 
 
 def train(rank, args, chkpt_path, hp, hp_str):
@@ -29,7 +30,10 @@ def train(rank, args, chkpt_path, hp, hp_str):
     torch.cuda.manual_seed(hp.train.seed)
     device = torch.device('cuda:{:d}'.format(rank))
 
-    model_g = Generator(hp).to(device)
+    model_g = SynthesizerTrn(
+        hp.data.filter_length // 2 + 1,
+        hp.data.segment_size // hp.data.hop_length,
+        hp).to(device)
     model_d = Discriminator(hp).to(device)
 
     optim_g = torch.optim.AdamW(model_g.parameters(),

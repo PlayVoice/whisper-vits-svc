@@ -8,9 +8,7 @@ from vits.losses import (
 )
 from vits_decoder.discriminator import Discriminator
 from vits.models import SynthesizerTrn
-from vits.data_utils import DistributedBucketSampler
-from vits.data_utils import TextAudioSpeakerCollate
-from vits.data_utils import TextAudioSpeakerSet
+
 from vits import utils
 from vits import commons
 import os
@@ -53,38 +51,10 @@ def run(rank, n_gpus, hps):
     torch.manual_seed(hps.train.seed)
     torch.cuda.set_device(rank)
     # *********************************************************************
-    train_dataset = TextAudioSpeakerSet(hps.data.training_files, hps.data)
-    train_sampler = DistributedBucketSampler(
-        train_dataset,
-        hps.train.batch_size,
-        [150, 300, 450],
-        num_replicas=n_gpus,
-        rank=rank,
-        shuffle=True)
 
-    collate_fn = TextAudioSpeakerCollate()
-    train_loader = DataLoader(
-        train_dataset,
-        num_workers=2,
-        shuffle=False,
-        pin_memory=True,
-        collate_fn=collate_fn,
-        batch_sampler=train_sampler)
-    if rank == 0:
-        eval_dataset = TextAudioSpeakerSet(hps.data.validation_files, hps.data)
-        eval_loader = DataLoader(
-            eval_dataset,
-            num_workers=2,
-            shuffle=False,
-            batch_size=hps.train.batch_size,
-            pin_memory=True,
-            drop_last=False,
-            collate_fn=collate_fn)
+        
     # *********************************************************************
-    net_g = SynthesizerTrn(
-        hps.data.filter_length // 2 + 1,
-        hps.data.segment_size // hps.data.hop_length,
-        hps).cuda(rank)
+    net_g = 
     net_d = Discriminator(hps).cuda(rank)
     optim_g = torch.optim.AdamW(
         net_g.parameters(),
