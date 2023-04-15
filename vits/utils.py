@@ -6,14 +6,12 @@ import logging
 import json
 
 import numpy as np
-import torchaudio
 
 import torch
 import torchvision
 
 from scipy.io.wavfile import read
 from omegaconf import OmegaConf
-from hubert import hubert_model
 
 MATPLOTLIB_FLAG = False
 
@@ -41,35 +39,6 @@ def f0_to_coarse(f0):
   assert f0_coarse.max() <= 255 and f0_coarse.min(
   ) >= 1, (f0_coarse.max(), f0_coarse.min())
   return f0_coarse
-
-
-def get_hubert_model(rank=None):
-
-  hubert_soft = hubert_model.hubert_soft("hubert/hubert-soft-0d54a1f4.pt")
-  if rank is not None:
-    hubert_soft = hubert_soft.cuda(rank)
-  return hubert_soft
-
-
-def get_hubert_content(hmodel, y=None, path=None):
-  if path is not None:
-    source, sr = torchaudio.load(path)
-    source = torchaudio.functional.resample(source, sr, 16000)
-    if len(source.shape) == 2 and source.shape[1] >= 2:
-      source = torch.mean(source, dim=0).unsqueeze(0)
-  else:
-    source = y
-  source = source.unsqueeze(0)
-  with torch.inference_mode():
-    units = hmodel.units(source)
-    return units.transpose(1, 2)
-
-
-def get_content(cmodel, y):
-    with torch.no_grad():
-        c = cmodel.extract_features(y.squeeze(1))[0]
-    c = c.transpose(1, 2)
-    return c
 
 
 def transform(mel, height):  # 68-92
@@ -219,43 +188,20 @@ def load_wav_to_torch(full_path):
   return torch.FloatTensor(data.astype(np.float32)), sampling_rate
 
 
-def load_filepaths_and_text(filename, split="|"):
-  with open(filename, encoding='utf-8') as f:
-    filepaths_and_text = [line.strip().split(split) for line in f]
-  return filepaths_and_text
-
-
 def get_hparams(init=True):
   parser = argparse.ArgumentParser()
-  parser.add_argument('-c', '--config', type=str, default="./configs/base.json",
-                      help='JSON file for configuration')
-  parser.add_argument('-m', '--model', type=str, required=True,
-                      help='Model name')
-
+  parser.add_argument('-c', '--config', type=str, default="./configs/base.yaml",
+                      help='YAML file for configuration')
   args = parser.parse_args()
-  model_dir = os.path.join("./logs", args.model)
 
+  hparams = OmegaConf.load(args.config)
+  model_dir = os.path.join("./logs", hparams.train.model)
   if not os.path.exists(model_dir):
     os.makedirs(model_dir)
-
-  config_path = args.config
   config_save_path = os.path.join(model_dir, "config.json")
-  if init:
-    with open(config_path, "r") as f:
-      data = f.read()
-    with open(config_save_path, "w") as f:
-      f.write(data)
-  else:
-    with open(config_save_path, "r") as f:
-      data = f.read()
-  config = json.loads(data)
-
-  hparams = OmegaConf.load(config_path)
+  os.system(f"cp {args.config} {config_save_path}")
   hparams.model_dir = model_dir
   return hparams
-
-
-
 
 
 def get_logger(model_dir, filename="train.log"):

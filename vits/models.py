@@ -21,7 +21,7 @@ class TextEncoder(nn.Module):
                  p_dropout):
         super().__init__()
         self.out_channels = out_channels
-        self.pre = nn.Conv1d(in_channels, hidden_channels, 3)
+        self.pre = nn.Conv1d(in_channels, hidden_channels, kernel_size=5, padding=2)
         self.pit = nn.Embedding(256, hidden_channels)
         self.enc = attentions.Encoder(
             hidden_channels,
@@ -128,9 +128,11 @@ class SynthesizerTrn(nn.Module):
     def __init__(
         self,
         spec_channels,
+        segment_size,
         hp
     ):
         super().__init__()
+        self.segment_size = segment_size
         self.emb_g = nn.Linear(hp.vits.gin_channels, hp.vits.gin_channels)
         self.enc_p_ = TextEncoder(
             hp.vits.ppg_dim,
@@ -139,7 +141,7 @@ class SynthesizerTrn(nn.Module):
             hp.vits.filter_channels,
             2,
             6,
-            5,
+            3,
             0.1,
         )
         self.enc_q = PosteriorEncoder(
