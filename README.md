@@ -48,26 +48,24 @@ dataset_raw
     └───xxx7-xxx007.wav
 ```
 
-## 数据预处理
-1. 重采样
+### 工作目录
+    export PYTHONPATH=$PWD
 
-```shell
-python resample.py
- ```
-2. 自动划分训练集 验证集 测试集 以及自动生成配置文件
-```shell
-python preprocess_flist_config.py
-# 注意
-# 自动生成的配置文件中，说话人数量n_speakers会自动按照数据集中的人数而定
-# 为了给之后添加说话人留下一定空间，n_speakers自动设置为 当前数据集人数乘2
-# 如果想多留一些空位可以在此步骤后 自行修改生成的config.json中n_speakers数量
-# 一旦模型开始训练后此项不可再更改
-```
-3. 生成hubert与f0
-```shell
-python preprocess_hubert_f0.py
-```
-执行完以上步骤后 dataset 目录便是预处理完成的数据，可以删除dataset_raw文件夹了
+## 数据预处理
+- 1， 重采样
+    > python resample.py
+- 2， 提取音高
+    > python prepare/preprocess_f0.py -w data_svc/waves/ -p data_svc/pitch
+- 3， 提取内容编码
+    > python prepare/preprocess_ppg.py -w data_svc/waves/ -p data_svc/whisper
+- 4， 提取音色编码
+    > python prepare/preprocess_speaker.py data_svc/waves/ data_svc/speaker
+- 5， 提取线性谱
+    > python prepare/preprocess_spec.py -w data_svc/waves/ -s data_svc/specs
+- 6， 生成训练索引
+    > python prepare/preprocess_train.py
+- 7， 训练文件调试
+    > python prepare/preprocess_zzz.py
 
 ## 训练
 ```shell
