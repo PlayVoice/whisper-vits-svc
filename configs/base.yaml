@@ -27,7 +27,7 @@ data:
   mel_fmax: 8000.0
 #############################
 vits:
-  ppg_dim: 256
+  ppg_dim: 1024
   spk_dim: 256
   gin_channels: 256
   inter_channels: 192

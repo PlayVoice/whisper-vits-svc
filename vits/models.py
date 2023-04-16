@@ -2,6 +2,7 @@
 import torch
 
 from torch import nn
+from torch.nn import functional as F
 from vits import attentions
 from vits import commons
 from vits import modules
@@ -33,6 +34,7 @@ class TextEncoder(nn.Module):
         self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1)
 
     def forward(self, x, x_lengths, f0):
+        x = torch.transpose(x, 1, -1)  # [b, h, t]
         x_mask = torch.unsqueeze(commons.sequence_mask(x_lengths, x.size(2)), 1).to(
             x.dtype
         )
@@ -169,17 +171,17 @@ class SynthesizerTrn(nn.Module):
         self.dec.remove_weight_norm()
 
     def forward(self, ppg, pit, spec, spk, ppg_l, spec_l):
-        spk = self.emb_g(spk).transpose(1, 2)
+        g = self.emb_g(F.normalize(spk)).unsqueeze(-1)
         z_p, m_p, logs_p, ppg_mask = self.enc_p(
             ppg, ppg_l, f0=f0_to_coarse(pit))
-        z_q, m_q, logs_q, spec_mask = self.enc_q(spec, spec_l, g=spk)
+        z_q, m_q, logs_q, spec_mask = self.enc_q(spec, spec_l, g=g)
 
         z_slice, pit_slice, ids_slice = commons.rand_slice_segments_with_pitch(
             z_q, pit, spec_l, self.segment_size)
         audio = self.dec(spk, z_slice, pit_slice)
 
-        z_f = self.flow(z_q, spec_mask, g=spk)
-        z_r = self.flow(z_p, spec_mask, g=spk, reverse=True)
+        z_f = self.flow(z_q, spec_mask, g=g)
+        z_r = self.flow(z_p, spec_mask, g=g, reverse=True)
         return audio, ids_slice, spec_mask, (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q)
 
     def infer(self, ppg, pit, spk, ppg_l):
