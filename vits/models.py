@@ -134,7 +134,7 @@ class SynthesizerTrn(nn.Module):
         super().__init__()
         self.segment_size = segment_size
         self.emb_g = nn.Linear(hp.vits.gin_channels, hp.vits.gin_channels)
-        self.enc_p_ = TextEncoder(
+        self.enc_p = TextEncoder(
             hp.vits.ppg_dim,
             hp.vits.inter_channels,
             hp.vits.hidden_channels,
@@ -168,37 +168,24 @@ class SynthesizerTrn(nn.Module):
         self.flow.remove_weight_norm()
         self.dec.remove_weight_norm()
 
-    def forward(self, c, f0, spec, g=None, mel=None, c_lengths=None, spec_lengths=None):
-        if c_lengths == None:
-            c_lengths = (torch.ones(c.size(0)) * c.size(-1)).to(c.device)
-        if spec_lengths == None:
-            spec_lengths = (torch.ones(spec.size(0)) *
-                            spec.size(-1)).to(spec.device)
+    def forward(self, ppg, pit, spec, spk, ppg_l, spec_l):
+        spk = self.emb_g(spk).transpose(1, 2)
+        z_p, m_p, logs_p, ppg_mask = self.enc_p(
+            ppg, ppg_l, f0=f0_to_coarse(pit))
+        z_q, m_q, logs_q, spec_mask = self.enc_q(spec, spec_l, g=spk)
 
-        g = self.emb_g(g).transpose(1, 2)
+        z_slice, pit_slice, ids_slice = commons.rand_slice_segments_with_pitch(
+            z_q, pit, spec_l, self.segment_size)
+        audio = self.dec(spk, z_slice, pit_slice)
 
-        z_ptemp, m_p, logs_p, _ = self.enc_p_(
-            c, c_lengths, f0=f0_to_coarse(f0))
-        z, m_q, logs_q, spec_mask = self.enc_q(spec, spec_lengths, g=g)
+        z_f = self.flow(z_q, spec_mask, g=spk)
+        z_r = self.flow(z_p, spec_mask, g=spk, reverse=True)
+        return audio, ids_slice, spec_mask, (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q)
 
-        z_p = self.flow(z, spec_mask, g=g)
-        z_slice, pitch_slice, ids_slice = commons.rand_slice_segments_with_pitch(
-            z, f0, spec_lengths, self.segment_size)
-
-        # o = self.dec(z_slice, g=g)
-        o = self.dec(z_slice, g=g, f0=pitch_slice)
-
-        return o, ids_slice, spec_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
-
-    def infer(self, c, f0, g=None, mel=None, c_lengths=None):
-        if c_lengths == None:
-            c_lengths = (torch.ones(c.size(0)) * c.size(-1)).to(c.device)
-        g = self.emb_g(g).transpose(1, 2)
-
-        z_p, m_p, logs_p, c_mask = self.enc_p_(
-            c, c_lengths, f0=f0_to_coarse(f0))
-        z = self.flow(z_p, c_mask, g=g, reverse=True)
-
-        o = self.dec(z * c_mask, g=g, f0=f0)
-
+    def infer(self, ppg, pit, spk, ppg_l):
+        spk = self.emb_g(spk).transpose(1, 2)
+        z_p, m_p, logs_p, ppg_mask = self.enc_p(
+            ppg, ppg_l, f0=f0_to_coarse(pit))
+        z = self.flow(z_p, ppg_mask, g=spk, reverse=True)
+        o = self.dec(spk, z * ppg_mask, f0=pit)
         return o

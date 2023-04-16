@@ -11,14 +11,16 @@ from torch.nn.parallel import DistributedDataParallel
 import itertools
 import traceback
 
-from vits_extend.dataloader import create_dataloader
+from vits_extend.dataloader import create_dataloader_train
+from vits_extend.dataloader import create_dataloader_eval
 from vits_extend.writer import MyWriter
 from vits_extend.stft import TacotronSTFT
 from vits_extend.stft_loss import MultiResolutionSTFTLoss
 from vits_extend.validation import validate
 from vits_decoder.discriminator import Discriminator
 from vits.models import SynthesizerTrn
-
+from vits import commons
+from vits.losses import kl_loss
 
 
 def train(rank, args, chkpt_path, hp, hp_str):
@@ -37,9 +39,9 @@ def train(rank, args, chkpt_path, hp, hp_str):
     model_d = Discriminator(hp).to(device)
 
     optim_g = torch.optim.AdamW(model_g.parameters(),
-        lr=hp.train.adam.lr, betas=(hp.train.adam.beta1, hp.train.adam.beta2))
+                                lr=hp.train.learning_rate, betas=hp.train.betas, eps=hp.train.eps)
     optim_d = torch.optim.AdamW(model_d.parameters(),
-        lr=hp.train.adam.lr, betas=(hp.train.adam.beta1, hp.train.adam.beta2))
+                                lr=hp.train.learning_rate, betas=hp.train.betas, eps=hp.train.eps)
 
     init_epoch = -1
     step = 0
@@ -70,7 +72,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
         )
         logger = logging.getLogger()
         writer = MyWriter(hp, log_dir)
-        valloader = create_dataloader(hp, False)
+        valloader = create_dataloader_eval(hp)
 
     if chkpt_path is not None:
         if rank == 0:
@@ -94,11 +96,16 @@ def train(rank, args, chkpt_path, hp, hp_str):
         model_g = DistributedDataParallel(model_g, device_ids=[rank]).to(device)
         model_d = DistributedDataParallel(model_d, device_ids=[rank]).to(device)
 
+    scheduler_g = torch.optim.lr_scheduler.ExponentialLR(
+        optim_g, gamma=hp.train.lr_decay, last_epoch=init_epoch-1)
+    scheduler_d = torch.optim.lr_scheduler.ExponentialLR(
+        optim_d, gamma=hp.train.lr_decay, last_epoch=init_epoch-1)
+
     # this accelerates training when the size of minibatch is always consistent.
     # if not consistent, it'll horribly slow down.
     torch.backends.cudnn.benchmark = True
 
-    trainloader = create_dataloader(hp, True)
+    trainloader = create_dataloader_train(hp)
 
     model_g.train()
     model_d.train()
@@ -107,7 +114,9 @@ def train(rank, args, chkpt_path, hp, hp_str):
     stft_criterion = MultiResolutionSTFTLoss(device, resolutions)
 
     for epoch in itertools.count(init_epoch+1):
-        
+
+        trainloader.batch_sampler.set_epoch(epoch)
+
         if rank == 0 and epoch % hp.log.validation_interval == 0:
             with torch.no_grad():
                 validate(hp, args, model_g, model_d, valloader, stft, writer, step, device)
@@ -117,16 +126,27 @@ def train(rank, args, chkpt_path, hp, hp_str):
         else:
             loader = trainloader
 
-        for spk, ppg, pos, pit, audio in loader:
-            spk = spk.to(device)
+        for ppg, ppg_l, pit, spk, spec, spec_l, audio, audio_l in loader:
+            
             ppg = ppg.to(device)
-            pos = pos.to(device)
             pit = pit.to(device)
+            spk = spk.to(device)
+            spec = spec.to(device)
             audio = audio.to(device)
-
+            ppg_l = ppg_l.to(device)
+            spec_l = spec_l.to(device)
+            audio_l = audio_l.to(device)
+            
             # generator
             optim_g.zero_grad()
-            fake_audio = model_g(spk, ppg, pos, pit)
+
+            fake_audio, ids_slice, z_mask, \
+                (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q) = model_g(
+                    ppg, pit, spec, spk, ppg_l, spec_l)
+
+
+            audio = commons.slice_segments(
+                audio, ids_slice * hp.data.hop_length, hp.data.segment_size)  # slice
 
             # Mel Loss
             mel_fake = stft.mel_spectrogram(fake_audio.squeeze(1))
@@ -137,6 +157,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             sc_loss, mag_loss = stft_criterion(fake_audio.squeeze(1), audio.squeeze(1))
             stft_loss = (sc_loss + mag_loss) * hp.train.stft_lamb
 
+            # Generator Loss
             res_fake, period_fake = model_d(fake_audio)
 
             score_loss = 0.0
@@ -146,8 +167,12 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
             score_loss = score_loss / len(res_fake + period_fake)
 
+            # Kl Loss
+            loss_kl = kl_loss(z_f, logs_q, m_p, logs_p, z_mask) * hp.train.c_kl
+            loss_kl_r = kl_loss(z_r, logs_p, m_q, logs_q, z_mask) * hp.train.c_kl
+
             # for fast train
-            loss_g = score_loss + stft_loss + mel_loss
+            loss_g = score_loss + stft_loss + mel_loss + loss_kl + loss_kl_r
             # for last train
             # loss_g = score_loss + stft_loss
 
@@ -155,7 +180,6 @@ def train(rank, args, chkpt_path, hp, hp_str):
             optim_g.step()
 
             # discriminator
-
             optim_d.zero_grad()
             res_fake, period_fake = model_d(fake_audio.detach())
             res_real, period_real = model_d(audio)
@@ -195,3 +219,6 @@ def train(rank, args, chkpt_path, hp, hp_str):
                 'hp_str': hp_str,
             }, save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
+
+        scheduler_g.step()
+        scheduler_d.step()
