@@ -69,7 +69,7 @@ dataset_raw
 
 ## 训练
 ```shell
-python train.py -c configs/config.json -m 48k
+python svc_trainer.py -c configs/base.yaml -n sovits5.0
 ```
 
 ## 推理

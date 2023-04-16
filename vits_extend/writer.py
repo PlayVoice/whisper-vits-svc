@@ -7,7 +7,7 @@ from .plotting import plot_waveform_to_numpy, plot_spectrogram_to_numpy
 class MyWriter(SummaryWriter):
     def __init__(self, hp, logdir):
         super(MyWriter, self).__init__(logdir)
-        self.sample_rate = hp.audio.sampling_rate
+        self.sample_rate = hp.data.sampling_rate
         self.is_first = True
 
     def log_training(self, g_loss, d_loss, mel_loss, stft_loss, score_loss, step):

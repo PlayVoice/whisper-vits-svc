@@ -25,8 +25,8 @@ if __name__ == '__main__':
     with open(args.config, 'r') as f:
         hp_str = ''.join(f.readlines())
 
-    assert hp.audio.hop_length == 160, \
-        'hp.audio.hop_length must be equal to 160, got %d' % hp.audio.hop_length
+    assert hp.data.hop_length == 160, \
+        'hp.data.hop_length must be equal to 160, got %d' % hp.data.hop_length
 
     args.num_gpus = 0
     torch.manual_seed(hp.train.seed)
@@ -34,12 +34,11 @@ if __name__ == '__main__':
         torch.cuda.manual_seed(hp.train.seed)
         args.num_gpus = torch.cuda.device_count()
         print('Batch size per GPU :', hp.train.batch_size)
-    else:
-        pass
 
-    if args.num_gpus > 1:
-        mp.spawn(train, nprocs=args.num_gpus,
-                 args=(args, args.checkpoint_path, hp, hp_str,))
+        if args.num_gpus > 1:
+            mp.spawn(train, nprocs=args.num_gpus,
+                     args=(args, args.checkpoint_path, hp, hp_str,))
+        else:
+            train(0, args, args.checkpoint_path, hp, hp_str)
     else:
-        # train(0, args, args.checkpoint_path, hp, hp_str)
         print('No GPU find!')

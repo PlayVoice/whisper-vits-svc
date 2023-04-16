@@ -1,8 +1,5 @@
 train:
   model: "sovits"
-  fp16_run: False
-  log_interval: 200
-  eval_interval: 1000
   seed: 1234
   epochs: 10000
   learning_rate: 1e-4
@@ -27,11 +24,12 @@ data:
   win_length: 512
   mel_channels: 80
   mel_fmin: 0.0
-  mel_fmax: None
+  mel_fmax: 8000.0
 #############################
 vits:
   ppg_dim: 256
   spk_dim: 256
+  gin_channels: 256
   inter_channels: 192
   hidden_channels: 192
   filter_channels: 768
@@ -55,3 +53,12 @@ mrd:
   resolutions: "[(1024, 120, 600), (2048, 240, 1200), (512, 50, 240)]" # (filter_length, hop_length, win_length)
   use_spectral_norm: False
   lReLU_slope: 0.2
+#############################
+log:
+  summary_interval: 100
+  validation_interval: 5
+  save_interval: 5
+  num_audio: 6
+  chkpt_dir: 'chkpt'
+  log_dir: 'logs'
+

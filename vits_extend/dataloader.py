@@ -24,7 +24,7 @@ def create_dataloader_train(hps, n_gpus, rank):
     return train_loader
 
 
-def create_dataloader_eval(hps, n_gpus, rank):
+def create_dataloader_eval(hps):
     collate_fn = TextAudioSpeakerCollate()
     eval_dataset = TextAudioSpeakerSet(hps.data.validation_files, hps.data)
     eval_loader = DataLoader(

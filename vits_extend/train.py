@@ -46,13 +46,13 @@ def train(rank, args, chkpt_path, hp, hp_str):
     init_epoch = -1
     step = 0
 
-    stft = TacotronSTFT(filter_length=hp.audio.filter_length,
-                        hop_length=hp.audio.hop_length,
-                        win_length=hp.audio.win_length,
-                        n_mel_channels=hp.audio.n_mel_channels,
-                        sampling_rate=hp.audio.sampling_rate,
-                        mel_fmin=hp.audio.mel_fmin,
-                        mel_fmax=hp.audio.mel_fmax,
+    stft = TacotronSTFT(filter_length=hp.data.filter_length,
+                        hop_length=hp.data.hop_length,
+                        win_length=hp.data.win_length,
+                        n_mel_channels=hp.data.mel_channels,
+                        sampling_rate=hp.data.sampling_rate,
+                        mel_fmin=hp.data.mel_fmin,
+                        mel_fmax=hp.data.mel_fmax,
                         center=False,
                         device=device)
     # define logger, writer, valloader, stft at rank_zero
@@ -105,7 +105,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
     # if not consistent, it'll horribly slow down.
     torch.backends.cudnn.benchmark = True
 
-    trainloader = create_dataloader_train(hp)
+    trainloader = create_dataloader_train(hp, args.n_gpu, rank)
 
     model_g.train()
     model_d.train()

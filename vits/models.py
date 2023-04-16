@@ -1,10 +1,10 @@
 
 import torch
-import attentions
-import commons
-import modules
 
 from torch import nn
+from vits import attentions
+from vits import commons
+from vits import modules
 from vits.utils import f0_to_coarse
 from vits_decoder.generator import Generator
 
@@ -133,7 +133,7 @@ class SynthesizerTrn(nn.Module):
     ):
         super().__init__()
         self.segment_size = segment_size
-        self.emb_g = nn.Linear(hp.vits.gin_channels, hp.vits.gin_channels)
+        self.emb_g = nn.Linear(hp.vits.spk_dim, hp.vits.gin_channels)
         self.enc_p = TextEncoder(
             hp.vits.ppg_dim,
             hp.vits.inter_channels,
@@ -161,7 +161,7 @@ class SynthesizerTrn(nn.Module):
             4,
             gin_channels=hp.vits.gin_channels
         )
-        self.dec = Generator(h=hp)
+        self.dec = Generator(hp=hp)
 
     def remove_weight_norm(self):
         self.enc_q.remove_weight_norm()
