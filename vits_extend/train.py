@@ -43,7 +43,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
     optim_d = torch.optim.AdamW(model_d.parameters(),
                                 lr=hp.train.learning_rate, betas=hp.train.betas, eps=hp.train.eps)
 
-    init_epoch = -1
+    init_epoch = 1
     step = 0
 
     stft = TacotronSTFT(filter_length=hp.data.filter_length,
@@ -97,15 +97,15 @@ def train(rank, args, chkpt_path, hp, hp_str):
         model_d = DistributedDataParallel(model_d, device_ids=[rank]).to(device)
 
     scheduler_g = torch.optim.lr_scheduler.ExponentialLR(
-        optim_g, gamma=hp.train.lr_decay, last_epoch=init_epoch-1)
+        optim_g, gamma=hp.train.lr_decay, last_epoch=init_epoch-2)
     scheduler_d = torch.optim.lr_scheduler.ExponentialLR(
-        optim_d, gamma=hp.train.lr_decay, last_epoch=init_epoch-1)
+        optim_d, gamma=hp.train.lr_decay, last_epoch=init_epoch-2)
 
     # this accelerates training when the size of minibatch is always consistent.
     # if not consistent, it'll horribly slow down.
     torch.backends.cudnn.benchmark = True
 
-    trainloader = create_dataloader_train(hp, args.n_gpu, rank)
+    trainloader = create_dataloader_train(hp, args.num_gpus, rank)
 
     model_g.train()
     model_d.train()
@@ -113,7 +113,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
     resolutions = eval(hp.mrd.resolutions)
     stft_criterion = MultiResolutionSTFTLoss(device, resolutions)
 
-    for epoch in itertools.count(init_epoch+1):
+    for epoch in range(init_epoch, 2000):
 
         trainloader.batch_sampler.set_epoch(epoch)
 
