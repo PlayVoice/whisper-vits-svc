@@ -68,18 +68,18 @@ dataset_raw
     > python prepare/preprocess_zzz.py
 
 ## 训练
-```shell
-python svc_trainer.py -c configs/base.yaml -n sovits5.0
-```
+
+> python svc_trainer.py -c configs/base.yaml -n sovits5.0
+
 
 ## 推理
 
-使用[inference_main.py](inference_main.py)
-+ 更改model_path为你自己训练的最新模型记录点
-+ 将待转换的音频放在raw文件夹下
-+ clean_names 写待转换的音频名称
-+ trans 填写变调半音数量
-+ spk_list 填写合成的说话人名称
+> python svc_export.py --config config/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
+
+> python whisper/inference.py -w test.wav -p temp.ppg.npy
+
+> python svc_inference.py --config config/base.yaml --model sovits5.0.pth --spk ./data_svc/speaker.npy --statics ./data_svc/pitch_statics.npy --wave test.wav
+
 
 ## 代码来源和参考文献
 
