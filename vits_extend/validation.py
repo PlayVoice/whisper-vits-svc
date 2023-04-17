@@ -17,8 +17,12 @@ def validate(hp, args, generator, discriminator, valloader, stft, writer, step, 
         ppg_l = ppg_l.to(device)
         audio = audio.to(device)
 
-        fake_audio = generator.infer(
-            ppg, pit, spk, ppg_l)[:, :, :audio.size(2)]
+        if hasattr(generator, 'module'):
+            fake_audio = generator.module.infer(ppg, pit, spk, ppg_l)[
+                :, :, :audio.size(2)]
+        else:
+            fake_audio = generator.infer(ppg, pit, spk, ppg_l)[
+                :, :, :audio.size(2)]
 
         mel_fake = stft.mel_spectrogram(fake_audio.squeeze(1))
         mel_real = stft.mel_spectrogram(audio.squeeze(1))

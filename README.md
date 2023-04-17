@@ -53,7 +53,7 @@ dataset_raw
 
 ## 数据预处理
 - 1， 重采样
-    > python resample.py
+    > python svc_resample.py
 - 2， 提取音高
     > python prepare/preprocess_f0.py -w data_svc/waves/ -p data_svc/pitch
 - 3， 提取内容编码
