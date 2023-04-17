@@ -22,6 +22,18 @@
 
 - 加入GRL阻止音色泄漏
 
+| Feature | Status |
+| --- | --- |
+| whiser | ✅ |
+| bigvgan  | ✅ |
+| nature speech | ✅ |
+| nsf vocoder | ✅ |
+| speaker encoder | ✅ |
+| GRL for speaker | Coming soon! |
+| one shot vits | Coming soon! |
+| band extention | Coming soon! |
+| audio enhance | Coming soon! |
+
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
 
