@@ -10,14 +10,15 @@ def validate(hp, args, generator, discriminator, valloader, stft, writer, step, 
 
     loader = tqdm.tqdm(valloader, desc='Validation loop')
     mel_loss = 0.0
-    for idx, (spk, ppg, pos, pit, audio) in enumerate(loader):
-        spk = spk.to(device)
+    for idx, (ppg, ppg_l, pit, spk, spec, spec_l, audio, audio_l) in enumerate(loader):
         ppg = ppg.to(device)
-        pos = pos.to(device)
         pit = pit.to(device)
+        spk = spk.to(device)
+        ppg_l = ppg_l.to(device)
         audio = audio.to(device)
 
-        fake_audio = generator(spk, ppg, pos, pit)[:,:,:audio.size(2)]
+        fake_audio = generator.infer(
+            ppg, pit, spk, ppg_l)[:, :, :audio.size(2)]
 
         mel_fake = stft.mel_spectrogram(fake_audio.squeeze(1))
         mel_real = stft.mel_spectrogram(audio.squeeze(1))
@@ -32,7 +33,8 @@ def validate(hp, args, generator, discriminator, valloader, stft, writer, step, 
             fake_audio = fake_audio[0][0].cpu().detach().numpy()
             spec_fake = spec_fake[0].cpu().detach().numpy()
             spec_real = spec_real[0].cpu().detach().numpy()
-            writer.log_fig_audio(audio, fake_audio, spec_fake, spec_real, idx, step)
+            writer.log_fig_audio(
+                audio, fake_audio, spec_fake, spec_real, idx, step)
 
     mel_loss = mel_loss / len(valloader.dataset)
 

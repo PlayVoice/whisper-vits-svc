@@ -119,7 +119,6 @@ class Generator(torch.nn.Module):
         f0 = self.f0_upsamp(f0).transpose(1, 2)
         har_source = self.m_source(f0)
         har_source = har_source.transpose(1, 2)
-        x = torch.transpose(x, 1, -1)       # [B, D, L]
         x = self.conv_pre(x)
 
         for i in range(self.num_upsamples):

@@ -151,11 +151,11 @@ def train(rank, args, chkpt_path, hp, hp_str):
             # Mel Loss
             mel_fake = stft.mel_spectrogram(fake_audio.squeeze(1))
             mel_real = stft.mel_spectrogram(audio.squeeze(1))
-            mel_loss = F.l1_loss(mel_fake, mel_real) * hp.train.mel_lamb
+            mel_loss = F.l1_loss(mel_fake, mel_real) * hp.train.c_mel
 
             # Multi-Resolution STFT Loss
             sc_loss, mag_loss = stft_criterion(fake_audio.squeeze(1), audio.squeeze(1))
-            stft_loss = (sc_loss + mag_loss) * hp.train.stft_lamb
+            stft_loss = (sc_loss + mag_loss) * hp.train.c_mel
 
             # Generator Loss
             res_fake, period_fake = model_d(fake_audio)
@@ -168,11 +168,11 @@ def train(rank, args, chkpt_path, hp, hp_str):
             score_loss = score_loss / len(res_fake + period_fake)
 
             # Kl Loss
-            loss_kl = kl_loss(z_f, logs_q, m_p, logs_p, z_mask) * hp.train.c_kl
+            loss_kl_f = kl_loss(z_f, logs_q, m_p, logs_p, z_mask) * hp.train.c_kl
             loss_kl_r = kl_loss(z_r, logs_p, m_q, logs_q, z_mask) * hp.train.c_kl
 
             # for fast train
-            loss_g = score_loss + stft_loss + mel_loss + loss_kl + loss_kl_r
+            loss_g = score_loss + stft_loss + mel_loss + loss_kl_f + loss_kl_r
             # for last train
             # loss_g = score_loss + stft_loss
 
@@ -200,11 +200,15 @@ def train(rank, args, chkpt_path, hp, hp_str):
             loss_d = loss_d.item()
             loss_s = stft_loss.item()
             loss_m = mel_loss.item()
+            loss_k = loss_kl_f.item()
+            loss_r = loss_kl_r.item()
 
             if rank == 0 and step % hp.log.summary_interval == 0:
-                writer.log_training(loss_g, loss_d, loss_m, loss_s, score_loss.item(), step)
+                writer.log_training(
+                    loss_g, loss_d, loss_m, loss_s, loss_k, loss_r, score_loss.item(), step)
                 # loader.set_description("g %.04f m %.04f s %.04f d %.04f | step %d" % (loss_g, loss_m, loss_s, loss_d, step))
-                logger.info("g %.04f m %.04f s %.04f d %.04f | step %d" % (loss_g, loss_m, loss_s, loss_d, step))
+                logger.info("g %.04f m %.04f s %.04f d %.04f k %.04f r %.04f | step %d" % (
+                    loss_g, loss_m, loss_s, loss_d, loss_k, loss_r, step))
 
         if rank == 0 and epoch % hp.log.save_interval == 0:
             save_path = os.path.join(pt_dir, '%s_%04d.pt'

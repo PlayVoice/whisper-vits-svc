@@ -143,7 +143,7 @@ class TextAudioSpeakerCollate:
         ppg_lengths = torch.LongTensor(len(batch))
         ppg_padded = torch.FloatTensor(
             len(batch), max_ppg_len, batch[0][2].size(1))
-        pit_padded = torch.LongTensor(len(batch), max_ppg_len)
+        pit_padded = torch.FloatTensor(len(batch), max_ppg_len)
         ppg_padded.zero_()
         pit_padded.zero_()
         spk = torch.FloatTensor(len(batch), batch[0][4].size(0))
