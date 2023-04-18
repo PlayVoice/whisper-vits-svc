@@ -92,6 +92,23 @@ dataset_raw
 
 > python svc_inference.py --config config/base.yaml --model sovits5.0.pth --spk ./data_svc/speaker.npy --statics ./data_svc/pitch_statics.npy --wave test.wav
 
+## 数据集
+| Name | URL |
+| --- | --- |
+|KiSing       |http://shijt.site/index.php/2021/05/16/kising-the-first-open-source-mandarin-singing-voice-synthesis-corpus/|
+|PopCS 		    |https://github.com/MoonInTheRiver/DiffSinger/blob/master/resources/apply_form.md|
+|opencpop 	  |https://wenet.org.cn/opencpop/download/|
+|Multi-Singer |https://github.com/Multi-Singer/Multi-Singer.github.io|
+|M4Singer	    |https://github.com/M4Singer/M4Singer/blob/master/apply_form.md|
+|CSD 		      |https://zenodo.org/record/4785016#.YxqrTbaOMU4|
+|KSS		      |https://www.kaggle.com/datasets/bryanpark/korean-single-speaker-speech-dataset|
+|JVS MuSic	  |https://sites.google.com/site/shinnosuketakamichi/research-topics/jvs_music|
+|PJS		      |https://sites.google.com/site/shinnosuketakamichi/research-topics/pjs_corpus|
+|JUST Song	  |https://sites.google.com/site/shinnosuketakamichi/publication/jsut-song|
+|MUSDB18		  |https://sigsep.github.io/datasets/musdb.html#musdb18-compressed-stems|
+|DSD100 		  |https://sigsep.github.io/datasets/dsd100.html|
+|Aishell-3 	  |http://www.aishelltech.com/aishell_3|
+|VCTK 		    |https://datashare.ed.ac.uk/handle/10283/2651|
 
 ## 代码来源和参考文献
 
