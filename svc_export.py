@@ -3,7 +3,7 @@ import torch
 import argparse
 from omegaconf import OmegaConf
 
-from vits.models import SynthesizerTrn
+from vits.models import SynthesizerInfer
 
 
 def load_model(checkpoint_path, model):
@@ -37,7 +37,7 @@ def save_model(model, checkpoint_path):
 
 def main(args):
     hp = OmegaConf.load(args.config)
-    model = SynthesizerTrn(
+    model = SynthesizerInfer(
         hp.data.filter_length // 2 + 1,
         hp.data.segment_size // hp.data.hop_length,
         hp)

@@ -7,7 +7,7 @@ import torchcrepe
 
 from omegaconf import OmegaConf
 from scipy.io.wavfile import write
-from vits.models import SynthesizerTrn
+from vits.models import SynthesizerInfer
 
 
 def load_svc_model(checkpoint_path, model):
@@ -54,21 +54,27 @@ def compute_f0_nn(filename, device):
     return pitch
 
 
-ppg_path = "svc_tmp.ppg.npy"
-
-
 def main(args):
-    os.system(f"python whisper/inference.py -w {args.wave} -p {ppg_path}")
+    if (args.ppg == None):
+        args.ppg = "svc_tmp.ppg.npy"
+        print(
+            f"Auto run : python whisper/inference.py -w {args.wave} -p {args.ppg}")
+        os.system(f"python whisper/inference.py -w {args.wave} -p {args.ppg}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     hp = OmegaConf.load(args.config)
-    model = SynthesizerTrn(
+    model = SynthesizerInfer(
         hp.data.filter_length // 2 + 1,
         hp.data.segment_size // hp.data.hop_length,
         hp)
     load_svc_model(args.model, model)
+    model.eval()
+    model.to(device)
 
-    ppg = np.load(ppg_path)
+    spk = np.load(args.spk)
+    spk = torch.FloatTensor(spk)
+
+    ppg = np.load(args.ppg)
     ppg = np.repeat(ppg, 2, 0)  # 320 PPG -> 160 * 2
     ppg = torch.FloatTensor(ppg)
 
@@ -96,26 +102,21 @@ def main(args):
 
     pit = torch.FloatTensor(pit)
 
-    spk = np.load(args.spk)
-    spk = torch.FloatTensor(spk)
-
     len_pit = pit.size()[0]
     len_ppg = ppg.size()[0]
     len_min = min(len_pit, len_ppg)
     pit = pit[:len_min]
     ppg = ppg[:len_min, :]
 
-    model.eval(inference=True)
-    model.to(device)
     with torch.no_grad():
         spk = spk.unsqueeze(0).to(device)
         ppg = ppg.unsqueeze(0).to(device)
         pit = pit.unsqueeze(0).to(device)
         len_min = torch.LongTensor([len_min]).to(device)
-        audio = model.inference(ppg, pit, spk, len_min)
+        audio = model(ppg, pit, spk, len_min)
         audio = audio[0, 0].data.cpu().detach().numpy()
 
-    write("svc_out.wav", hp.audio.sampling_rate, audio)
+    write("svc_out.wav", hp.data.sampling_rate, audio)
 
 
 if __name__ == '__main__':
@@ -128,6 +129,8 @@ if __name__ == '__main__':
                         help="Path of raw audio.")
     parser.add_argument('-s', '--spk', type=str, required=True,
                         help="Path of speaker.")
+    parser.add_argument('-p', '--ppg', type=str,
+                        help="Path of content vector.")
     parser.add_argument('-t', '--statics', type=str,
                         help="Path of pitch statics.")
     args = parser.parse_args()

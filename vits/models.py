@@ -165,11 +165,6 @@ class SynthesizerTrn(nn.Module):
         )
         self.dec = Generator(hp=hp)
 
-    def remove_weight_norm(self):
-        self.enc_q.remove_weight_norm()
-        self.flow.remove_weight_norm()
-        self.dec.remove_weight_norm()
-
     def forward(self, ppg, pit, spec, spk, ppg_l, spec_l):
         g = self.emb_g(F.normalize(spk)).unsqueeze(-1)
         z_p, m_p, logs_p, ppg_mask = self.enc_p(
@@ -185,6 +180,50 @@ class SynthesizerTrn(nn.Module):
         return audio, ids_slice, spec_mask, (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q)
 
     def infer(self, ppg, pit, spk, ppg_l):
+        g = self.emb_g(F.normalize(spk)).unsqueeze(-1)
+        z_p, m_p, logs_p, ppg_mask = self.enc_p(
+            ppg, ppg_l, f0=f0_to_coarse(pit))
+        z = self.flow(z_p, ppg_mask, g=g, reverse=True)
+        o = self.dec(spk, z * ppg_mask, f0=pit)
+        return o
+
+
+class SynthesizerInfer(nn.Module):
+    def __init__(
+        self,
+        spec_channels,
+        segment_size,
+        hp
+    ):
+        super().__init__()
+        self.segment_size = segment_size
+        self.emb_g = nn.Linear(hp.vits.spk_dim, hp.vits.gin_channels)
+        self.enc_p = TextEncoder(
+            hp.vits.ppg_dim,
+            hp.vits.inter_channels,
+            hp.vits.hidden_channels,
+            hp.vits.filter_channels,
+            2,
+            6,
+            3,
+            0.1,
+        )
+        self.flow = ResidualCouplingBlock(
+            hp.vits.inter_channels,
+            hp.vits.hidden_channels,
+            5,
+            1,
+            4,
+            gin_channels=hp.vits.gin_channels
+        )
+        self.dec = Generator(hp=hp)
+
+    def remove_weight_norm(self):
+        self.enc_q.remove_weight_norm()
+        self.flow.remove_weight_norm()
+        self.dec.remove_weight_norm()
+
+    def forward(self, ppg, pit, spk, ppg_l):
         g = self.emb_g(F.normalize(spk)).unsqueeze(-1)
         z_p, m_p, logs_p, ppg_mask = self.enc_p(
             ppg, ppg_l, f0=f0_to_coarse(pit))

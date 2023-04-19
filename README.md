@@ -66,18 +66,25 @@ dataset_raw
 ## 数据预处理
 - 1， 重采样
     > python svc_resample.py
+
 - 2， 提取音高
     > python prepare/preprocess_f0.py -w data_svc/waves/ -p data_svc/pitch
+
 - 3， 提取内容编码
     > python prepare/preprocess_ppg.py -w data_svc/waves/ -p data_svc/whisper
+
 - 4， 提取音色编码
     > python prepare/preprocess_speaker.py data_svc/waves/ data_svc/speaker
+
 - 5， 提取线性谱
     > python prepare/preprocess_spec.py -w data_svc/waves/ -s data_svc/specs
+
 - 6， 生成训练索引
     > python prepare/preprocess_train.py
+
 - 7， 训练文件调试
     > python prepare/preprocess_zzz.py
+
 
 ## 训练
 
@@ -86,29 +93,50 @@ dataset_raw
 
 ## 推理
 
-> python svc_export.py --config config/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
+### 当前发布的版本用于代码调试，不是最终效果；模型可以使用configs\singers目录中的56个发音人进行推理；
 
-> python whisper/inference.py -w test.wav -p temp.ppg.npy
+- 1， 设置工作目录
+    > export PYTHONPATH=$PWD
 
-> python svc_inference.py --config config/base.yaml --model sovits5.0.pth --spk ./data_svc/speaker.npy --statics ./data_svc/pitch_statics.npy --wave test.wav
+- 2， 导出推理模型：文本编码器，Flow网络，Decoder网络；判别器和后验编码器只在训练中使用
+    > python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
+
+- 3， 使用whisper提取内容编码，没有采用一键推理，为了降低显存占用
+    > python whisper/inference.py -w test.wav -p test.ppg.npy
+
+    生成test.ppg.npy；如果下一步没有指定ppg文件，则调用程序自动生成
+- 4，指定参数，推理
+    > python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./configs/singers/singer0001.npy --wave test.wav --ppg test.ppg.npy
+
+    当指定--ppg后，多次推理同一个音频时，可以避免重复提取音频内容编码；没有指定，也会自动提取；
+
+    生成文件在当前目录svc_out.wav；
+
+    | Feature | Status |
+    | --- | --- |
+    |--config   | 配置文件 |
+    |--model    | 模型文件 |
+    |--spk      | 音色文件 |
+    |--wave     | 音频文件 |
+    |--ppg      | 音频内容 |
 
 ## 数据集
 | Name | URL |
 | --- | --- |
-|KiSing       |http://shijt.site/index.php/2021/05/16/kising-the-first-open-source-mandarin-singing-voice-synthesis-corpus/|
-|PopCS 		    |https://github.com/MoonInTheRiver/DiffSinger/blob/master/resources/apply_form.md|
-|opencpop 	  |https://wenet.org.cn/opencpop/download/|
-|Multi-Singer |https://github.com/Multi-Singer/Multi-Singer.github.io|
-|M4Singer	    |https://github.com/M4Singer/M4Singer/blob/master/apply_form.md|
-|CSD 		      |https://zenodo.org/record/4785016#.YxqrTbaOMU4|
-|KSS		      |https://www.kaggle.com/datasets/bryanpark/korean-single-speaker-speech-dataset|
-|JVS MuSic	  |https://sites.google.com/site/shinnosuketakamichi/research-topics/jvs_music|
-|PJS		      |https://sites.google.com/site/shinnosuketakamichi/research-topics/pjs_corpus|
-|JUST Song	  |https://sites.google.com/site/shinnosuketakamichi/publication/jsut-song|
-|MUSDB18		  |https://sigsep.github.io/datasets/musdb.html#musdb18-compressed-stems|
-|DSD100 		  |https://sigsep.github.io/datasets/dsd100.html|
-|Aishell-3 	  |http://www.aishelltech.com/aishell_3|
-|VCTK 		    |https://datashare.ed.ac.uk/handle/10283/2651|
+|KiSing         |http://shijt.site/index.php/2021/05/16/kising-the-first-open-source-mandarin-singing-voice-synthesis-corpus/|
+|PopCS          |https://github.com/MoonInTheRiver/DiffSinger/blob/master/resources/apply_form.md|
+|opencpop       |https://wenet.org.cn/opencpop/download/|
+|Multi-Singer   |https://github.com/Multi-Singer/Multi-Singer.github.io|
+|M4Singer       |https://github.com/M4Singer/M4Singer/blob/master/apply_form.md|
+|CSD            |https://zenodo.org/record/4785016#.YxqrTbaOMU4|
+|KSS            |https://www.kaggle.com/datasets/bryanpark/korean-single-speaker-speech-dataset|
+|JVS MuSic      |https://sites.google.com/site/shinnosuketakamichi/research-topics/jvs_music|
+|PJS            |https://sites.google.com/site/shinnosuketakamichi/research-topics/pjs_corpus|
+|JUST Song      |https://sites.google.com/site/shinnosuketakamichi/publication/jsut-song|
+|MUSDB18        |https://sigsep.github.io/datasets/musdb.html#musdb18-compressed-stems|
+|DSD100         |https://sigsep.github.io/datasets/dsd100.html|
+|Aishell-3      |http://www.aishelltech.com/aishell_3|
+|VCTK           |https://datashare.ed.ac.uk/handle/10283/2651|
 
 ## 代码来源和参考文献
 
