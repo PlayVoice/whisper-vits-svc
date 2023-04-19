@@ -112,7 +112,7 @@ dataset_raw
 
     生成文件在当前目录svc_out.wav；
 
-    | Feature | Status |
+    | args | name |
     | --- | --- |
     |--config   | 配置文件 |
     |--model    | 模型文件 |
