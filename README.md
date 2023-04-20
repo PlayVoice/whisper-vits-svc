@@ -31,7 +31,7 @@
 | speaker encoder | ✅ |
 | GRL for speaker | Coming soon! |
 | one shot vits | Coming soon! |
-| band extention | Coming soon! |
+| band extention | ✅ |
 | audio enhance | Coming soon! |
 
 ## 模型简介
@@ -119,6 +119,11 @@ dataset_raw
     |--spk      | 音色文件 |
     |--wave     | 音频文件 |
     |--ppg      | 音频内容 |
+
+- 5 频率扩展48KHz
+    > python bandex/inference.py -w svc_out.wav
+
+    在当前目录生成svc_out_48k.wav
 
 ## 数据集
 | Name | URL |
