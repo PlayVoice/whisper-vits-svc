@@ -36,6 +36,7 @@ def main(args):
             cut_e_16k = (bwe_index + bwe_chunk + hop_frame) * hop_size
             cut_e_48k = -1 * hop_frame * hop_size * SCALE
         x_chunk = x[cut_s_16k:cut_e_16k]
+
         with torch.no_grad():
             i_audio = torch.from_numpy(x_chunk).to(device)
             o_audio = model(i_audio, sr).data.cpu().float().numpy()
