@@ -30,7 +30,7 @@
 | nsf vocoder | ✅ |
 | speaker encoder | ✅ |
 | GRL for speaker | Coming soon! |
-| one shot vits | Coming soon! |
+| one shot vits | ✅ |
 | band extention | ✅ |
 
 ## 模型简介
@@ -157,6 +157,8 @@ https://github.com/mindslab-ai/univnet [[paper]](https://arxiv.org/abs/2106.0788
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
 
 [VI-SVC, Singing Voice Conversion based on VITS decoder](https://zhuanlan.zhihu.com/p/564060769)
+
+[SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
 [Adapter-Based Extension of Multi-Speaker Text-to-Speech Model for New Speakers](https://arxiv.org/abs/2211.00585)
 
