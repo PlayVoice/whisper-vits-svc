@@ -206,7 +206,7 @@ class WN(torch.nn.Module):
             if i < self.n_layers - 1:
                 res_acts = res_skip_acts[:, : self.hidden_channels, :]
                 x = (x + res_acts) * x_mask
-                output = output + res_skip_acts[:, self.hidden_channels :, :]
+                output = output + res_skip_acts[:, self.hidden_channels:, :]
             else:
                 output = output + res_skip_acts
         return output * x_mask
@@ -424,22 +424,30 @@ class ResidualCouplingLayer(nn.Module):
         self.mean_only = mean_only
 
         self.pre = nn.Conv1d(self.half_channels, hidden_channels, 1)
+        # no use gin_channels
         self.enc = WN(
             hidden_channels,
             kernel_size,
             dilation_rate,
             n_layers,
             p_dropout=p_dropout,
-            gin_channels=gin_channels,
         )
-        self.post = nn.Conv1d(hidden_channels, self.half_channels * (2 - mean_only), 1)
+        self.post = nn.Conv1d(
+            hidden_channels, self.half_channels * (2 - mean_only), 1)
         self.post.weight.data.zero_()
         self.post.bias.data.zero_()
+        # SNAC Speaker-normalized Affine Coupling Layer
+        self.snac = nn.Conv1d(gin_channels, 2 * self.half_channels, 1)
 
     def forward(self, x, x_mask, g=None, reverse=False):
+        speaker = self.snac(g)
+        speaker_m, speaker_v = speaker.chunk(2, dim=1)  # (B, half_channels, 1)
         x0, x1 = torch.split(x, [self.half_channels] * 2, 1)
-        h = self.pre(x0) * x_mask
-        h = self.enc(h, x_mask, g=g)
+        # x0 norm
+        x0_norm = (x0 - speaker_m) * torch.exp(-speaker_v) * x_mask
+        h = self.pre(x0_norm) * x_mask
+        # don't use global condition
+        h = self.enc(h, x_mask)
         stats = self.post(h) * x_mask
         if not self.mean_only:
             m, logs = torch.split(stats, [self.half_channels] * 2, 1)
@@ -448,12 +456,18 @@ class ResidualCouplingLayer(nn.Module):
             logs = torch.zeros_like(m)
 
         if not reverse:
-            x1 = m + x1 * torch.exp(logs) * x_mask
+            # x1 norm before affine xform
+            x1_norm = (x1 - speaker_m) * torch.exp(-speaker_v) * x_mask
+            x1 = (m + x1_norm * torch.exp(logs)) * x_mask
             x = torch.cat([x0, x1], 1)
-            logdet = torch.sum(logs, [1, 2])
+            # speaker var to logdet
+            logdet = torch.sum(logs * x_mask, [1, 2]) - torch.sum(
+                speaker_v.expand(-1, -1, logs.size(-1)) * x_mask, [1, 2])
             return x, logdet
         else:
             x1 = (x1 - m) * torch.exp(-logs) * x_mask
+            # x1 denorm before output
+            x1 = (speaker_m + x1 * torch.exp(speaker_v)) * x_mask
             x = torch.cat([x0, x1], 1)
             return x
 
