@@ -57,9 +57,9 @@ def train(rank, args, chkpt_path, hp, hp_str):
                         device=device)
     # define logger, writer, valloader, stft at rank_zero
     if rank == 0:
-        pt_dir = os.path.join(hp.log.chkpt_dir, args.name)
+        pth_dir = os.path.join(hp.log.pth_dir, args.name)
         log_dir = os.path.join(hp.log.log_dir, args.name)
-        os.makedirs(pt_dir, exist_ok=True)
+        os.makedirs(pth_dir, exist_ok=True)
         os.makedirs(log_dir, exist_ok=True)
 
         logging.basicConfig(
@@ -112,7 +112,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
         trainloader.batch_sampler.set_epoch(epoch)
 
-        if rank == 0 and epoch % hp.log.validation_interval == 0:
+        if rank == 0 and epoch % hp.log.eval_interval == 0:
             with torch.no_grad():
                 validate(hp, args, model_g, model_d, valloader, stft, writer, step, device)
 
@@ -198,7 +198,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             loss_k = loss_kl_f.item()
             loss_r = loss_kl_r.item()
 
-            if rank == 0 and step % hp.log.summary_interval == 0:
+            if rank == 0 and step % hp.log.info_interval == 0:
                 writer.log_training(
                     loss_g, loss_d, loss_m, loss_s, loss_k, loss_r, score_loss.item(), step)
                 # loader.set_description("g %.04f m %.04f s %.04f d %.04f | step %d" % (loss_g, loss_m, loss_s, loss_d, step))

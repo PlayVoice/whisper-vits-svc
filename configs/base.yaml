@@ -55,11 +55,11 @@ mrd:
   lReLU_slope: 0.2
 #############################
 log:
-  summary_interval: 100
-  validation_interval: 5
+  info_interval: 100
+  eval_interval: 5
   save_interval: 5
   num_audio: 6
-  chkpt_dir: 'chkpt'
+  pth_dir: 'chkpt'
   log_dir: 'logs'
 #############################
 dist_config:
