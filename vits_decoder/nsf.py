@@ -376,8 +376,8 @@ class SourceModuleHnNSF(torch.nn.Module):
 
     def __init__(
         self,
-        sampling_rate=16000,
-        harmonic_num=8,
+        sampling_rate=48000,
+        harmonic_num=10,
         sine_amp=0.1,
         add_noise_std=0.003,
         voiced_threshod=0,

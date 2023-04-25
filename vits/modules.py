@@ -376,11 +376,8 @@ class Log(nn.Module):
 class Flip(nn.Module):
     def forward(self, x, *args, reverse=False, **kwargs):
         x = torch.flip(x, [1])
-        if not reverse:
-            logdet = torch.zeros(x.size(0)).to(dtype=x.dtype, device=x.device)
-            return x, logdet
-        else:
-            return x
+        logdet = torch.zeros(x.size(0)).to(dtype=x.dtype, device=x.device)
+        return x, logdet
 
 
 class ElementwiseAffine(nn.Module):
@@ -440,7 +437,7 @@ class ResidualCouplingLayer(nn.Module):
         self.snac = nn.Conv1d(gin_channels, 2 * self.half_channels, 1)
 
     def forward(self, x, x_mask, g=None, reverse=False):
-        speaker = self.snac(g)
+        speaker = self.snac(g.unsqueeze(-1))
         speaker_m, speaker_v = speaker.chunk(2, dim=1)  # (B, half_channels, 1)
         x0, x1 = torch.split(x, [self.half_channels] * 2, 1)
         # x0 norm
@@ -469,7 +466,10 @@ class ResidualCouplingLayer(nn.Module):
             # x1 denorm before output
             x1 = (speaker_m + x1 * torch.exp(speaker_v)) * x_mask
             x = torch.cat([x0, x1], 1)
-            return x
+            # speaker var to logdet
+            logdet = torch.sum(logs * x_mask, [1, 2]) + torch.sum(
+                speaker_v.expand(-1, -1, logs.size(-1)) * x_mask, [1, 2])
+            return x, logdet
 
     def remove_weight_norm(self):
         self.enc.remove_weight_norm()

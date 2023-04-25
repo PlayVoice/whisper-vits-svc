@@ -25,8 +25,8 @@ if __name__ == '__main__':
     with open(args.config, 'r') as f:
         hp_str = ''.join(f.readlines())
 
-    assert hp.data.hop_length == 160, \
-        'hp.data.hop_length must be equal to 160, got %d' % hp.data.hop_length
+    assert hp.data.hop_length == 480, \
+        'hp.data.hop_length must be equal to 480, got %d' % hp.data.hop_length
 
     args.num_gpus = 0
     torch.manual_seed(hp.train.seed)
