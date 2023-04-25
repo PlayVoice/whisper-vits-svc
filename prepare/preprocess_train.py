@@ -5,7 +5,7 @@ import random
 if __name__ == "__main__":
     os.makedirs("./files/", exist_ok=True)
 
-    rootPath = "./data_svc/waves/"
+    rootPath = "./data_svc/waves-48k/"
     all_items = []
     for spks in os.listdir(f"./{rootPath}"):
         if os.path.isdir(f"./{rootPath}/{spks}"):
@@ -13,7 +13,7 @@ if __name__ == "__main__":
                 if file.endswith(".wav"):
                     file = file[:-4]
                     path_spk = f"./data_svc/speaker/{spks}/{file}.spk.npy"
-                    path_wave = f"./data_svc/waves/{spks}/{file}.wav"
+                    path_wave = f"./data_svc/waves-48k/{spks}/{file}.wav"
                     path_spec = f"./data_svc/specs/{spks}/{file}.pt"
                     path_pitch = f"./data_svc/pitch/{spks}/{file}.pit.npy"
                     path_whisper = f"./data_svc/whisper/{spks}/{file}.ppg.npy"
@@ -29,7 +29,7 @@ if __name__ == "__main__":
             if file.endswith(".wav"):
                 file = file[:-4]
                 path_spk = f"./data_svc/speaker/{file}.spk.npy"
-                path_wave = f"./data_svc/waves/{file}.wav"
+                path_wave = f"./data_svc/waves-48k/{file}.wav"
                 path_spec = f"./data_svc/specs/{file}.pt"
                 path_pitch = f"./data_svc/pitch/{file}.pit.npy"
                 path_whisper = f"./data_svc/whisper/{file}.ppg.npy"
