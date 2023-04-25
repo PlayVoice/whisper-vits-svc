@@ -29,7 +29,7 @@
 | nature speech | ✅ |
 | nsf vocoder | ✅ |
 | speaker encoder | ✅ |
-| GRL for speaker | Coming soon! |
+| GRL for speaker | 用法和判别器类似，模型训练完了再处理 |
 | one shot vits | ✅ |
 | band extention | ✅ |
 
@@ -92,7 +92,7 @@ dataset_raw
 
 ## 推理
 
-### 当前发布的版本用于代码调试，不是最终效果；模型可以使用configs\singers目录中的56个发音人进行推理；
+### 当前代码为48K训练代码，debug模型需要使用同时release的source.zip测试，模型可以使用configs\singers目录中的56个发音人进行推理；
 
 - 1， 设置工作目录
     > export PYTHONPATH=$PWD
