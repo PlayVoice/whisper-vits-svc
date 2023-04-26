@@ -116,6 +116,7 @@ dataset_raw
 
 > tensorboard --logdir logs/
 
+![snac](https://user-images.githubusercontent.com/16432329/234463836-ddf6d806-ccd1-452c-9961-1467ce26f304.png)
 
 ## 推理
 
