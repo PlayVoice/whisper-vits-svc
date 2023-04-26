@@ -122,6 +122,7 @@ dataset_raw
 
 ### 可以下载release页面的sovits5.0_48k_debug.pth模型，进行推理测试
 ### 模型包含56个发音人，在configs/singers目录中，可用于测试音色泄露
+### 4个辨识度较高的发音人样本，在configs/singers_sample目录中
 
 - 1， 设置工作目录
 
