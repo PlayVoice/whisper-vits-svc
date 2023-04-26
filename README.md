@@ -120,7 +120,8 @@ dataset_raw
 
 ## 推理
 
-### 当前代码为48K训练代码，debug模型需要使用同时release的source.zip测试，模型可以使用configs\singers目录中的56个发音人进行推理；
+### 可以下载release页面的sovits5.0_48k_debug.pth模型，进行推理测试
+### 模型包含56个发音人，在configs/singers目录中，可用于测试音色泄露
 
 - 1， 设置工作目录
 
