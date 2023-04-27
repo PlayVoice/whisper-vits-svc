@@ -13,7 +13,7 @@
 
 - [PlayVoice/max-vc](https://github.com/PlayVoice/max-vc) 不提取F0，解决F0提取不准，丝滑的转换结果
 
-## 本项目更新中，暂时不能使用，更新点
+## 本项目更新中，测试模型发布，非最后结果
 
 - 内容提取器更新为OpenAI的whisper
   
