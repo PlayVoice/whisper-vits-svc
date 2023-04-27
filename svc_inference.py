@@ -13,7 +13,12 @@ from vits.models import SynthesizerInfer
 def load_svc_model(checkpoint_path, model):
     assert os.path.isfile(checkpoint_path)
     checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
-    model.load_state_dict(checkpoint_dict["model_g"])
+    saved_state_dict = checkpoint_dict["model_g"]
+    state_dict = model.state_dict()
+    new_state_dict = {}
+    for k, v in state_dict.items():
+        new_state_dict[k] = saved_state_dict[k]
+    model.load_state_dict(new_state_dict)
     return model
 
 
