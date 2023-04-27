@@ -206,7 +206,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
                     loss_g, loss_m, loss_s, loss_d, loss_k, loss_r, step))
 
         if rank == 0 and epoch % hp.log.save_interval == 0:
-            save_path = os.path.join(pt_dir, '%s_%04d.pt'
+            save_path = os.path.join(pth_dir, '%s_%04d.pt'
                                      % (args.name, epoch))
             torch.save({
                 'model_g': (model_g.module if args.num_gpus > 1 else model_g).state_dict(),
