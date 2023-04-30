@@ -5,7 +5,7 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
-【无需去伴奏】就能直接进行歌声转换的SVC库
+【无需去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
 
 ## 技术分支
 
