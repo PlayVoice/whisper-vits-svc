@@ -158,33 +158,44 @@ class Generator(torch.nn.Module):
         if inference:
             self.remove_weight_norm()
 
-    def inference(self, spk, ppg, pos, f0):
-        MAX_WAV_VALUE = 32768.0
-        audio = self.forward(spk, ppg, pos, f0)
-        audio = audio.squeeze()  # collapse all dimension except time axis
-        audio = MAX_WAV_VALUE * audio
-        audio = audio.clamp(min=-MAX_WAV_VALUE, max=MAX_WAV_VALUE-1)
-        audio = audio.short()
-        return audio
-
-    def pitch2wav(self, f0):
-        MAX_WAV_VALUE = 32768.0
-        # nsf
+    def pitch2source(self, f0):
         f0 = f0[:, None]
-        f0 = self.f0_upsamp(f0).transpose(1, 2)
+        f0 = self.f0_upsamp(f0).transpose(1, 2)  # [1,len,1]
         har_source = self.m_source(f0)
-        audio = har_source.transpose(1, 2)
-        audio = audio.squeeze()  # collapse all dimension except time axis
+        har_source = har_source.transpose(1, 2)  # [1,1,len]
+        return har_source
+
+    def source2wav(self, audio):
+        MAX_WAV_VALUE = 32768.0
+        audio = audio.squeeze()
         audio = MAX_WAV_VALUE * audio
         audio = audio.clamp(min=-MAX_WAV_VALUE, max=MAX_WAV_VALUE-1)
         audio = audio.short()
-        return audio
+        return audio.cpu().detach().numpy()
 
-    def train_lora(self):
-        print("~~~train_lora~~~")
-        for p in self.parameters():
-           p.requires_grad = False
-        for p in self.adapter.parameters():
-           p.requires_grad = True
-        for p in self.conv_post.parameters():
-           p.requires_grad = True
+    def inference(self, spk, x, har_source):
+        # adapter
+        x = self.adapter(x, spk)
+        x = self.conv_pre(x)
+
+        for i in range(self.num_upsamples):
+            # upsampling
+            for i_up in range(len(self.ups[i])):
+                x = self.ups[i][i_up](x)
+            # nsf
+            x_source = self.noise_convs[i](har_source)
+            x = x + x_source
+            # AMP blocks
+            xs = None
+            for j in range(self.num_kernels):
+                if xs is None:
+                    xs = self.resblocks[i * self.num_kernels + j](x)
+                else:
+                    xs += self.resblocks[i * self.num_kernels + j](x)
+            x = xs / self.num_kernels
+
+        # post conv
+        x = self.activation_post(x)
+        x = self.conv_post(x)
+        x = torch.tanh(x)
+        return x

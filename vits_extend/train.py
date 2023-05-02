@@ -108,7 +108,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
     resolutions = eval(hp.mrd.resolutions)
     stft_criterion = MultiResolutionSTFTLoss(device, resolutions)
 
-    for epoch in range(init_epoch, 2000):
+    for epoch in range(init_epoch, hp.train.epochs):
 
         trainloader.batch_sampler.set_epoch(epoch)
 

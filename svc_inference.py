@@ -114,29 +114,77 @@ def main(args):
     ppg = ppg[:len_min, :]
 
     with torch.no_grad():
-        spk = spk.unsqueeze(0).to(device)
-        ppg = ppg.unsqueeze(0).to(device)
-        pit = pit.unsqueeze(0).to(device)
-        len_min = torch.LongTensor([len_min]).to(device)
-        audio = model(ppg, pit, spk, len_min)
-        audio = audio[0, 0].data.cpu().detach().numpy()
 
-    write("svc_out.wav", hp.data.sampling_rate, audio)
+        spk = spk.unsqueeze(0).to(device)
+        source = pit.unsqueeze(0).to(device)
+        source = model.pitch2source(source)
+        pitwav = model.source2wav(source)
+        write("svc_out_pit.wav", hp.data.sampling_rate, pitwav)
+
+        hop_size = hp.data.hop_length
+        all_frame = len_min
+        hop_frame = 10
+        out_chunk = 2500  # 25 S
+        out_index = 0
+        out_audio = []
+
+        while (out_index + out_chunk < all_frame):
+            if (out_index == 0):  # start frame
+                cut_s = out_index
+                cut_s_48k = 0
+            else:
+                cut_s = out_index - hop_frame
+                cut_s_48k = hop_frame * hop_size
+
+            if (out_index + out_chunk + hop_frame > all_frame):  # end frame
+                cut_e = out_index + out_chunk
+                cut_e_48k = 0
+            else:
+                cut_e = out_index + out_chunk + hop_frame
+                cut_e_48k = -1 * hop_frame * hop_size
+
+            sub_ppg = ppg[cut_s:cut_e, :].unsqueeze(0).to(device)
+            sub_pit = pit[cut_s:cut_e].unsqueeze(0).to(device)
+            sub_len = torch.LongTensor([cut_e - cut_s]).to(device)
+            sub_har = source[:, :, cut_s *
+                             hop_size:cut_e * hop_size].to(device)
+            sub_out = model.inference(sub_ppg, sub_pit, spk, sub_len, sub_har)
+            sub_out = sub_out[0, 0].data.cpu().detach().numpy()
+
+            sub_out = sub_out[cut_s_48k:cut_e_48k]
+            out_audio.extend(sub_out)
+            out_index = out_index + out_chunk
+
+        if (out_index < all_frame):
+            cut_s = out_index - hop_frame
+            cut_s_48k = hop_frame * hop_size
+            sub_ppg = ppg[cut_s:, :].unsqueeze(0).to(device)
+            sub_pit = pit[cut_s:].unsqueeze(0).to(device)
+            sub_len = torch.LongTensor([all_frame - cut_s]).to(device)
+            sub_har = source[:, :, cut_s * hop_size:].to(device)
+            sub_out = model.inference(sub_ppg, sub_pit, spk, sub_len, sub_har)
+            sub_out = sub_out[0, 0].data.cpu().detach().numpy()
+
+            sub_out = sub_out[cut_s_48k:]
+            out_audio.extend(sub_out)
+        out_audio = np.asarray(out_audio)
+
+    write("svc_out.wav", hp.data.sampling_rate, out_audio)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, required=True,
+    parser.add_argument('--config', type=str, required=True,
                         help="yaml file for config.")
-    parser.add_argument('-m', '--model', type=str, required=True,
+    parser.add_argument('--model', type=str, required=True,
                         help="path of model for evaluation")
-    parser.add_argument('-w', '--wave', type=str, required=True,
+    parser.add_argument('--wave', type=str, required=True,
                         help="Path of raw audio.")
-    parser.add_argument('-s', '--spk', type=str, required=True,
+    parser.add_argument('--spk', type=str, required=True,
                         help="Path of speaker.")
-    parser.add_argument('-p', '--ppg', type=str,
+    parser.add_argument('--ppg', type=str,
                         help="Path of content vector.")
-    parser.add_argument('-t', '--statics', type=str,
+    parser.add_argument('--statics', type=str,
                         help="Path of pitch statics.")
     args = parser.parse_args()
 

@@ -114,6 +114,10 @@ dataset_raw
 
 > python svc_trainer.py -c configs/base.yaml -n sovits5.0
 
+恢复训练
+
+> python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
+
 查看日志
 
 > tensorboard --logdir logs/

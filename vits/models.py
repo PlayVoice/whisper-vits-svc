@@ -226,9 +226,15 @@ class SynthesizerInfer(nn.Module):
         self.flow.remove_weight_norm()
         self.dec.remove_weight_norm()
 
-    def forward(self, ppg, pit, spk, ppg_l):
+    def pitch2source(self, f0):
+        return self.dec.pitch2source(f0)
+
+    def source2wav(self, source):
+        return self.dec.source2wav(source)
+
+    def inference(self, ppg, pit, spk, ppg_l, source):
         z_p, m_p, logs_p, ppg_mask = self.enc_p(
             ppg, ppg_l, f0=f0_to_coarse(pit))
         z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
-        o = self.dec(spk, z * ppg_mask, f0=pit)
+        o = self.dec.inference(spk, z * ppg_mask, source)
         return o
