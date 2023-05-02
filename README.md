@@ -7,14 +7,6 @@
 
 【无需去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
 
-## 技术分支
-
-- [PlayVoice/so-vits-svc-5.0](https://github.com/PlayVoice/so-vits-svc-5.0) 有口音，辨识度高，适合非跨语言，跨语言会口糊
-  
-- [PlayVoice/lora-svc](https://github.com/PlayVoice/lora-svc) 无口音，辨识度略低，适合跨语言，跨语言不口糊
-
-- [PlayVoice/max-vc](https://github.com/PlayVoice/max-vc) 不提取F0，解决F0提取不准，丝滑的转换结果
-
 ## 本项目更新中，测试模型发布，非最后结果
 
 - 内容提取器更新为OpenAI的whisper
