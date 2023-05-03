@@ -61,7 +61,7 @@ dataset_raw
 
 ## 安装依赖
 
-    待完善~~~
+> pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
 ## 数据预处理
 - 1， 设置工作目录
