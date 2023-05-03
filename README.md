@@ -25,13 +25,13 @@
 | Feature | Status | Function |
 | --- | --- | --- |
 | whiser | ✅ | 强大的抗噪能力 |
-| bigvgan  | ✅ | 抗锯齿，蛇形激活 |
+| bigvgan  | ✅ | 抗锯齿与蛇形激活 |
 | nature speech | ✅ | 减少发音错误 |
 | nsf vocoder | ✅ | 解决断音 |
 | speaker encoder | ✅ | 音色编码与聚类 |
-| GRL for speaker | 用法和判别器类似 |防止编码器泄露音色 |
+| GRL for speaker | 待完成 |防止编码器泄露音色 |
 | one shot vits | ✅ | VITS 一句话克隆 |
-| band extention | ✅ | 16K升68K采样 |
+| band extention | ✅ | 16K升48K采样 |
 
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
