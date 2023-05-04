@@ -8,7 +8,7 @@
 
 【无需去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
 
-## 本项目更新中，测试模型发布，非最后结果
+## 本项目更新中，代码还有性能缺陷，暂时不处理BUG，测试模型测试用的~
 
 - 内容提取器更新为OpenAI的whisper
   
@@ -192,8 +192,6 @@ https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
 https://github.com/mindslab-ai/univnet [[paper]](https://arxiv.org/abs/2106.07889)
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
-
-[VI-SVC, Singing Voice Conversion based on VITS decoder](https://zhuanlan.zhihu.com/p/564060769)
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
