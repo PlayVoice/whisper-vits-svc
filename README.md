@@ -8,7 +8,7 @@
 
 【无需去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
 
-## 本项目更新中，代码还有性能缺陷，暂时不处理BUG，测试模型测试用的~
+## 本项目更新中，代码还有性能缺陷（13K以上高频是模糊的），不推荐现在就用这套代码训练，测试模型测试用的~
 
 - 内容提取器更新为OpenAI的whisper
   
@@ -76,7 +76,9 @@ dataset_raw
     > export PYTHONPATH=$PWD
 
 - 2， 重采样
-
+    
+    将音频剪裁为小于30秒的音频段，whisper的要求
+    
     生成采样率16000Hz音频, 存储路径为：./data_svc/waves-16k
 
     > python prepare/preprocess_a.py -w ./data_raw -o ./data_svc/waves-16k -s 16000
