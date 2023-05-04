@@ -127,10 +127,12 @@ def main(args):
         out_chunk = 2500  # 25 S
         out_index = 0
         out_audio = []
+        has_audio = False
 
         while (out_index + out_chunk < all_frame):
+            has_audio = True
             if (out_index == 0):  # start frame
-                cut_s = out_index
+                cut_s = 0
                 cut_s_48k = 0
             else:
                 cut_s = out_index - hop_frame
@@ -156,8 +158,12 @@ def main(args):
             out_index = out_index + out_chunk
 
         if (out_index < all_frame):
-            cut_s = out_index - hop_frame
-            cut_s_48k = hop_frame * hop_size
+            if (has_audio):
+                cut_s = out_index - hop_frame
+                cut_s_48k = hop_frame * hop_size
+            else:
+                cut_s = 0
+                cut_s_48k = 0
             sub_ppg = ppg[cut_s:, :].unsqueeze(0).to(device)
             sub_pit = pit[cut_s:].unsqueeze(0).to(device)
             sub_len = torch.LongTensor([all_frame - cut_s]).to(device)

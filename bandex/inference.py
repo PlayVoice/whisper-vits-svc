@@ -20,8 +20,10 @@ def main(args):
     bwe_chunk = 500  # 10S
     bwe_index = 0
     bwe_audio = []
+    has_audio = False
 
     while (bwe_index + bwe_chunk < hop_count):
+        has_audio = True
         if (bwe_index == 0):  # start frame
             cut_s_16k = 0
             cut_s_48k = 0
@@ -45,8 +47,12 @@ def main(args):
         bwe_index = bwe_index + bwe_chunk
 
     if (bwe_index < hop_count):
-        cut_s_16k = bwe_index - hop_frame
-        cut_s_48k = hop_frame * hop_size * SCALE
+        if (has_audio):
+            cut_s_16k = bwe_index - hop_frame
+            cut_s_48k = hop_frame * hop_size * SCALE
+        else:
+            cut_s_16k = 0
+            cut_s_48k = 0
         x_chunk = x[cut_s_16k * hop_size:]
         with torch.no_grad():
             i_audio = torch.from_numpy(x_chunk).to(device)
