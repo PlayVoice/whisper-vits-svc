@@ -29,7 +29,7 @@
 | nature speech | ✅ | 减少发音错误 |
 | nsf vocoder | ✅ | 解决断音 |
 | speaker encoder | ✅ | 音色编码与聚类 |
-| GRL for speaker | 待完成 |防止编码器泄露音色 |
+| GRL for speaker | ✅ |防止编码器泄露音色 |
 | one shot vits | ✅ | VITS 一句话克隆 |
 | band extention | ✅ | 16K升48K采样 |
 
@@ -76,9 +76,9 @@ dataset_raw
     > export PYTHONPATH=$PWD
 
 - 2， 重采样
-    
+
     将音频剪裁为小于30秒的音频段，whisper的要求
-    
+
     生成采样率16000Hz音频, 存储路径为：./data_svc/waves-16k
 
     > python prepare/preprocess_a.py -w ./data_raw -o ./data_svc/waves-16k -s 16000
