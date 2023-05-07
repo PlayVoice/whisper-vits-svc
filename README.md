@@ -10,28 +10,16 @@
 
 ## 本项目更新中，代码还有性能缺陷（13K以上高频是模糊的），不推荐现在就用这套代码训练，测试模型测试用的~
 
-- 内容提取器更新为OpenAI的whisper
-  
-- HiFiGAN更新为NVIDA的BigVGAN
-  
-- VITS框架加入Micsoft的NatureSpeech优化
-  
-- 加入音色提取
-
-- 加入说话人适配器
-
-- 加入GRL阻止音色泄漏
-
-| Feature | Status | Function |
-| --- | --- | --- |
-| whisper | ✅ | 强大的抗噪能力 |
-| bigvgan  | ✅ | 抗锯齿与蛇形激活 |
-| nature speech | ✅ | 减少发音错误 |
-| nsf vocoder | ✅ | 解决断音 |
-| speaker encoder | ✅ | 音色编码与聚类 |
-| GRL for speaker | ✅ |防止编码器泄露音色 |
-| one shot vits | ✅ | VITS 一句话克隆 |
-| band extention | ✅ | 16K升48K采样 |
+| Feature | From | Status | Function |
+| --- | --- | --- | --- |
+| whisper | OpenAI | ✅ | 强大的抗噪能力 |
+| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 |
+| nature speech | Microsoft | ✅ | 减少发音错误 |
+| nsf vocoder | NII | ✅ | 解决断音 |
+| speaker encoder | Google | ✅ | 音色编码与聚类 |
+| GRL for speaker | Skoltech |✅ |防止编码器泄露音色 |
+| one shot vits |  Samsung | ✅ | VITS 一句话克隆 |
+| band extention | Adobe | ✅ | 16K升48K采样 |
 
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
