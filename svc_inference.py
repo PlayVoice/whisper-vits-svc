@@ -1,13 +1,12 @@
 import os
 import torch
-import librosa
 import argparse
 import numpy as np
-import torchcrepe
 
 from omegaconf import OmegaConf
 from scipy.io.wavfile import write
 from vits.models import SynthesizerInfer
+from pitch import load_csv_pitch
 
 
 def load_svc_model(checkpoint_path, model):
@@ -22,49 +21,18 @@ def load_svc_model(checkpoint_path, model):
     return model
 
 
-def compute_f0_nn(filename, device):
-    audio, sr = librosa.load(filename, sr=16000)
-    assert sr == 16000
-    # Load audio
-    audio = torch.tensor(np.copy(audio))[None]
-    # Here we'll use a 20 millisecond hop length
-    hop_length = 320
-    # Provide a sensible frequency range for your domain (upper limit is 2006 Hz)
-    # This would be a reasonable range for speech
-    fmin = 50
-    fmax = 1000
-    # Select a model capacity--one of "tiny" or "full"
-    model = "full"
-    # Pick a batch size that doesn't cause memory errors on your gpu
-    batch_size = 512
-    # Compute pitch using first gpu
-    pitch, periodicity = torchcrepe.predict(
-        audio,
-        sr,
-        hop_length,
-        fmin,
-        fmax,
-        model,
-        batch_size=batch_size,
-        device=device,
-        return_periodicity=True,
-    )
-    pitch = np.repeat(pitch, 2, -1)  # 320 -> 160 * 2
-    periodicity = np.repeat(periodicity, 2, -1)  # 320 -> 160 * 2
-    # CREPE was not trained on silent audio. some error on silent need filter.
-    periodicity = torchcrepe.filter.median(periodicity, 9)
-    pitch = torchcrepe.filter.mean(pitch, 9)
-    pitch[periodicity < 0.1] = 0
-    pitch = pitch.squeeze(0)
-    return pitch
-
-
 def main(args):
     if (args.ppg == None):
         args.ppg = "svc_tmp.ppg.npy"
         print(
             f"Auto run : python whisper/inference.py -w {args.wave} -p {args.ppg}")
         os.system(f"python whisper/inference.py -w {args.wave} -p {args.ppg}")
+
+    if (args.pit == None):
+        args.pit = "svc_tmp.pit.csv"
+        print(
+            f"Auto run : python pitch/inference.py -w {args.wave} -p {args.pit}")
+        os.system(f"python pitch/inference.py -w {args.wave} -p {args.pit}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     hp = OmegaConf.load(args.config)
@@ -83,7 +51,7 @@ def main(args):
     ppg = np.repeat(ppg, 2, 0)  # 320 PPG -> 160 * 2
     ppg = torch.FloatTensor(ppg)
 
-    pit = compute_f0_nn(args.wave, device)
+    pit = load_csv_pitch(args.pit)
     if (args.statics == None):
         print("don't use pitch shift")
     else:
@@ -190,6 +158,8 @@ if __name__ == '__main__':
                         help="Path of speaker.")
     parser.add_argument('--ppg', type=str,
                         help="Path of content vector.")
+    parser.add_argument('--pit', type=str,
+                        help="Path of pitch csv file.")
     parser.add_argument('--statics', type=str,
                         help="Path of pitch statics.")
     args = parser.parse_args()

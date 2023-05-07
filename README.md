@@ -8,6 +8,8 @@
 
 【无需去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
 
+【使用Excel】进行原始的SVC调教
+
 ## 本项目更新中，代码还有性能缺陷（13K以上高频是模糊的），不推荐现在就用这套代码训练，测试模型测试用的~
 
 | Feature | From | Status | Function |
@@ -15,7 +17,7 @@
 | whisper | OpenAI | ✅ | 强大的抗噪能力 |
 | bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 |
 | nature speech | Microsoft | ✅ | 减少发音错误 |
-| nsf vocoder | NII | ✅ | 解决断音 |
+| neural source-filter | NII | ✅ | 解决断音问题 |
 | speaker encoder | Google | ✅ | 音色编码与聚类 |
 | GRL for speaker | Skoltech |✅ |防止编码器泄露音色 |
 | one shot vits |  Samsung | ✅ | VITS 一句话克隆 |
@@ -134,11 +136,17 @@ dataset_raw
 
     生成test.ppg.npy；如果下一步没有指定ppg文件，则调用程序自动生成
 
-- 4，指定参数，推理
+- 4， 提取csv文本格式F0参数，Excel打开csv文件，对照Audition手动修改错误的F0
 
-    > python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./configs/singers/singer0001.npy --wave test.wav --ppg test.ppg.npy
+    > python pitch/inference.py -w test.wav -p test.csv
+
+- 5，指定参数，推理
+
+    > python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./configs/singers/singer0001.npy --wave test.wav --ppg test.ppg.npy --pit test.csv
 
     当指定--ppg后，多次推理同一个音频时，可以避免重复提取音频内容编码；没有指定，也会自动提取；
+
+    当指定--pit后，可以加载手工调教的F0参数；没有指定，也会自动提取；
 
     生成文件在当前目录svc_out.wav；
 
@@ -149,6 +157,7 @@ dataset_raw
     |--spk      | 音色文件 |
     |--wave     | 音频文件 |
     |--ppg      | 音频内容 |
+    |--pit      | 音高内容 |
 
 ## 数据集
 
