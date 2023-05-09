@@ -147,6 +147,8 @@ dataset_raw
 
     > python pitch/inference.py -w test.wav -p test.csv
 
+![Audition ](https://user-images.githubusercontent.com/16432329/237006512-9ef97936-df00-4b2d-ab76-921c383eb616.png)
+
 - 5，指定参数，推理
 
     > python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./configs/singers/singer0001.npy --wave test.wav --ppg test.ppg.npy --pit test.csv
