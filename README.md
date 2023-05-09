@@ -16,7 +16,7 @@
 | --- | --- | --- | --- |
 | whisper | OpenAI | ✅ | 强大的抗噪能力 |
 | bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 |
-| nature speech | Microsoft | ✅ | 减少发音错误 |
+| natural speech | Microsoft | ✅ | 减少发音错误 |
 | neural source-filter | NII | ✅ | 解决断音问题 |
 | speaker encoder | Google | ✅ | 音色编码与聚类 |
 | GRL for speaker | Skoltech |✅ |防止编码器泄露音色 |
@@ -61,7 +61,7 @@ dataset_raw
 
 
 ## 数据预处理
-- 1， 设置工作目录
+- 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
     > export PYTHONPATH=$PWD
 
@@ -101,18 +101,25 @@ dataset_raw
 
 
 ## 训练
+- 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
-启动训练
+    > export PYTHONPATH=$PWD
 
-> python svc_trainer.py -c configs/base.yaml -n sovits5.0
+- 2， 启动训练，一阶段训练
 
-恢复训练
+    > python svc_trainer.py -c configs/base.yaml -n sovits5.0
 
-> python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
+- 3， 恢复训练
 
-查看日志
+    > python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
 
-> tensorboard --logdir logs/
+- 4， 查看日志
+
+    > tensorboard --logdir logs/
+
+- 5， 启动训练，二阶段训练:heartpulse:
+
+    > 待完成，二阶段训练内容：PPG叠加噪声，GRL去音色，natural speech推理loss
 
 ![snac](https://user-images.githubusercontent.com/16432329/234463836-ddf6d806-ccd1-452c-9961-1467ce26f304.png)
 
@@ -122,7 +129,7 @@ dataset_raw
 ### 模型包含56个发音人，在configs/singers目录中，可用于测试音色泄露
 ### 4个辨识度较高的发音人样本，在configs/singers_sample目录中
 
-- 1， 设置工作目录
+- 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
     > export PYTHONPATH=$PWD
 
