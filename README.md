@@ -10,6 +10,8 @@
 
 【使用Excel】进行原始的SVC调教
 
+![sonic visualiser](https://user-images.githubusercontent.com/16432329/237011482-51f3a45e-72c6-4d4a-b1df-f561d1df7132.png)
+
 ## 本项目更新中，代码还有性能缺陷（13K以上高频是模糊的），不推荐现在就用这套代码训练，测试模型测试用的~
 
 | Feature | From | Status | Function |
