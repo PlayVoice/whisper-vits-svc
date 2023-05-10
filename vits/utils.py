@@ -1,10 +1,6 @@
-import os
-import argparse
-import numpy as np
 import torch
-
+import numpy as np
 from scipy.io.wavfile import read
-from omegaconf import OmegaConf
 
 MATPLOTLIB_FLAG = False
 
@@ -35,18 +31,3 @@ def f0_to_coarse(f0):
     assert f0_coarse.max() <= 255 and f0_coarse.min(
     ) >= 1, (f0_coarse.max(), f0_coarse.min())
     return f0_coarse
-
-
-def get_hparams(init=True):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default="./configs/base.yaml",
-                        help='YAML file for configuration')
-    args = parser.parse_args()
-    hparams = OmegaConf.load(args.config)
-    model_dir = os.path.join("./logs", hparams.train.model)
-    if not os.path.exists(model_dir):
-        os.makedirs(model_dir)
-    config_save_path = os.path.join(model_dir, "config.json")
-    os.system(f"cp {args.config} {config_save_path}")
-    hparams.model_dir = model_dir
-    return hparams
