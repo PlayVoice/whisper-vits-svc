@@ -8,8 +8,7 @@ from torch.nn.utils import weight_norm
 from torch.nn.utils import remove_weight_norm
 
 from .nsf import SourceModuleHnNSF
-from .bigv import init_weights, SnakeBeta, AMPBlock
-from .alias import Activation1d
+from .bigv import init_weights, AMPBlock
 
 
 class SpeakerAdapter(nn.Module):
@@ -57,24 +56,28 @@ class Generator(torch.nn.Module):
         # speaker adaper, 256 should change by what speaker encoder you use
         self.adapter = SpeakerAdapter(hp.vits.spk_dim, hp.gen.upsample_input)
         # pre conv
-        self.conv_pre = nn.utils.weight_norm(
-            Conv1d(hp.gen.upsample_input, hp.gen.upsample_initial_channel, 7, 1, padding=3))
+        self.conv_pre = Conv1d(hp.gen.upsample_input,
+                               hp.gen.upsample_initial_channel, 7, 1, padding=3)
         # nsf
         self.f0_upsamp = torch.nn.Upsample(
             scale_factor=np.prod(hp.gen.upsample_rates))
-        self.m_source = SourceModuleHnNSF()
+        self.m_source = SourceModuleHnNSF(sampling_rate=hp.data.sampling_rate)
         self.noise_convs = nn.ModuleList()
         # transposed conv-based upsamplers. does not apply anti-aliasing
         self.ups = nn.ModuleList()
         for i, (u, k) in enumerate(zip(hp.gen.upsample_rates, hp.gen.upsample_kernel_sizes)):
             # print(f'ups: {i} {k}, {u}, {(k - u) // 2}')
             # base
-            self.ups.append(nn.ModuleList([
-                weight_norm(ConvTranspose1d(hp.gen.upsample_initial_channel // (2 ** i),
-                                            hp.gen.upsample_initial_channel // (
-                                                2 ** (i + 1)),
-                                            k, u, padding=(k - u) // 2))
-            ]))
+            self.ups.append(
+                weight_norm(
+                    ConvTranspose1d(
+                        hp.gen.upsample_initial_channel // (2 ** i),
+                        hp.gen.upsample_initial_channel // (2 ** (i + 1)),
+                        k,
+                        u,
+                        padding=(k - u) // 2)
+                )
+            )
             # nsf
             if i + 1 < len(hp.gen.upsample_rates):
                 stride_f0 = np.prod(hp.gen.upsample_rates[i + 1:])
@@ -99,17 +102,12 @@ class Generator(torch.nn.Module):
         for i in range(len(self.ups)):
             ch = hp.gen.upsample_initial_channel // (2 ** (i + 1))
             for k, d in zip(hp.gen.resblock_kernel_sizes, hp.gen.resblock_dilation_sizes):
-                self.resblocks.append(AMPBlock(hp, ch, k, d))
+                self.resblocks.append(AMPBlock(ch, k, d))
 
         # post conv
-        activation_post = SnakeBeta(ch, alpha_logscale=True)
-        self.activation_post = Activation1d(activation=activation_post)
-        self.conv_post = weight_norm(Conv1d(ch, 1, 7, 1, padding=3))
-
+        self.conv_post = Conv1d(ch, 1, 7, 1, padding=3, bias=False)
         # weight initialization
-        for i in range(len(self.ups)):
-            self.ups[i].apply(init_weights)
-        self.conv_post.apply(init_weights)
+        self.ups.apply(init_weights)
 
     def forward(self, spk, x, f0):
         # adapter
@@ -122,9 +120,9 @@ class Generator(torch.nn.Module):
         x = self.conv_pre(x)
 
         for i in range(self.num_upsamples):
+            x = nn.functional.leaky_relu(x, 0.1)
             # upsampling
-            for i_up in range(len(self.ups[i])):
-                x = self.ups[i][i_up](x)
+            x = self.ups[i](x)
             # nsf
             x_source = self.noise_convs[i](har_source)
             x = x + x_source
@@ -138,19 +136,16 @@ class Generator(torch.nn.Module):
             x = xs / self.num_kernels
 
         # post conv
-        x = self.activation_post(x)
+        x = nn.functional.leaky_relu(x)
         x = self.conv_post(x)
         x = torch.tanh(x)
         return x
 
     def remove_weight_norm(self):
         for l in self.ups:
-            for l_i in l:
-                remove_weight_norm(l_i)
+            remove_weight_norm(l)
         for l in self.resblocks:
             l.remove_weight_norm()
-        remove_weight_norm(self.conv_pre)
-        remove_weight_norm(self.conv_post)
 
     def eval(self, inference=False):
         super(Generator, self).eval()
@@ -179,9 +174,9 @@ class Generator(torch.nn.Module):
         x = self.conv_pre(x)
 
         for i in range(self.num_upsamples):
+            x = nn.functional.leaky_relu(x, 0.1)
             # upsampling
-            for i_up in range(len(self.ups[i])):
-                x = self.ups[i][i_up](x)
+            x = self.ups[i](x)
             # nsf
             x_source = self.noise_convs[i](har_source)
             x = x + x_source
@@ -195,7 +190,7 @@ class Generator(torch.nn.Module):
             x = xs / self.num_kernels
 
         # post conv
-        x = self.activation_post(x)
+        x = nn.functional.leaky_relu(x)
         x = self.conv_post(x)
         x = torch.tanh(x)
         return x
