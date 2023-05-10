@@ -212,6 +212,8 @@ https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/proje
 
 [AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
 
+[Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
+
 ## 贡献者
 
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
