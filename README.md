@@ -12,18 +12,18 @@
 
 ![sonic visualiser](https://user-images.githubusercontent.com/16432329/237011482-51f3a45e-72c6-4d4a-b1df-f561d1df7132.png)
 
-## 本项目更新中，代码还有性能缺陷（13K以上高频是模糊的），不推荐现在就用这套代码训练，测试模型测试用的~
+## 本项目预览模型已发布，还需要更多的时间训练到最佳状态
 
-| Feature | From | Status | Function |
-| --- | --- | --- | --- |
-| whisper | OpenAI | ✅ | 强大的抗噪能力 |
-| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 |
-| natural speech | Microsoft | ✅ | 减少发音错误 |
-| neural source-filter | NII | ✅ | 解决断音问题 |
-| speaker encoder | Google | ✅ | 音色编码与聚类 |
-| GRL for speaker | Skoltech |✅ |防止编码器泄露音色 |
-| one shot vits |  Samsung | ✅ | VITS 一句话克隆 |
-| band extention | Adobe | ✅ | 16K升48K采样 |
+| Feature | From | Status | Function | Remarks |
+| --- | --- | --- | --- | --- |
+| whisper | OpenAI | ✅ | 强大的抗噪能力 | 必须 |
+| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | 删除，GPU占用过多 |
+| natural speech | Microsoft | ✅ | 减少发音错误 | 二阶段训练 |
+| neural source-filter | NII | ✅ | 解决断音问题 | 必须 |
+| speaker encoder | Google | ✅ | 音色编码与聚类 | 必须 |
+| GRL for speaker | Skoltech |✅ |防止编码器泄露音色 | 二阶段训练 |
+| one shot vits |  Samsung | ✅ | VITS 一句话克隆 | 必须 |
+| band extention | Adobe | ✅ | 16K升48K采样 | 数据处理 |
 
 ## 模型简介
 歌声音色转换模型，通过SoftVC内容编码器提取源音频语音特征，与F0同时输入VITS替换原本的文本输入达到歌声转换的效果。同时，更换声码器为 [NSF HiFiGAN](https://github.com/openvpi/DiffSinger/tree/refactor/modules/nsf_hifigan) 解决断音问题
@@ -81,11 +81,11 @@ dataset_raw
 
     > python prepare/preprocess_a.py -w ./data_raw -o ./data_svc/waves-16k -s 16000
 
-    生成采样率48000Hz音频, 存储路径为：./data_svc/waves-48k
+    生成采样率32000Hz音频, 存储路径为：./data_svc/waves-32k
 
-    > python prepare/preprocess_a.py -w ./data_raw -o ./data_svc/waves-48k -s 48000
+    > python prepare/preprocess_a.py -w ./data_raw -o ./data_svc/waves-32k -s 32000
 
-    可选的16000Hz提升到48000Hz，待完善~批处理
+    可选的16000Hz提升到32000Hz，待完善~批处理
 
     > python bandex/inference.py -w svc_out.wav
 
@@ -98,10 +98,10 @@ dataset_raw
 - 5， 使用16k音频，提取音色编码
     > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
 
-- 6， 使用48k音频，提取线性谱
-    > python prepare/preprocess_spec.py -w data_svc/waves-48k/ -s data_svc/specs
+- 6， 使用32k音频，提取线性谱
+    > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
 
-- 7， 使用48k音频，生成训练索引
+- 7， 使用32k音频，生成训练索引
     > python prepare/preprocess_train.py
 
 - 8， 训练文件调试
@@ -121,7 +121,7 @@ dataset_raw
 
     > python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
 
-- 4， 查看日志
+- 4， 查看日志，release页面有完整的训练日志
 
     > tensorboard --logdir logs/
 
@@ -129,11 +129,11 @@ dataset_raw
 
     > 待完成，二阶段训练内容：PPG叠加噪声，GRL去音色，natural speech推理loss
 
-![snac](https://user-images.githubusercontent.com/16432329/234463836-ddf6d806-ccd1-452c-9961-1467ce26f304.png)
+![sovits5 0 preview](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/339c11d5-67dd-426a-ba19-077d66efc953)
 
 ## 推理
 
-### 可以下载release页面的sovits5.0_48k_debug.pth模型，进行推理测试
+### 可以下载release页面的sovits5.0.pretrain.pth模型，进行推理测试
 ### 模型包含56个发音人，在configs/singers目录中，可用于测试音色泄露
 ### 4个辨识度较高的发音人样本，在configs/singers_sample目录中
 
