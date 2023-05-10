@@ -6,13 +6,17 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
-【无需去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
+【不去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
 
-【使用Excel】进行原始的SVC调教
+【用Excel】进行原始的SVC调教
 
 ![sonic visualiser](https://user-images.githubusercontent.com/16432329/237011482-51f3a45e-72c6-4d4a-b1df-f561d1df7132.png)
 
 ## 本项目预览模型已发布，还需要更多的时间训练到最佳状态
+
+- 预览模型包括：生成器+判别器=194M，设置batch_size为8时，训练占用7.5G显存，学习门槛大大降低
+- 预览模型包含56个发音人，发音人文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
+- 发音人22，30，47，51辨识度较高，发音人样本在configs/singers_sample目录中
 
 | Feature | From | Status | Function | Remarks |
 | --- | --- | --- | --- | --- |
@@ -133,10 +137,6 @@ dataset_raw
 
 ## 推理
 
-### 可以下载release页面的sovits5.0.pretrain.pth模型，进行推理测试
-### 模型包含56个发音人，在configs/singers目录中，可用于测试音色泄露
-### 4个辨识度较高的发音人样本，在configs/singers_sample目录中
-
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
     > export PYTHONPATH=$PWD
@@ -151,7 +151,7 @@ dataset_raw
 
     生成test.ppg.npy；如果下一步没有指定ppg文件，则调用程序自动生成
 
-- 4， 提取csv文本格式F0参数，Excel打开csv文件，对照Audition手动修改错误的F0
+- 4， 提取csv文本格式F0参数，Excel打开csv文件，对照Audition或者SonicVisualiser手动修改错误的F0
 
     > python pitch/inference.py -w test.wav -p test.csv
 
