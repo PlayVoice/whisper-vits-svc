@@ -101,17 +101,17 @@ def main(args):
             has_audio = True
             if (out_index == 0):  # start frame
                 cut_s = 0
-                cut_s_48k = 0
+                cut_s_out = 0
             else:
                 cut_s = out_index - hop_frame
-                cut_s_48k = hop_frame * hop_size
+                cut_s_out = hop_frame * hop_size
 
             if (out_index + out_chunk + hop_frame > all_frame):  # end frame
                 cut_e = out_index + out_chunk
-                cut_e_48k = 0
+                cut_e_out = 0
             else:
                 cut_e = out_index + out_chunk + hop_frame
-                cut_e_48k = -1 * hop_frame * hop_size
+                cut_e_out = -1 * hop_frame * hop_size
 
             sub_ppg = ppg[cut_s:cut_e, :].unsqueeze(0).to(device)
             sub_pit = pit[cut_s:cut_e].unsqueeze(0).to(device)
@@ -121,17 +121,17 @@ def main(args):
             sub_out = model.inference(sub_ppg, sub_pit, spk, sub_len, sub_har)
             sub_out = sub_out[0, 0].data.cpu().detach().numpy()
 
-            sub_out = sub_out[cut_s_48k:cut_e_48k]
+            sub_out = sub_out[cut_s_out:cut_e_out]
             out_audio.extend(sub_out)
             out_index = out_index + out_chunk
 
         if (out_index < all_frame):
             if (has_audio):
                 cut_s = out_index - hop_frame
-                cut_s_48k = hop_frame * hop_size
+                cut_s_out = hop_frame * hop_size
             else:
                 cut_s = 0
-                cut_s_48k = 0
+                cut_s_out = 0
             sub_ppg = ppg[cut_s:, :].unsqueeze(0).to(device)
             sub_pit = pit[cut_s:].unsqueeze(0).to(device)
             sub_len = torch.LongTensor([all_frame - cut_s]).to(device)
@@ -139,7 +139,7 @@ def main(args):
             sub_out = model.inference(sub_ppg, sub_pit, spk, sub_len, sub_har)
             sub_out = sub_out[0, 0].data.cpu().detach().numpy()
 
-            sub_out = sub_out[cut_s_48k:]
+            sub_out = sub_out[cut_s_out:]
             out_audio.extend(sub_out)
         out_audio = np.asarray(out_audio)
 

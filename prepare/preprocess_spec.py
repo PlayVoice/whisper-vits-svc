@@ -9,12 +9,7 @@ from omegaconf import OmegaConf
 
 def compute_spec(hps, filename, specname):
     audio, sampling_rate = utils.load_wav_to_torch(filename)
-    if sampling_rate != hps.sampling_rate:
-        raise ValueError(
-            "{} {} SR doesn't match target {} SR".format(
-                sampling_rate, hps.sampling_rate
-            )
-        )
+    assert sampling_rate == hps.sampling_rate, f"{sampling_rate} is not {hps.sampling_rate}"
     audio_norm = audio / hps.max_wav_value
     audio_norm = audio_norm.unsqueeze(0)
     n_fft = hps.filter_length
