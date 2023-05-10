@@ -21,6 +21,27 @@ from vits_decoder.discriminator import Discriminator
 from vits.models import SynthesizerTrn
 from vits import commons
 from vits.losses import kl_loss
+from vits.commons import clip_grad_value_
+
+
+def load_pretrain(path, model):
+    saved_state_dict = torch.load(path, map_location='cpu')
+    saved_state_dict = saved_state_dict['model_g']
+    if hasattr(model, 'module'):
+        state_dict = model.module.state_dict()
+    else:
+        state_dict = model.state_dict()
+    new_state_dict = {}
+    for k, v in state_dict.items():
+        if k.startswith('TODO'):
+            new_state_dict[k] = v
+        else:
+            new_state_dict[k] = saved_state_dict[k]
+    if hasattr(model, 'module'):
+        model.module.load_state_dict(new_state_dict)
+    else:
+        model.load_state_dict(new_state_dict)
+    return model
 
 
 def train(rank, args, chkpt_path, hp, hp_str):
@@ -74,6 +95,11 @@ def train(rank, args, chkpt_path, hp, hp_str):
         writer = MyWriter(hp, log_dir)
         valloader = create_dataloader_eval(hp)
 
+    if os.path.isfile(hp.train.pretrain):
+        if rank == 0:
+            logger.info("Start from 32k pretrain model: %s" % hp.train.pretrain)
+        load_pretrain(hp.train.pretrain, model_g)
+
     if chkpt_path is not None:
         if rank == 0:
             logger.info("Resuming from checkpoint: %s" % chkpt_path)
@@ -82,8 +108,8 @@ def train(rank, args, chkpt_path, hp, hp_str):
         model_d.load_state_dict(checkpoint['model_d'])
         optim_g.load_state_dict(checkpoint['optim_g'])
         optim_d.load_state_dict(checkpoint['optim_d'])
-        step = checkpoint['step']
         init_epoch = checkpoint['epoch']
+        step = checkpoint['step']
 
         if rank == 0:
             if hp_str != checkpoint['hp_str']:
@@ -93,20 +119,19 @@ def train(rank, args, chkpt_path, hp, hp_str):
             logger.info("Starting new training run.")
 
     if args.num_gpus > 1:
-        model_g = DistributedDataParallel(model_g, device_ids=[rank]).to(device)
-        model_d = DistributedDataParallel(model_d, device_ids=[rank]).to(device)
+        model_g = DistributedDataParallel(model_g, device_ids=[rank])
+        model_d = DistributedDataParallel(model_d, device_ids=[rank])
 
     # this accelerates training when the size of minibatch is always consistent.
     # if not consistent, it'll horribly slow down.
     torch.backends.cudnn.benchmark = True
 
+    scheduler_g = torch.optim.lr_scheduler.ExponentialLR(optim_g, gamma=hp.train.lr_decay, last_epoch=init_epoch-2)
+    scheduler_d = torch.optim.lr_scheduler.ExponentialLR(optim_d, gamma=hp.train.lr_decay, last_epoch=init_epoch-2)
+
+    stft_criterion = MultiResolutionSTFTLoss(device, eval(hp.mrd.resolutions))
+
     trainloader = create_dataloader_train(hp, args.num_gpus, rank)
-
-    model_g.train()
-    model_d.train()
-
-    resolutions = eval(hp.mrd.resolutions)
-    stft_criterion = MultiResolutionSTFTLoss(device, resolutions)
 
     for epoch in range(init_epoch, hp.train.epochs):
 
@@ -121,8 +146,11 @@ def train(rank, args, chkpt_path, hp, hp_str):
         else:
             loader = trainloader
 
+        model_g.train()
+        model_d.train()
+
         for ppg, ppg_l, pit, spk, spec, spec_l, audio, audio_l in loader:
-            
+
             ppg = ppg.to(device)
             pit = pit.to(device)
             spk = spk.to(device)
@@ -131,7 +159,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             ppg_l = ppg_l.to(device)
             spec_l = spec_l.to(device)
             audio_l = audio_l.to(device)
-            
+
             # generator
             optim_g.zero_grad()
 
@@ -153,40 +181,44 @@ def train(rank, args, chkpt_path, hp, hp_str):
             stft_loss = (sc_loss + mag_loss) * hp.train.c_stft
 
             # Generator Loss
-            res_fake, period_fake = model_d(fake_audio)
-
+            res_fake, period_fake, dis_fake = model_d(fake_audio)
             score_loss = 0.0
-
-            for (_, score_fake) in res_fake + period_fake:
+            for (_, score_fake) in res_fake + period_fake + dis_fake:
                 score_loss += torch.mean(torch.pow(score_fake - 1.0, 2))
+            score_loss = score_loss / len(res_fake + period_fake + dis_fake)
 
-            score_loss = score_loss / len(res_fake + period_fake)
+            # Feature Loss
+            res_real, period_real, dis_real = model_d(audio)
+            feat_loss = 0.0
+            for (feat_fake, _), (feat_real, _) in zip(res_fake + period_fake + dis_fake, res_real + period_real + dis_real):
+                for fake, real in zip(feat_fake, feat_real):
+                    feat_loss += torch.mean(torch.abs(fake - real))
+            feat_loss = feat_loss / len(res_fake + period_fake + dis_fake)
+            feat_loss = feat_loss * 2
 
             # Kl Loss
             loss_kl_f = kl_loss(z_f, logs_q, m_p, logs_p, logdet_f, z_mask) * hp.train.c_kl
             loss_kl_r = kl_loss(z_r, logs_p, m_q, logs_q, logdet_r, z_mask) * hp.train.c_kl
 
-            # for fast train
-            loss_g = score_loss + mel_loss + stft_loss + loss_kl_f
-            # for last train
-            # loss_g = score_loss + stft_loss + loss_kl_f + loss_kl_r
-
+            # Loss
+            loss_g = score_loss + feat_loss + mel_loss + stft_loss + loss_kl_f
             loss_g.backward()
+            clip_grad_value_(model_g.parameters(),  None)
             optim_g.step()
 
             # discriminator
             optim_d.zero_grad()
-            res_fake, period_fake = model_d(fake_audio.detach())
-            res_real, period_real = model_d(audio)
+            res_fake, period_fake, dis_fake = model_d(fake_audio.detach())
+            res_real, period_real, dis_real = model_d(audio)
 
             loss_d = 0.0
-            for (_, score_fake), (_, score_real) in zip(res_fake + period_fake, res_real + period_real):
+            for (_, score_fake), (_, score_real) in zip(res_fake + period_fake + dis_fake, res_real + period_real + dis_real):
                 loss_d += torch.mean(torch.pow(score_real - 1.0, 2))
                 loss_d += torch.mean(torch.pow(score_fake, 2))
-
-            loss_d = loss_d / len(res_fake + period_fake)
+            loss_d = loss_d / len(res_fake + period_fake + dis_fake)
 
             loss_d.backward()
+            clip_grad_value_(model_d.parameters(),  None)
             optim_d.step()
 
             step += 1
@@ -201,7 +233,6 @@ def train(rank, args, chkpt_path, hp, hp_str):
             if rank == 0 and step % hp.log.info_interval == 0:
                 writer.log_training(
                     loss_g, loss_d, loss_m, loss_s, loss_k, loss_r, score_loss.item(), step)
-                # loader.set_description("g %.04f m %.04f s %.04f d %.04f | step %d" % (loss_g, loss_m, loss_s, loss_d, step))
                 logger.info("g %.04f m %.04f s %.04f d %.04f k %.04f r %.04f | step %d" % (
                     loss_g, loss_m, loss_s, loss_d, loss_k, loss_r, step))
 
@@ -218,3 +249,6 @@ def train(rank, args, chkpt_path, hp, hp_str):
                 'hp_str': hp_str,
             }, save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
+
+        scheduler_g.step()
+        scheduler_d.step()
