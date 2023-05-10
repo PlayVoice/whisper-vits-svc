@@ -6,9 +6,9 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
-【不去伴奏】就能直接进行歌声转换的SVC库（轻度伴奏）
+【带 伴奏】也能进行歌声转换的SVC库（轻度伴奏）
 
-【用Excel】进行原始的SVC调教
+【用 Excel】进行原始的SVC手工调教
 
 ![sonic visualiser](https://user-images.githubusercontent.com/16432329/237011482-51f3a45e-72c6-4d4a-b1df-f561d1df7132.png)
 
@@ -132,6 +132,8 @@ dataset_raw
 - 5， 启动训练，二阶段训练:heartpulse:
 
     > 待完成，二阶段训练内容：PPG叠加噪声，GRL去音色，natural speech推理loss
+
+20K一阶段训练日志如下，可以看到还未收敛完成
 
 ![sovits5 0 preview](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/339c11d5-67dd-426a-ba19-077d66efc953)
 
