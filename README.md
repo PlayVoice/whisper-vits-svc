@@ -6,6 +6,8 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
+![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
+
 【带 伴奏】也能进行歌声转换的SVC库（轻度伴奏）
 
 【用 Excel】进行原始的SVC手工调教
