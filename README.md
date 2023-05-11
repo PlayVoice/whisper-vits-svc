@@ -139,6 +139,8 @@ dataset_raw
 
 ![sovits5 0 preview](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/339c11d5-67dd-426a-ba19-077d66efc953)
 
+![sovits_spec](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/c4223cf3-b4a0-4325-bec0-6d46d195a1fc)
+
 ## 推理
 
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
