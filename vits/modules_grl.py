@@ -80,13 +80,6 @@ class SpeakerClassifier(nn.Module):
             x = (B, embed_dim)
         '''
         # pass through classifier
-        outputs = self.classifier(x)  # (B, nb_speakers)
+        x_ave = torch.mean(x, dim=-1)
+        outputs = self.classifier(x_ave)  # (B, nb_speakers)
         return outputs
-
-
-
-# -- Speaker Classifier
-# speaker_posterior = self.speaker_classifier(prosody_vector.squeeze(1))
-# LOSS
-# self.nll_loss = nn.NLLLoss()
-# adv_loss = self.nll_loss(speaker_posteriors, speaker_targets[序号])

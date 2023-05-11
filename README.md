@@ -31,6 +31,7 @@
 | speaker encoder | Google | ✅ | 音色编码与聚类 | 必须 |
 | GRL for speaker | Skoltech |✅ |防止编码器泄露音色 | 二阶段训练 |
 | one shot vits |  Samsung | ✅ | VITS 一句话克隆 | 必须 |
+| SCLN |  Microsoft | ✅ | 改善克隆 | 必须 |
 | band extention | Adobe | ✅ | 16K升48K采样 | 数据处理 |
 
 ## 模型简介
@@ -135,7 +136,9 @@ dataset_raw
 
 - 5， 启动训练，二阶段训练:heartpulse:
 
-    > 待完成，二阶段训练内容：PPG叠加噪声，GRL去音色，natural speech推理loss
+    二阶段训练内容：PPG扰动，GRL去音色，natural speech推理loss;验证中~~~
+
+    > python svc_trainer.py -c configs/more.yaml -n more -e 1
 
 20K一阶段训练日志如下，可以看到还未收敛完成
 

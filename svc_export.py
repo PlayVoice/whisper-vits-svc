@@ -30,8 +30,6 @@ def load_model(checkpoint_path, model):
 def save_pretrain(checkpoint_path, save_path):
     assert os.path.isfile(checkpoint_path)
     checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
-    checkpoint_dict['model_g']['dec.m_source.l_linear.weight'] = w
-    checkpoint_dict['model_g']['dec.m_source.l_linear.bias'] = b
     torch.save({
         'model_g': checkpoint_dict['model_g'],
         'model_d': checkpoint_dict['model_d'],
