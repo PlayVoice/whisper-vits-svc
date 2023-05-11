@@ -1,5 +1,4 @@
 fsspec
-ffmpeg
 ffmpeg-python
 praat-parselmouth
 pyworld
@@ -7,8 +6,6 @@ matplotlib
 soundfile
 scikit-learn
 scipy
-torch
-torchaudio
 torchcrepe
 tensorboard
 transformers
