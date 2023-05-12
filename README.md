@@ -20,6 +20,8 @@
 
 svc-develop-team/so-vits-svc基于PlayVoice/VI-SVC演变而来，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
 
+本项目是PlayVoice/VI-SVC是继续完善，而非基于svc-develop-team/so-vits-svc
+
 ## 本项目预览模型已发布，还需要更多的时间训练到最佳状态
 
 - 预览模型包括：生成器+判别器=194M，设置batch_size为8时，训练占用7.5G显存，学习门槛大大降低
