@@ -1,4 +1,4 @@
-# Singing Voice Conversion
+# Variational Inference with adversarial learning for end-to-end Singing Voice Conversion (VI-SVC) based on Variational Inference with adversarial learning for end-to-end Text-to-Speech (VITS)
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/maxmax20160403/sovits5.0)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1PY1E4bDAeHbAD4r99D_oYXB46fG8nIA5?usp=sharing)
 <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/PlayVoice/so-vits-svc-5.0">
@@ -16,11 +16,7 @@
 
 ![sonic visualiser](https://user-images.githubusercontent.com/16432329/237011482-51f3a45e-72c6-4d4a-b1df-f561d1df7132.png)
 
-## 本项目与svc-develop-team/so-vits-svc仓库的关系
-
-svc-develop-team/so-vits-svc基于PlayVoice/VI-SVC演变而来，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
-
-本项目是PlayVoice/VI-SVC的继续完善，而非基于svc-develop-team/so-vits-svc
+本项目并不基于svc-develop-team/so-vits-svc，恰恰相反，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
 
 ## 本项目预览模型已发布，还需要更多的时间训练到最佳状态
 
