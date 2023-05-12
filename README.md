@@ -59,7 +59,7 @@ svc-develop-team/so-vits-svc基于PlayVoice/VI-SVC演变而来，见https://gith
 - 2 频率提升
 - 3 音质提升，基于https://github.com/openvpi/vocoders ，待整合
 
-然后以下文件结构将数据集放入dataset_raw目录
+然后以下面文件结构将数据集放入dataset_raw目录
 ```shell
 dataset_raw
 ├───speaker0
@@ -221,6 +221,10 @@ https://github.com/mindslab-ai/univnet [[paper]](https://arxiv.org/abs/2106.0788
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
 
+https://github.com/brentspell/hifi-gan-bwe
+
+https://github.com/mozilla/TTS
+
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
 [Adapter-Based Extension of Multi-Speaker Text-to-Speech Model for New Speakers](https://arxiv.org/abs/2211.00585)
@@ -228,6 +232,8 @@ https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/proje
 [AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
 
 [Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
+
+[Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
 
 ## 贡献者
 
