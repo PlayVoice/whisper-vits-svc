@@ -20,7 +20,7 @@
 
 svc-develop-team/so-vits-svc基于PlayVoice/VI-SVC演变而来，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
 
-本项目是PlayVoice/VI-SVC是继续完善，而非基于svc-develop-team/so-vits-svc
+本项目是PlayVoice/VI-SVC的继续完善，而非基于svc-develop-team/so-vits-svc
 
 ## 本项目预览模型已发布，还需要更多的时间训练到最佳状态
 
