@@ -35,7 +35,7 @@
 | natural speech | Microsoft | ✅ | 减少发音错误 | 二阶段训练 |
 | neural source-filter | NII | ✅ | 解决断音问题 | 必须 |
 | speaker encoder | Google | ✅ | 音色编码与聚类 | 必须 |
-| GRL for speaker | Skoltech |✅ |防止编码器泄露音色 | 二阶段训练 |
+| GRL for speaker | Ubisoft |✅ |防止编码器泄露音色 | 二阶段训练 |
 | one shot vits |  Samsung | ✅ | VITS 一句话克隆 | 必须 |
 | SCLN |  Microsoft | ✅ | 改善克隆 | 必须 |
 | band extention | Adobe | ✅ | 16K升48K采样 | 数据处理 |
