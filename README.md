@@ -27,7 +27,7 @@
 
 本项目并不基于svc-develop-team/so-vits-svc，恰恰相反，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
 
-## 本项目预览模型已发布，还需要更多的时间训练到最佳状态
+## 本项目还在调试开发中~~~
 
 - 预览模型包括：生成器+判别器=194M，设置batch_size为8时，训练占用7.5G显存，学习门槛大大降低
 - 预览模型包含56个发音人，发音人文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
