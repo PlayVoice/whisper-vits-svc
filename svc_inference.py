@@ -16,7 +16,11 @@ def load_svc_model(checkpoint_path, model):
     state_dict = model.state_dict()
     new_state_dict = {}
     for k, v in state_dict.items():
-        new_state_dict[k] = saved_state_dict[k]
+        try:
+            new_state_dict[k] = saved_state_dict[k]
+        except:
+            print("%s is not in the checkpoint" % k)
+            new_state_dict[k] = v
     model.load_state_dict(new_state_dict)
     return model
 
