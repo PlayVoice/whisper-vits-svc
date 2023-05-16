@@ -3,9 +3,9 @@
 
 import torch
 import torch.nn as nn
-from collections import OrderedDict
-from torch.nn import functional as F
+
 from torch.autograd import Function
+from torch.nn.utils import weight_norm
 
 
 class GradientReversalFunction(Function):
@@ -39,26 +39,6 @@ class GradientReversal(torch.nn.Module):
         return GradientReversalFunction.apply(x, self.lambda_)
 
 
-class LinearNorm(nn.Module):
-    ''' Linear Norm Module:
-        - Linear Layer
-    '''
-
-    def __init__(self, in_dim, out_dim, bias=True, w_init_gain='linear'):
-        super(LinearNorm, self).__init__()
-        self.linear_layer = nn.Linear(in_dim, out_dim, bias=bias)
-        nn.init.xavier_uniform_(self.linear_layer.weight,
-                                gain=nn.init.calculate_gain(w_init_gain))
-
-    def forward(self, x):
-        ''' Forward function of Linear Norm
-            x = (*, in_dim)
-        '''
-        x = self.linear_layer(x)  # (*, out_dim)
-
-        return x
-
-
 class SpeakerClassifier(nn.Module):
     ''' Speaker Classifier Module:
         - 3x Linear Layers with ReLU
@@ -68,11 +48,11 @@ class SpeakerClassifier(nn.Module):
         super(SpeakerClassifier, self).__init__()
         self.classifier = nn.Sequential(
             GradientReversal(lambda_reversal=1),
-            LinearNorm(embed_dim, embed_dim, w_init_gain='relu'),
+            weight_norm(nn.Conv1d(embed_dim, embed_dim, kernel_size=5, padding=2)),
             nn.ReLU(),
-            LinearNorm(embed_dim, embed_dim, w_init_gain='relu'),
+            weight_norm(nn.Conv1d(embed_dim, embed_dim, kernel_size=5, padding=2)),
             nn.ReLU(),
-            LinearNorm(embed_dim, spk_dim, w_init_gain='linear')
+            weight_norm(nn.Conv1d(embed_dim, spk_dim, kernel_size=5, padding=2))
         )
 
     def forward(self, x):
@@ -80,6 +60,6 @@ class SpeakerClassifier(nn.Module):
             x = (B, embed_dim)
         '''
         # pass through classifier
-        x_ave = torch.mean(x, dim=-1)
-        outputs = self.classifier(x_ave)  # (B, nb_speakers)
+        outputs = self.classifier(x)  # (B, nb_speakers)
+        outputs = torch.mean(outputs, dim=-1)
         return outputs
