@@ -44,6 +44,8 @@
 | SCLN |  Microsoft | ✅ | 改善克隆 | 必须 |
 | band extention | Adobe | ✅ | 16K升48K采样 | 数据处理 |
 
+💗GRL去音色泄漏，更多的是理论上的价值；Hugging Face Demo推理模型无泄漏主要归因于PPG扰动。
+
 ## 数据集准备
 
 💗必要的前处理：
