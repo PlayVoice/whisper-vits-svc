@@ -233,6 +233,7 @@ class SynthesizerInfer(nn.Module):
         return self.dec.source2wav(source)
 
     def inference(self, ppg, pit, spk, ppg_l, source):
+        ppg = ppg + torch.randn_like(ppg) * 0.1  # Perturbation
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, f0=f0_to_coarse(pit))
         z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
