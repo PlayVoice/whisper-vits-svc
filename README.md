@@ -235,6 +235,16 @@ https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 [Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
 
+## 基于数据扰动防止音色泄露的方法
+
+https://github.com/revsic/torch-nansy/blob/main/utils/augment/praat.py
+
+https://github.com/revsic/torch-nansy/blob/main/utils/augment/peq.py
+
+https://github.com/biggytruck/SpeechSplit2/blob/main/utils.py
+
+https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
+
 ## 贡献者
 
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
