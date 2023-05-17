@@ -229,6 +229,8 @@ https://github.com/mozilla/TTS
 
 [Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
 
+[Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
+
 ## 贡献者
 
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
