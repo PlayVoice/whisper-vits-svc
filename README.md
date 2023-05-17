@@ -237,6 +237,8 @@ https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 ## 基于数据扰动防止音色泄露的方法
 
+https://github.com/auspicious3000/contentvec/blob/main/contentvec/data/audio/audio_utils_1.py
+
 https://github.com/revsic/torch-nansy/blob/main/utils/augment/praat.py
 
 https://github.com/revsic/torch-nansy/blob/main/utils/augment/peq.py
