@@ -211,13 +211,15 @@ https://github.com/openai/whisper/ [paper](https://arxiv.org/abs/2212.04356)
 
 https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
 
-https://github.com/mindslab-ai/univnet [[paper]](https://arxiv.org/abs/2106.07889)
+https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
 
 https://github.com/brentspell/hifi-gan-bwe
 
 https://github.com/mozilla/TTS
+
+https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
