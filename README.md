@@ -18,9 +18,9 @@
 
 【低 配置】6G显存可训练
 
-【无 泄漏】支持多发音人的SVC库
+【无 泄漏】支持多发音人
 
-【带 伴奏】也能进行歌声转换的SVC库（轻度伴奏）
+【带 伴奏】也能进行歌声转换（轻度伴奏）
 
 【用 Excel】进行原始的SVC手工调教
 
@@ -249,3 +249,10 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
+
+## 交流群
+<div align="center">
+
+![炼丹师工会-SVC群二维码](https://github.com/PlayVoice/vits_chinese/assets/16432329/c1dce8eb-ea7a-4c0f-8a8a-735bb6525a7c)
+
+</div>
