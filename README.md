@@ -16,6 +16,8 @@
 
 ![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
 
+【低 配置】6G显存可训练
+
 【无 泄漏】支持多发音人的SVC库
 
 【带 伴奏】也能进行歌声转换的SVC库（轻度伴奏）
@@ -34,17 +36,18 @@
 
 | Feature | From | Status | Function | Remarks |
 | --- | --- | --- | --- | --- |
-| whisper | OpenAI | ✅ | 强大的抗噪能力 | 必须 |
+| whisper | OpenAI | ✅ | 强大的抗噪能力 | 参数修改 |
 | bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | 删除，GPU占用过多 |
-| natural speech | Microsoft | ✅ | 减少发音错误 | 二阶段训练 |
-| neural source-filter | NII | ✅ | 解决断音问题 | 必须 |
-| speaker encoder | Google | ✅ | 音色编码与聚类 | 必须 |
-| GRL for speaker | Ubisoft |✅ |防止编码器泄露音色 | 二阶段训练 |
-| one shot vits |  Samsung | ✅ | VITS 一句话克隆 | 必须 |
-| SCLN |  Microsoft | ✅ | 改善克隆 | 必须 |
+| natural speech | Microsoft | ✅ | 减少发音错误 | - |
+| neural source-filter | NII | ✅ | 解决断音问题 | 参数优化 |
+| speaker encoder | Google | ✅ | 音色编码与聚类 | - |
+| GRL for speaker | Ubisoft |✅ | 防止编码器泄露音色 | 原理类似判别器的对抗训练 |
+| one shot vits |  Samsung | ✅ | VITS 一句话克隆 | - |
+| SCLN |  Microsoft | ✅ | 改善克隆 | - |
 | band extention | Adobe | ✅ | 16K升48K采样 | 数据处理 |
+| PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
 
-💗GRL去音色泄漏，更多的是理论上的价值；Hugging Face Demo推理模型无泄漏主要归因于PPG扰动。
+💗GRL去音色泄漏，更多的是理论上的价值；Hugging Face Demo推理模型无泄漏主要归因于PPG扰动；由于使用了数据扰动，相比其他项目需要更长的训练时间。
 
 ## 数据集准备
 
@@ -122,7 +125,7 @@ dataset_raw
 
     > export PYTHONPATH=$PWD
 
-- 2， 启动训练，一阶段训练
+- 2， 启动训练
 
     > python svc_trainer.py -c configs/base.yaml -n sovits5.0
 
@@ -133,12 +136,6 @@ dataset_raw
 - 4， 查看日志，release页面有完整的训练日志
 
     > tensorboard --logdir logs/
-
-- 5， 启动训练，二阶段训练:heartpulse:
-
-    二阶段训练内容：PPG扰动，GRL去音色，natural speech推理loss;验证中~~~
-
-    > python svc_trainer.py -c configs/more.yaml -n more -e 1
 
 20K一阶段训练日志如下，可以看到还未收敛完成
 
