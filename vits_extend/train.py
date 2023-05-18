@@ -24,9 +24,7 @@ from vits.losses import kl_loss
 from vits.commons import clip_grad_value_
 
 
-def load_pretrain(path, model):
-    saved_state_dict = torch.load(path, map_location='cpu')
-    saved_state_dict = saved_state_dict['model_g']
+def load_part(model, saved_state_dict):
     if hasattr(model, 'module'):
         state_dict = model.module.state_dict()
     else:
@@ -37,6 +35,25 @@ def load_pretrain(path, model):
             new_state_dict[k] = v
         else:
             new_state_dict[k] = saved_state_dict[k]
+    if hasattr(model, 'module'):
+        model.module.load_state_dict(new_state_dict)
+    else:
+        model.load_state_dict(new_state_dict)
+    return model
+
+
+def load_model(model, saved_state_dict):
+    if hasattr(model, 'module'):
+        state_dict = model.module.state_dict()
+    else:
+        state_dict = model.state_dict()
+    new_state_dict = {}
+    for k, v in state_dict.items():
+        try:
+            new_state_dict[k] = saved_state_dict[k]
+        except:
+            print("%s is not in the checkpoint" % k)
+            new_state_dict[k] = v
     if hasattr(model, 'module'):
         model.module.load_state_dict(new_state_dict)
     else:
@@ -98,14 +115,16 @@ def train(rank, args, chkpt_path, hp, hp_str):
     if os.path.isfile(hp.train.pretrain):
         if rank == 0:
             logger.info("Start from 32k pretrain model: %s" % hp.train.pretrain)
-        load_pretrain(hp.train.pretrain, model_g)
+        checkpoint = torch.load(hp.train.pretrain, map_location='cpu')
+        load_model(model_g, checkpoint['model_g'])
+        load_model(model_d, checkpoint['model_d'])
 
     if chkpt_path is not None:
         if rank == 0:
             logger.info("Resuming from checkpoint: %s" % chkpt_path)
         checkpoint = torch.load(chkpt_path, map_location='cpu')
-        model_g.load_state_dict(checkpoint['model_g'])
-        model_d.load_state_dict(checkpoint['model_d'])
+        load_model(model_g, checkpoint['model_g'])
+        load_model(model_d, checkpoint['model_d'])
         optim_g.load_state_dict(checkpoint['optim_g'])
         optim_d.load_state_dict(checkpoint['optim_d'])
         init_epoch = checkpoint['epoch']
@@ -184,19 +203,19 @@ def train(rank, args, chkpt_path, hp, hp_str):
             stft_loss = (sc_loss + mag_loss) * hp.train.c_stft
 
             # Generator Loss
-            res_fake, period_fake, dis_fake = model_d(fake_audio)
+            res_fake, period_fake = model_d(fake_audio)
             score_loss = 0.0
-            for (_, score_fake) in res_fake + period_fake + dis_fake:
+            for (_, score_fake) in res_fake + period_fake:
                 score_loss += torch.mean(torch.pow(score_fake - 1.0, 2))
-            score_loss = score_loss / len(res_fake + period_fake + dis_fake)
+            score_loss = score_loss / len(res_fake + period_fake)
 
             # Feature Loss
-            res_real, period_real, dis_real = model_d(audio)
+            res_real, period_real = model_d(audio)
             feat_loss = 0.0
-            for (feat_fake, _), (feat_real, _) in zip(res_fake + period_fake + dis_fake, res_real + period_real + dis_real):
+            for (feat_fake, _), (feat_real, _) in zip(res_fake + period_fake, res_real + period_real):
                 for fake, real in zip(feat_fake, feat_real):
                     feat_loss += torch.mean(torch.abs(fake - real))
-            feat_loss = feat_loss / len(res_fake + period_fake + dis_fake)
+            feat_loss = feat_loss / len(res_fake + period_fake)
             feat_loss = feat_loss * 2
 
             # Kl Loss
@@ -211,14 +230,14 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
             # discriminator
             optim_d.zero_grad()
-            res_fake, period_fake, dis_fake = model_d(fake_audio.detach())
-            res_real, period_real, dis_real = model_d(audio)
+            res_fake, period_fake = model_d(fake_audio.detach())
+            res_real, period_real = model_d(audio)
 
             loss_d = 0.0
-            for (_, score_fake), (_, score_real) in zip(res_fake + period_fake + dis_fake, res_real + period_real + dis_real):
+            for (_, score_fake), (_, score_real) in zip(res_fake + period_fake, res_real + period_real):
                 loss_d += torch.mean(torch.pow(score_real - 1.0, 2))
                 loss_d += torch.mean(torch.pow(score_fake, 2))
-            loss_d = loss_d / len(res_fake + period_fake + dis_fake)
+            loss_d = loss_d / len(res_fake + period_fake)
 
             loss_d.backward()
             clip_grad_value_(model_d.parameters(),  None)
