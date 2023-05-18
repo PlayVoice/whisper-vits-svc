@@ -38,10 +38,9 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
         self.MRD = MultiResolutionDiscriminator(hp)
         self.MPD = MultiPeriodDiscriminator(hp)
-        self.DIS = DiscriminatorS()
 
     def forward(self, x):
-        return self.MRD(x), self.MPD(x), self.DIS(x)
+        return self.MRD(x), self.MPD(x)
 
 
 if __name__ == '__main__':
@@ -59,4 +58,3 @@ if __name__ == '__main__':
 
     pytorch_total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(pytorch_total_params)
-
