@@ -40,9 +40,6 @@ class GradientReversal(torch.nn.Module):
 
 
 class SpeakerClassifier(nn.Module):
-    ''' Speaker Classifier Module:
-        - 3x Linear Layers with ReLU
-    '''
 
     def __init__(self, embed_dim, spk_dim):
         super(SpeakerClassifier, self).__init__()
@@ -57,7 +54,7 @@ class SpeakerClassifier(nn.Module):
 
     def forward(self, x):
         ''' Forward function of Speaker Classifier:
-            x = (B, embed_dim)
+            x = (B, embed_dim, len)
         '''
         # pass through classifier
         outputs = self.classifier(x)  # (B, nb_speakers)
