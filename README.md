@@ -20,9 +20,9 @@
 
 【无 泄漏】支持多发音人
 
-【带 伴奏】也能进行歌声转换（轻度伴奏）
+【带 伴奏】也能进行转换，轻度伴奏
 
-【用 Excel】进行原始的SVC手工调教
+【用 Excel】进行原始调教，纯手工
 
 ![sonic visualiser](https://user-images.githubusercontent.com/16432329/237011482-51f3a45e-72c6-4d4a-b1df-f561d1df7132.png)
 
