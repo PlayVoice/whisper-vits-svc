@@ -51,6 +51,11 @@
 💗GRL去音色泄漏，更多的是理论上的价值；Hugging Face Demo推理模型无泄漏主要归因于PPG扰动；由于使用了数据扰动，相比其他项目需要更长的训练时间。
 
 ## 数据集准备
+<div align="center">
+    
+![uvr5](https://github.com/PlayVoice/vits_chinese/assets/16432329/7f956925-f012-4d37-8f5c-d3d1c5eecf77)
+    
+</div>
 
 💗必要的前处理：
 - 1 降噪&去伴奏
