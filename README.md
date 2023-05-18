@@ -253,6 +253,6 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 ## 交流群
 <div align="center">
 
-![炼丹师工会-SVC群二维码](https://github.com/PlayVoice/vits_chinese/assets/16432329/c1dce8eb-ea7a-4c0f-8a8a-735bb6525a7c)
+![炼丹师公会-SVC群聊二维码](https://github.com/PlayVoice/vits_chinese/assets/16432329/1d728f61-be74-4706-9ecf-5cb0be4c094c)
 
 </div>
