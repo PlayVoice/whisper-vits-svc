@@ -53,7 +53,7 @@
 ## 数据集准备
 <div align="center">
     
-![uvr5](https://github.com/PlayVoice/vits_chinese/assets/16432329/7f956925-f012-4d37-8f5c-d3d1c5eecf77)
+![uvr5_config](https://github.com/PlayVoice/vits_chinese/assets/16432329/f72fd2fa-0f05-4da1-bb0b-f29d0c20ddbf)
     
 </div>
 
