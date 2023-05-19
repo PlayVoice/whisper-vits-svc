@@ -203,19 +203,19 @@ def train(rank, args, chkpt_path, hp, hp_str):
             stft_loss = (sc_loss + mag_loss) * hp.train.c_stft
 
             # Generator Loss
-            res_fake, period_fake = model_d(fake_audio)
+            disc_fake = model_d(fake_audio)
             score_loss = 0.0
-            for (_, score_fake) in res_fake + period_fake:
+            for (_, score_fake) in disc_fake:
                 score_loss += torch.mean(torch.pow(score_fake - 1.0, 2))
-            score_loss = score_loss / len(res_fake + period_fake)
+            score_loss = score_loss / len(disc_fake)
 
             # Feature Loss
-            res_real, period_real = model_d(audio)
+            disc_real = model_d(audio)
             feat_loss = 0.0
-            for (feat_fake, _), (feat_real, _) in zip(res_fake + period_fake, res_real + period_real):
+            for (feat_fake, _), (feat_real, _) in zip(disc_fake, disc_real):
                 for fake, real in zip(feat_fake, feat_real):
                     feat_loss += torch.mean(torch.abs(fake - real))
-            feat_loss = feat_loss / len(res_fake + period_fake)
+            feat_loss = feat_loss / len(disc_fake)
             feat_loss = feat_loss * 2
 
             # Kl Loss
@@ -230,14 +230,14 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
             # discriminator
             optim_d.zero_grad()
-            res_fake, period_fake = model_d(fake_audio.detach())
-            res_real, period_real = model_d(audio)
+            disc_fake = model_d(fake_audio.detach())
+            disc_real = model_d(audio)
 
             loss_d = 0.0
-            for (_, score_fake), (_, score_real) in zip(res_fake + period_fake, res_real + period_real):
+            for (_, score_fake), (_, score_real) in zip(disc_fake, disc_real):
                 loss_d += torch.mean(torch.pow(score_real - 1.0, 2))
                 loss_d += torch.mean(torch.pow(score_fake, 2))
-            loss_d = loss_d / len(res_fake + period_fake)
+            loss_d = loss_d / len(disc_fake)
 
             loss_d.backward()
             clip_grad_value_(model_d.parameters(),  None)
