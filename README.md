@@ -61,6 +61,7 @@
 - 1 降噪&去伴奏
 - 2 频率提升
 - 3 音质提升，基于https://github.com/openvpi/vocoders ，待整合
+- 4 将音频剪裁为小于30秒的音频段，whisper的要求
 
 然后以下面文件结构将数据集放入dataset_raw目录
 ```shell
@@ -92,8 +93,6 @@ dataset_raw
     > export PYTHONPATH=$PWD
 
 - 2， 重采样
-
-    将音频剪裁为小于30秒的音频段，whisper的要求
 
     生成采样率16000Hz音频, 存储路径为：./data_svc/waves-16k
 
