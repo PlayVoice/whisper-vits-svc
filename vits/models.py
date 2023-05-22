@@ -244,6 +244,7 @@ class SynthesizerInfer(nn.Module):
         ppg = ppg + torch.randn_like(ppg) * 0.0001  # Perturbation
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, f0=f0_to_coarse(pit))
+        z_p = m_p + torch.randn_like(m_p) * torch.exp(logs_p) * 0.7  
         z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
         o = self.dec.inference(spk, z * ppg_mask, source)
         return o
