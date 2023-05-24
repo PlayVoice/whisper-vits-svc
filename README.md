@@ -38,7 +38,7 @@
 | Feature | From | Status | Function | Remarks |
 | --- | --- | --- | --- | --- |
 | whisper | OpenAI | ✅ | 强大的抗噪能力 | 参数修改 |
-| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新分支训练，提升音质明显 |
+| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新分支训练，共振峰更清晰，提升音质明显 |
 | natural speech | Microsoft | ✅ | 减少发音错误 | - |
 | neural source-filter | NII | ✅ | 解决断音问题 | 参数优化 |
 | speaker encoder | Google | ✅ | 音色编码与聚类 | - |
