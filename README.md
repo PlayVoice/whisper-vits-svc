@@ -90,7 +90,7 @@ dataset_raw
 ## 数据预处理
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
-    > export PYTHONPATH=$PWD
+    > export PYTHONPATH=$PWD for linux or set PYTHONPATH=%cd% for windows
 
 - 2， 重采样
 
@@ -187,7 +187,7 @@ data_svc/
 
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
-    > export PYTHONPATH=$PWD
+    > export PYTHONPATH=$PWD for linux or set PYTHONPATH=%cd% for windows
 
 - 2， 启动训练
 
@@ -211,7 +211,7 @@ data_svc/
 
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
-    > export PYTHONPATH=$PWD
+    > export PYTHONPATH=$PWD for linux or set PYTHONPATH=%cd% for windows
 
 - 2， 导出推理模型：文本编码器，Flow网络，Decoder网络；判别器和后验编码器只在训练中使用
 
@@ -239,9 +239,9 @@ data_svc/
 
     生成文件在当前目录svc_out.wav；
 
-    | args |--config | --model | --spk | --wave | --ppg | --pit |          
-    | ---  | --- | --- | --- | --- | --- | --- |
-    | name | 配置文件 | 模型文件 | 音色文件 | 音频文件 | 音频内容 | 音高内容 |
+    | args |--config | --model | --spk | --wave | --ppg | --pit | --shift |
+    | ---  | --- | --- | --- | --- | --- | --- | --- |
+    | name | 配置文件 | 模型文件 | 音色文件 | 音频文件 | 音频内容 | 音高内容 | 升降调 |
 
 ## 数据集
 
