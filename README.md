@@ -106,7 +106,7 @@ dataset_raw
 
     > python bandex/inference.py -w svc_out.wav
 
-- 3， 使用16K音频，提取音高
+- 3， 使用16K音频，提取音高：注意f0_ceil=900，需要根据您数据的最高音进行修改
     > python prepare/preprocess_f0.py -w data_svc/waves-16k/ -p data_svc/pitch
 
 - 4， 使用16k音频，提取内容编码
