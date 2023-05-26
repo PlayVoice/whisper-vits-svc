@@ -79,7 +79,9 @@ dataset_raw
 ## 安装依赖
 
 - 1 软件依赖
-
+  
+  > apt update && sudo apt install ffmpeg
+  
   > pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 
 - 2 下载音色编码器: [Speaker-Encoder by @mueller91](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把 `best_model.pth.tar`  放到目录 `speaker_pretrain/`
