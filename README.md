@@ -92,7 +92,11 @@ dataset_raw
 ## 数据预处理
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
-    > export PYTHONPATH=$PWD for linux or set PYTHONPATH=%cd% for windows
+    linux
+    > export PYTHONPATH=$PWD
+    
+    windows
+    > set PYTHONPATH=%cd%
 
 - 2， 重采样
 
@@ -189,7 +193,11 @@ data_svc/
 
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
-    > export PYTHONPATH=$PWD for linux or set PYTHONPATH=%cd% for windows
+    linux
+    > export PYTHONPATH=$PWD
+    
+    windows
+    > set PYTHONPATH=%cd%
 
 - 2， 启动训练
 
@@ -211,7 +219,11 @@ data_svc/
 
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
-    > export PYTHONPATH=$PWD for linux or set PYTHONPATH=%cd% for windows
+    linux
+    > export PYTHONPATH=$PWD
+    
+    windows
+    > set PYTHONPATH=%cd%
 
 - 2， 导出推理模型：文本编码器，Flow网络，Decoder网络；判别器和后验编码器只在训练中使用
 
