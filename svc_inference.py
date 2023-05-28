@@ -56,8 +56,9 @@ def main(args):
     ppg = torch.FloatTensor(ppg)
 
     pit = load_csv_pitch(args.pit)
+    print("pitch shift: ", args.shift)
     if (args.shift == 0):
-        print("don't use pitch shift")
+        pass
     else:
         pit = np.array(pit)
         source = pit[pit > 0]
