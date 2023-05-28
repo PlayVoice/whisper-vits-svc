@@ -102,11 +102,11 @@ dataset_raw
 
     生成采样率16000Hz音频, 存储路径为：./data_svc/waves-16k
 
-    > python prepare/preprocess_a.py -w ./data_raw -o ./data_svc/waves-16k -s 16000
+    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-16k -s 16000
 
     生成采样率32000Hz音频, 存储路径为：./data_svc/waves-32k
 
-    > python prepare/preprocess_a.py -w ./data_raw -o ./data_svc/waves-32k -s 32000
+    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
 
     可选的16000Hz提升到32000Hz，待完善~批处理
 
