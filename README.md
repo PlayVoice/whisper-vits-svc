@@ -31,16 +31,16 @@
 
 ## 模型和日志：
 
-https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/base_release_hifigan
+https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/hifigan_release
 
-- [5.0.epoch1200.full.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/base_release_hifigan/5.0.epoch1200.full.pth)模型包括：生成器+判别器=176M，可用作预训练模型
+- [5.0.epoch1200.full.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/hifigan_release/5.0.epoch1200.full.pth)模型包括：生成器+判别器=176M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
 - 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
 | Feature | From | Status | Function | Remarks |
 | --- | --- | --- | --- | --- |
 | whisper | OpenAI | ✅ | 强大的抗噪能力 | 参数修改 |
-| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新bigvgan分支训练，共振峰更清晰，提升音质明显 |
+| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新[bigvgan](https://github.com/PlayVoice/so-vits-svc-5.0/tree/bigvgan)分支训练，共振峰更清晰，提升音质明显 |
 | natural speech | Microsoft | ✅ | 减少发音错误 | - |
 | neural source-filter | NII | ✅ | 解决断音问题 | 参数优化 |
 | speaker encoder | Google | ✅ | 音色编码与聚类 | - |
