@@ -17,7 +17,7 @@
 
 ![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
 
-- 【低 配置】6G显存可训练
+- 【低 配置】6G显存可训练(HiFiGAN分支)
 
 - 【无 泄漏】支持多发音人
 
@@ -31,9 +31,9 @@
 
 ## 模型和日志：
 
-https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/base_release_hifigan
+https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
-- [5.0.epoch1200.full.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/base_release_hifigan/5.0.epoch1200.full.pth)模型包括：生成器+判别器=176M，可用作预训练模型
+- [sovits5.0_bigvgan_350.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_350.pth)模型包括：生成器+判别器=197M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
 - 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
