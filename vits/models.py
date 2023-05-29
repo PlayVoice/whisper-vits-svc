@@ -194,6 +194,7 @@ class SynthesizerTrn(nn.Module):
         return audio, ids_slice, spec_mask, (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q, logdet_f, logdet_r), spk_preds
 
     def infer(self, ppg, pit, spk, ppg_l):
+        ppg = ppg + torch.randn_like(ppg) * 0.0001  # Perturbation
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, f0=f0_to_coarse(pit))
         z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
@@ -241,10 +242,8 @@ class SynthesizerInfer(nn.Module):
         return self.dec.source2wav(source)
 
     def inference(self, ppg, pit, spk, ppg_l, source):
-        ppg = ppg + torch.randn_like(ppg) * 0.0001  # Perturbation
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, f0=f0_to_coarse(pit))
-        z_p = m_p + torch.randn_like(m_p) * torch.exp(logs_p) * 0.7  
         z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
         o = self.dec.inference(spk, z * ppg_mask, source)
         return o

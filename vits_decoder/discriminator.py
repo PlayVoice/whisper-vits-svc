@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 from omegaconf import OmegaConf
-
+from .msd import ScaleDiscriminator
 from .mpd import MultiPeriodDiscriminator
 from .mrd import MultiResolutionDiscriminator
 
@@ -12,13 +12,13 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
         self.MRD = MultiResolutionDiscriminator(hp)
         self.MPD = MultiPeriodDiscriminator(hp)
-
+        self.MSD = ScaleDiscriminator()
 
     def forward(self, x):
         r = self.MRD(x)
         p = self.MPD(x)
-
-        return r + p
+        s = self.MSD(x)
+        return r + p + s
 
 
 if __name__ == '__main__':

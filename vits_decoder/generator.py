@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
 
 from torch.nn import Conv1d
@@ -8,7 +9,7 @@ from torch.nn.utils import weight_norm
 from torch.nn.utils import remove_weight_norm
 
 from .nsf import SourceModuleHnNSF
-from .bigv import init_weights, AMPBlock
+from .bigv import init_weights, AMPBlock, SnakeAlias
 
 
 class SpeakerAdapter(nn.Module):
@@ -105,6 +106,7 @@ class Generator(torch.nn.Module):
                 self.resblocks.append(AMPBlock(ch, k, d))
 
         # post conv
+        self.activation_post = SnakeAlias(ch)
         self.conv_post = Conv1d(ch, 1, 7, 1, padding=3, bias=False)
         # weight initialization
         self.ups.apply(init_weights)
@@ -112,15 +114,15 @@ class Generator(torch.nn.Module):
     def forward(self, spk, x, f0):
         # adapter
         x = self.adapter(x, spk)
+        x = self.conv_pre(x)
+        x = x * torch.tanh(F.softplus(x))
         # nsf
         f0 = f0[:, None]
         f0 = self.f0_upsamp(f0).transpose(1, 2)
         har_source = self.m_source(f0)
         har_source = har_source.transpose(1, 2)
-        x = self.conv_pre(x)
 
         for i in range(self.num_upsamples):
-            x = nn.functional.leaky_relu(x, 0.1)
             # upsampling
             x = self.ups[i](x)
             # nsf
@@ -136,7 +138,7 @@ class Generator(torch.nn.Module):
             x = xs / self.num_kernels
 
         # post conv
-        x = nn.functional.leaky_relu(x)
+        x = self.activation_post(x)
         x = self.conv_post(x)
         x = torch.tanh(x)
         return x
@@ -172,9 +174,9 @@ class Generator(torch.nn.Module):
         # adapter
         x = self.adapter(x, spk)
         x = self.conv_pre(x)
+        x = x * torch.tanh(F.softplus(x))
 
         for i in range(self.num_upsamples):
-            x = nn.functional.leaky_relu(x, 0.1)
             # upsampling
             x = self.ups[i](x)
             # nsf
@@ -190,7 +192,7 @@ class Generator(torch.nn.Module):
             x = xs / self.num_kernels
 
         # post conv
-        x = nn.functional.leaky_relu(x)
+        x = self.activation_post(x)
         x = self.conv_post(x)
         x = torch.tanh(x)
         return x

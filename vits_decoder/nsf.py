@@ -364,7 +364,7 @@ class SourceModuleHnNSF(torch.nn.Module):
         voiced_threshod=0,
     ):
         super(SourceModuleHnNSF, self).__init__()
-        harmonic_num = 8
+        harmonic_num = 10
         self.sine_amp = sine_amp
         self.noise_std = add_noise_std
 
@@ -376,9 +376,9 @@ class SourceModuleHnNSF(torch.nn.Module):
         # to merge source harmonics into a single excitation
         self.l_tanh = torch.nn.Tanh()
         self.register_buffer('merge_w', torch.FloatTensor([[
-            -0.1044, -0.4892, -0.4733, 0.4337, -0.2321,
-            -0.1889, 0.1315, -0.1002, 0.0590,]]))
-        self.register_buffer('merge_b', torch.FloatTensor([-0.2908]))
+            0.2942, -0.2243, 0.0033, -0.0056, -0.0020, -0.0046,
+            0.0221, -0.0083, -0.0241, -0.0036, -0.0581]]))
+        self.register_buffer('merge_b', torch.FloatTensor([0.0008]))
 
     def forward(self, x):
         """

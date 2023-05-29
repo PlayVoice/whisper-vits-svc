@@ -149,7 +149,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
     scheduler_d = torch.optim.lr_scheduler.ExponentialLR(optim_d, gamma=hp.train.lr_decay, last_epoch=init_epoch-2)
 
     stft_criterion = MultiResolutionSTFTLoss(device, eval(hp.mrd.resolutions))
-    vpr_loss = nn.CosineEmbeddingLoss()
+    spkc_criterion = nn.CosineEmbeddingLoss()
 
     trainloader = create_dataloader_train(hp, args.num_gpus, rank)
 
@@ -191,7 +191,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             audio = commons.slice_segments(
                 audio, ids_slice * hp.data.hop_length, hp.data.segment_size)  # slice
             # Spk Loss
-            spk_loss = vpr_loss(spk, spk_preds, torch.Tensor(spk_preds.size(0))
+            spk_loss = spkc_criterion(spk, spk_preds, torch.Tensor(spk_preds.size(0))
                                 .to(device).fill_(1.0))
             # Mel Loss
             mel_fake = stft.mel_spectrogram(fake_audio.squeeze(1))
@@ -223,7 +223,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             loss_kl_r = kl_loss(z_r, logs_p, m_q, logs_q, logdet_r, z_mask) * hp.train.c_kl
 
             # Loss
-            loss_g = score_loss + feat_loss + mel_loss + stft_loss + loss_kl_f + loss_kl_r * 0.5 + spk_loss * 0.5
+            loss_g = score_loss + feat_loss + mel_loss + stft_loss + loss_kl_f + loss_kl_r * 0.5 + spk_loss * 2
             loss_g.backward()
             clip_grad_value_(model_g.parameters(),  None)
             optim_g.step()

@@ -1,10 +1,9 @@
 import torch
-import torch.nn.functional as F
 import torch.nn as nn
 
-from torch import nn
 from torch.nn import Conv1d
 from torch.nn.utils import weight_norm, remove_weight_norm
+from .alias.act import SnakeAlias
 
 
 def init_weights(m, mean=0.0, std=0.01):
@@ -40,11 +39,20 @@ class AMPBlock(torch.nn.Module):
         ])
         self.convs2.apply(init_weights)
 
+        # total number of conv layers
+        self.num_layers = len(self.convs1) + len(self.convs2)
+
+        # periodic nonlinearity with snakebeta function and anti-aliasing
+        self.activations = nn.ModuleList([
+            SnakeAlias(channels) for _ in range(self.num_layers)
+        ])
+
     def forward(self, x):
-        for c1, c2 in zip(self.convs1, self.convs2):
-            xt = F.leaky_relu(x, 0.1)
+        acts1, acts2 = self.activations[::2], self.activations[1::2]
+        for c1, c2, a1, a2 in zip(self.convs1, self.convs2, acts1, acts2):
+            xt = a1(x)
             xt = c1(xt)
-            xt = F.leaky_relu(xt, 0.1)
+            xt = a2(xt)
             xt = c2(xt)
             x = xt + x
         return x
