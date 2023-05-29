@@ -12,7 +12,7 @@
 
 - 💗本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
 - 💗本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
-- 💗本项目不支持实时变声；（也许以后会支持，但要替换掉whisper）
+- 💗本项目不支持实时变声；（支持需要换掉whisper）
 - 💗本项目不会开发用于其他用途的一键包。（不会指没学会）
 
 ![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
@@ -29,43 +29,37 @@
 
 本项目并不基于svc-develop-team/so-vits-svc，恰恰相反，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
 
-本项目将继续完成基于BIGVGAN的模型（32K），在此之后，有成果再更新项目
+## 模型和日志：
 
-## 模型和日志：https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/base_release_hifigan
+https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/base_release_hifigan
 
 - [5.0.epoch1200.full.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/base_release_hifigan/5.0.epoch1200.full.pth)模型包括：生成器+判别器=176M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
-- 发音人22，30，47，51辨识度较高，音频样本在configs/singers_sample目录中
+- 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
 | Feature | From | Status | Function | Remarks |
 | --- | --- | --- | --- | --- |
 | whisper | OpenAI | ✅ | 强大的抗噪能力 | 参数修改 |
-| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新分支训练，共振峰更清晰，提升音质明显 |
+| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新bigvgan分支训练，共振峰更清晰，提升音质明显 |
 | natural speech | Microsoft | ✅ | 减少发音错误 | - |
 | neural source-filter | NII | ✅ | 解决断音问题 | 参数优化 |
 | speaker encoder | Google | ✅ | 音色编码与聚类 | - |
 | GRL for speaker | Ubisoft |✅ | 防止编码器泄漏音色 | 原理类似判别器的对抗训练 |
 | one shot vits |  Samsung | ✅ | VITS 一句话克隆 | - |
 | SCLN |  Microsoft | ✅ | 改善克隆 | - |
-| band extention | Adobe | ✅ | 16K升48K采样 | 数据处理 |
 | PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
 
-💗GRL去音色泄漏，更多的是理论上的价值；Hugging Face Demo推理模型无泄漏主要归因于PPG扰动；由于使用了数据扰动，相比其他项目需要更长的训练时间。
+💗Hugging Face Demo推理模型无泄漏主要归因于PPG扰动；由于使用了数据扰动，相比其他项目需要更长的训练时间。
 
 ## 数据集准备
-<div align="center">
-    
-![uvr5_config](https://github.com/PlayVoice/vits_chinese/assets/16432329/f72fd2fa-0f05-4da1-bb0b-f29d0c20ddbf)
-    
-</div>
 
-💗必要的前处理：
-- 1 降噪&去伴奏
+必要的前处理：
+- 1 伴奏分离
 - 2 频率提升
 - 3 音质提升
-- 4 将音频剪裁为小于30秒的音频段，whisper的要求
+- 4 剪切音频，whisper要求为小于30秒💗
 
-然后以下面文件结构将数据集放入dataset_raw目录
+然后按下面文件结构，将数据集放入dataset_raw目录
 ```shell
 dataset_raw
 ├───speaker0
@@ -137,52 +131,41 @@ dataset_raw
 
 ```shell
 data_svc/
-│
 └── waves-16k
-│    │
 │    └── speaker0
 │    │      ├── 000001.wav
 │    │      └── 000xxx.wav
 │    └── speaker1
 │           ├── 000001.wav
 │           └── 000xxx.wav
-│
 └── waves-32k
-│    │
 │    └── speaker0
 │    │      ├── 000001.wav
 │    │      └── 000xxx.wav
 │    └── speaker1
 │           ├── 000001.wav
 │           └── 000xxx.wav
-│
 └── pitch
-│    │
 │    └── speaker0
 │    │      ├── 000001.pit.npy
 │    │      └── 000xxx.pit.npy
 │    └── speaker1
 │           ├── 000001.pit.npy
 │           └── 000xxx.pit.npy
-│
 └── whisper
-│    │
 │    └── speaker0
 │    │      ├── 000001.ppg.npy
 │    │      └── 000xxx.ppg.npy
 │    └── speaker1
 │           ├── 000001.ppg.npy
 │           └── 000xxx.ppg.npy
-│
 └── speaker
-│    │
 │    └── speaker0
 │    │      ├── 000001.spk.npy
 │    │      └── 000xxx.spk.npy
 │    └── speaker1
 │           ├── 000001.spk.npy
 │           └── 000xxx.spk.npy
-|
 └── singer
     ├── speaker0.spk.npy
     └── speaker1.spk.npy
@@ -191,7 +174,7 @@ data_svc/
 ## 训练
 - 0， 如果基于预训练模型微调，需要下载预训练模型5.0.epoch1200.full.pth
 
-    > 指定configs/base.yaml参数pretrain: ""，并适当调小学习率
+    > 指定configs/base.yaml参数pretrain: "./5.0.epoch1200.full.pth"，并适当调小学习率
 
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
 
@@ -273,7 +256,7 @@ eva_conf = {
 
 生成的音色文件为：eva.spk.npy
 
-💗Flow和Decoder均需要输入，您甚至可以给两个模块输入不同的音色参数，捏出更独特的音色。
+💗Flow和Decoder均需要输入音色，您甚至可以给两个模块输入不同的音色参数，捏出更独特的音色。
 
 ## 数据集
 
