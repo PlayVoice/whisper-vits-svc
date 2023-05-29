@@ -104,10 +104,6 @@ dataset_raw
 
     > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
 
-    可选的16000Hz提升到32000Hz，待完善~批处理
-
-    > python bandex/inference.py -w svc_out.wav
-
 - 3， 使用16K音频，提取音高：注意f0_ceil=900，需要根据您数据的最高音进行修改
     > python prepare/preprocess_f0.py -w data_svc/waves-16k/ -p data_svc/pitch
 
