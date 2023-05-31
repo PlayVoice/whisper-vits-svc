@@ -33,7 +33,7 @@
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
-- [sovits5.0_bigvgan_350.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_350.pth)模型包括：生成器+判别器=197M，可用作预训练模型
+- [sovits5.0_bigvgan_555.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_555.pth)模型包括：生成器+判别器=197M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
 - 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
