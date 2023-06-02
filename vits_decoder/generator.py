@@ -110,6 +110,8 @@ class Generator(torch.nn.Module):
         self.ups.apply(init_weights)
 
     def forward(self, spk, x, f0):
+        # Perturbation
+        x = x + torch.randn_like(x)  
         # adapter
         x = self.adapter(x, spk)
         # nsf
