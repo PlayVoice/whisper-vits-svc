@@ -33,7 +33,7 @@ this project is not based on svc-develop-team/so-vits-svc，on the contrary，as
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/hifigan_release
 
-- [5.0.epoch1200.full.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/hifigan_release/5.0.epoch1200.full.pth) The model includes: generator + discriminator = 176M, which can be used as a pre-training model
+- [sovits5.0_main_1500.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/hifigan_release/sovits5.0_main_1500.pth) The model includes: generator + discriminator = 176M, which can be used as a pre-training model
 - speakers files are in the configs/singers directory, which can be used for reasoning tests, especially for timbre leakage
 - speakers 22, 30, 47, and 51 are highly recognizable, and the training audio samples are in the configs/singers_sample directory
 
@@ -166,9 +166,9 @@ data_svc/
 ```
 
 ## Train
-- 0， if fine-tuning based on the pre-trained model, you need to download the pre-trained model:5.0.epoch1200.full.pth
+- 0， if fine-tuning based on the pre-trained model, you need to download the pre-trained model: sovits5.0_main_1500.pth
 
-    > set pretrain: "./5.0.epoch1200.full.pth" in configs/base.yaml，and adjust the learning rate appropriately, eg 1e-5
+    > set pretrain: "./sovits5.0_main_1500.pth" in configs/base.yaml，and adjust the learning rate appropriately, eg 1e-5
 
 - 1， set working directory
 
