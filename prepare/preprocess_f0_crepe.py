@@ -1,12 +1,12 @@
 import os
-import torch
-import librosa
-import argparse
 import numpy as np
+import librosa
+import torch
 import torchcrepe
+import argparse
 
 
-def compute_f0_nn(filename, device):
+def compute_f0(filename, save, device):
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
     # Load audio
@@ -40,40 +40,35 @@ def compute_f0_nn(filename, device):
     pitch = torchcrepe.filter.mean(pitch, 5)
     pitch[periodicity < 0.1] = 0
     pitch = pitch.squeeze(0)
-    return pitch
-
-
-def save_csv_pitch(pitch, path):
-    with open(path, "w", encoding='utf-8') as pitch_file:
-        for i in range(len(pitch)):
-            t = i * 10
-            minute = t // 60000
-            seconds = (t - minute * 60000) // 1000
-            millisecond = t % 1000
-            print(
-                f"{minute}m {seconds}s {millisecond:3d},{int(pitch[i])}", file=pitch_file)
-
-
-def load_csv_pitch(path):
-    pitch = []
-    with open(path, "r", encoding='utf-8') as pitch_file:
-        for line in pitch_file.readlines():
-            pit = line.strip().split(",")[-1]
-            pitch.append(int(pit))
-    return pitch
+    np.save(save, pitch, allow_pickle=False)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter embed parameter ...'
     parser.add_argument("-w", "--wav", help="wav", dest="wav")
-    parser.add_argument("-p", "--pit", help="pit", dest="pit")  # csv for excel
+    parser.add_argument("-p", "--pit", help="pit", dest="pit")
     args = parser.parse_args()
     print(args.wav)
     print(args.pit)
+    os.makedirs(args.pit)
+    wavPath = args.wav
+    pitPath = args.pit
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    pitch = compute_f0_nn(args.wav, device)
-    save_csv_pitch(pitch, args.pit)
-    #tmp = load_csv_pitch(args.pit)
-    #save_csv_pitch(tmp, "tmp.csv")
+
+    for spks in os.listdir(wavPath):
+        if os.path.isdir(f"./{wavPath}/{spks}"):
+            os.makedirs(f"./{pitPath}/{spks}")
+            print(f">>>>>>>>>>{spks}<<<<<<<<<<")
+            for file in os.listdir(f"./{wavPath}/{spks}"):
+                if file.endswith(".wav"):
+                    print(file)
+                    file = file[:-4]
+                    compute_f0(f"{wavPath}/{spks}/{file}.wav", f"{pitPath}/{spks}/{file}.pit", device)
+        else:
+            file = spks
+            if file.endswith(".wav"):
+                print(file)
+                file = file[:-4]
+                compute_f0(f"{wavPath}/{file}.wav", f"{pitPath}/{file}.pit", device)
