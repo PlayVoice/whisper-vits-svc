@@ -27,8 +27,6 @@
 
 - 【用 Excel】进行原始调教，纯手工
 
-本项目并不基于svc-develop-team/so-vits-svc，恰恰相反，见https://github.com/svc-develop-team/so-vits-svc/tree/2.0
-
 ## 模型和日志：
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
