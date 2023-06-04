@@ -103,6 +103,10 @@ dataset_raw
 - 3， use 16K audio to extract pitch：f0_ceil=900, it needs to be modified according to the highest pitch of your data
     > python prepare/preprocess_f0.py -w data_svc/waves-16k/ -p data_svc/pitch
 
+    or use next for low quality audio
+
+    > python prepare/preprocess_f0_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
+
 - 4， use 16K audio to extract ppg
     > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
 
