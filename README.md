@@ -27,8 +27,6 @@
 
 - F0 can be edited using Excel
 
-this project is not based on svc-develop-team/so-vits-svc，on the contrary，as:https://github.com/svc-develop-team/so-vits-svc/tree/2.0
-
 ## Model properties
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/hifigan_release
