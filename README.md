@@ -82,6 +82,7 @@ dataset_raw
 
 - 3 下载whisper模型 [multiple language medium model](https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt), 确定下载的是`medium.pt`，把它放到文件夹 `whisper_pretrain/`
 
+- 4 不能额外安装whisper，否则会和代码内置whisper冲突
 
 ## 数据预处理
 - 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
