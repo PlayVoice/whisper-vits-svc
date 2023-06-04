@@ -7,7 +7,9 @@
 <img alt="GitHub forks" src="https://img.shields.io/github/forks/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
- 
+
+[![CodeWithGPU](https://www.codewithgpu.com/assets/logo.6e3c853d.svg)](https://www.codewithgpu.com/i/PlayVoice/so-vits-svc-5.0/so-vits-svc-v5)
+
 </div>
 
 - 💗本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
