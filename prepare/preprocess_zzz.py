@@ -1,3 +1,8 @@
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sys.path.append(parent_dir)
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from omegaconf import OmegaConf
