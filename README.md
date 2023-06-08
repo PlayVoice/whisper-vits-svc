@@ -48,8 +48,9 @@ https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 | one shot vits |  Samsung | ✅ | VITS 一句话克隆 | - |
 | SCLN |  Microsoft | ✅ | 改善克隆 | - |
 | PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
+| VAE perturbation | 本项目 | ✅ | 提升音质 | - |
 
-💗Hugging Face Demo推理模型无泄漏主要归因于PPG扰动；由于使用了数据扰动，相比其他项目需要更长的训练时间。
+💗由于使用了数据扰动，相比其他项目需要更长的训练时间
 
 ## 数据集准备
 
