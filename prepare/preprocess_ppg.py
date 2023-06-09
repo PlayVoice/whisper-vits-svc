@@ -67,15 +67,15 @@ if __name__ == "__main__":
             else:
                 process_num = args.thread_count
 
-            # with ThreadPoolExecutor(max_workers=process_num) as executor:
-            #     futures = [executor.submit(process_file, file) for file in os.listdir(f"./{wavPath}/{spks}")]
-            #     for future in tqdm(as_completed(futures), total=len(futures)):
-            #         pass
+            with ThreadPoolExecutor(max_workers=process_num) as executor:
+                futures = [executor.submit(process_file, file) for file in os.listdir(f"./{wavPath}/{spks}")]
+                for future in tqdm(as_completed(futures), total=len(futures)):
+                    pass
 
-            with Pool(processes=process_num) as pool:
-                results = [pool.apply_async(process_file, (file,)) for file in os.listdir(f"./{wavPath}/{spks}")]
-                for result in tqdm(results, total=len(results)):
-                    result.wait()
+            # with Pool(processes=process_num) as pool:
+            #     results = [pool.apply_async(process_file, (file,)) for file in os.listdir(f"./{wavPath}/{spks}")]
+            #     for result in tqdm(results, total=len(results)):
+            #         result.wait()
 
         else:
             file = spks
