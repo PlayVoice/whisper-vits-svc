@@ -6,9 +6,11 @@ sys.path.append(parent_dir)
 import numpy as np
 import argparse
 import torch
-
+from tqdm import tqdm
+from multiprocessing import Pool
 from whisper.model import Whisper, ModelDimensions
 from whisper.audio import load_audio, pad_or_trim, log_mel_spectrogram
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def load_model(path) -> Whisper:
@@ -29,19 +31,27 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
     with torch.no_grad():
         ppg = whisper.encoder(mel.unsqueeze(0)).squeeze().data.cpu().float().numpy()
         ppg = ppg[:ppgln,] # [length, dim=1024]
-        print(ppg.shape)
+        #print(ppg.shape)
         np.save(ppgPath, ppg, allow_pickle=False)
 
+def process_file(file):
+    if file.endswith(".wav"):
+        file = file[:-4]
+        pred_ppg(whisper, f"{wavPath}/{spks}/{file}.wav", f"{ppgPath}/{spks}/{file}.ppg")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter embed parameter ...'
     parser.add_argument("-w", "--wav", help="wav", dest="wav")
     parser.add_argument("-p", "--ppg", help="ppg", dest="ppg")
+    parser.add_argument("-t", "--thread_count", help="thread count to process, set 0 to use all cpu cores", dest="thread_count", type=int, default=1)
+    
     args = parser.parse_args()
     print(args.wav)
     print(args.ppg)
-    os.makedirs(args.ppg)
+    if not os.path.exists(args.ppg):
+        os.makedirs(args.ppg)
+
     wavPath = args.wav
     ppgPath = args.ppg
 
@@ -49,13 +59,24 @@ if __name__ == "__main__":
 
     for spks in os.listdir(wavPath):
         if os.path.isdir(f"./{wavPath}/{spks}"):
-            os.makedirs(f"./{ppgPath}/{spks}")
+            if not os.path.exists(f"./{ppgPath}/{spks}"):
+                os.makedirs(f"./{ppgPath}/{spks}")
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            for file in os.listdir(f"./{wavPath}/{spks}"):
-                if file.endswith(".wav"):
-                    # print(file)
-                    file = file[:-4]
-                    pred_ppg(whisper, f"{wavPath}/{spks}/{file}.wav", f"{ppgPath}/{spks}/{file}.ppg")
+            if args.thread_count == 0:
+                process_num = os.cpu_count()
+            else:
+                process_num = args.thread_count
+
+            # with ThreadPoolExecutor(max_workers=process_num) as executor:
+            #     futures = [executor.submit(process_file, file) for file in os.listdir(f"./{wavPath}/{spks}")]
+            #     for future in tqdm(as_completed(futures), total=len(futures)):
+            #         pass
+
+            with Pool(processes=process_num) as pool:
+                results = [pool.apply_async(process_file, (file,)) for file in os.listdir(f"./{wavPath}/{spks}")]
+                for result in tqdm(results, total=len(results)):
+                    result.wait()
+
         else:
             file = spks
             if file.endswith(".wav"):

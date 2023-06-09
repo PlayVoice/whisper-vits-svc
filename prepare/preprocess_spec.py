@@ -5,7 +5,9 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 import torch
 import argparse
-
+import multiprocessing
+from concurrent.futures import ThreadPoolExecutor
+from tqdm import tqdm
 from vits import spectrogram
 from vits import utils
 from omegaconf import OmegaConf
@@ -26,36 +28,43 @@ def compute_spec(hps, filename, specname):
     torch.save(spec, specname)
 
 
+def process_file(file):
+    if file.endswith(".wav"):
+        file = file[:-4]
+        compute_spec(hps.data, f"{wavPath}/{spks}/{file}.wav", f"{spePath}/{spks}/{file}.pt")
+
+def process_files_with_thread_pool(wavPath, spks, max_workers):
+    files = os.listdir(f"./{wavPath}/{spks}")
+    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        list(tqdm(executor.map(process_file, files), total=len(files)))
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter embed parameter ...'
     parser.add_argument("-w", "--wav", help="wav", dest="wav")
     parser.add_argument("-s", "--spe", help="spe", dest="spe")
+    parser.add_argument("-t", "--thread_count", help="thread count to process, set 0 to use all cpu cores", dest="thread_count", type=int, default=1)
     args = parser.parse_args()
     print(args.wav)
     print(args.spe)
-    os.makedirs(args.spe)
+    if not os.path.exists(args.spe):
+        os.makedirs(args.spe)
     wavPath = args.wav
     spePath = args.spe
     hps = OmegaConf.load("./configs/base.yaml")
 
     for spks in os.listdir(wavPath):
         if os.path.isdir(f"./{wavPath}/{spks}"):
-            os.makedirs(f"./{spePath}/{spks}")
-            print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            for file in os.listdir(f"./{wavPath}/{spks}"):
-                if file.endswith(".wav"):
-                    # print(file)
-                    file = file[:-4]
-                    compute_spec(hps.data, f"{wavPath}/{spks}/{file}.wav", f"{spePath}/{spks}/{file}.pt")
+            if not os.path.exists(f"./{spePath}/{spks}"):
+                os.makedirs(f"./{spePath}/{spks}")
+            if args.thread_count == 0:
+                process_num = os.cpu_count()
+            else:
+                process_num = args.thread_count
+            process_files_with_thread_pool(wavPath, spks, process_num)
         else:
             file = spks
             if file.endswith(".wav"):
                 # print(file)
                 file = file[:-4]
                 compute_spec(hps.data, f"{wavPath}/{file}.wav", f"{spePath}/{file}.pt")
-
-
-
-
-
