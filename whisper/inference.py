@@ -17,6 +17,7 @@ def load_model(path) -> Whisper:
     dims = ModelDimensions(**checkpoint["dims"])
     model = Whisper(dims)
     model.load_state_dict(checkpoint["model_state_dict"])
+    del model.decoder
     return model.to(device)
 
 
