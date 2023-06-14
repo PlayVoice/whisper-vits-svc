@@ -8,8 +8,6 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
-[CodeWithGPU](https://www.codewithgpu.com/i/PlayVoice/so-vits-svc-5.0/so-vits-svc-v5)
-
 </div>
 
 - 💗本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
@@ -19,7 +17,7 @@
 
 ![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
 
-- 【低 配置】6G显存可训练(HiFiGAN分支)
+- 【低 配置】6G显存可训练（显存不足6G可以用[云端训练](https://www.codewithgpu.com/i/PlayVoice/so-vits-svc-5.0/so-vits-svc-v5)）
 
 - 【无 泄漏】支持多发音人
 
@@ -29,7 +27,7 @@
 
 - 【用 Excel】进行原始调教，纯手工
 
-## 模型和日志：
+## 项目说明：
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
@@ -52,15 +50,39 @@ https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
 💗由于使用了数据扰动，相比其他项目需要更长的训练时间
 
+## 安装环境
+1. 安装ffmpeg
+- Linux
+   ```
+   apt update && sudo apt install ffmpeg
+   ```
+- Windows  
+
+  - 有conda环境运行下面的命令来安装ffmpeg  
+
+    ```
+    conda install ffmpeg
+    ```
+  - 没有conda环境从[CODEX FFMPEG](https://www.gyan.dev/ffmpeg/builds/)下载已经编译好的ffmpeg，并且正确配置ffmpeg的环境变量  
+
+2. 安装[PyTorch](https://pytorch.org/get-started/locally/)
+
+3.  安装项目依赖  
+    ```
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+    ```
+    **注意：不能额外安装whisper，否则会和代码内置whisper冲突**  
+
+4.  下载[音色编码器](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把`best_model.pth.tar`放到`speaker_pretrain/`里面 （**不要解压**）
+
+5.  下载[whisper-medium模型](https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt)，把`medium.pt`放到`whisper_pretrain/`里面
+
 ## 数据集准备
-
-必要的前处理：
-- 1 伴奏分离
-- 2 频率提升
-- 3 音质提升
-- 4 剪切音频，whisper要求为小于30秒💗
-
-然后按下面文件结构，将数据集放入dataset_raw目录
+1. 人声分离，如果数据集没有BGM直接跳过此步骤（推荐使用[UVR](https://github.com/Anjok07/ultimatevocalremovergui)中的3_HP-Vocal-UVR模型或者htdemucs_ft模型抠出数据集中的人声）  
+2. 用[slicer](https://github.com/flutydeer/audio-slicer)剪切音频，whisper要求为小于30秒（建议丢弃不足2秒的音频，短音频大多没有音素，有可能会影响训练效果）  
+3. 手动筛选经过第1步和第2步处理过的音频，裁剪或者丢弃杂音明显的音频，如果数据集没有BGM直接跳过此步骤  
+4. 用Adobe Audition进行响度平衡处理  
+5. 按下面文件结构，将数据集放入dataset_raw目录  
 ```shell
 dataset_raw
 ├───speaker0
@@ -73,64 +95,14 @@ dataset_raw
     └───000xxx.wav
 ```
 
-## 安装依赖
-
-- 1 软件依赖
-  
-  > apt update && sudo apt install ffmpeg
-  
-  > pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
-
-- 2 下载音色编码器: [Speaker-Encoder by @mueller91](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把 `best_model.pth.tar`  放到目录 `speaker_pretrain/`
-
-- 3 下载whisper模型 [multiple language medium model](https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt), 确定下载的是`medium.pt`，把它放到文件夹 `whisper_pretrain/`
-
-- 4 不能额外安装whisper，否则会和代码内置whisper冲突
-
 ## 数据预处理
-- 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
+```shell
+python svc_preprocessing.py -t 2 --crepe
+```
+-t：指定线程数，必须是正整数且不得超过CPU总核心数，一般写2就可以了  
+--crepe：使用crepe提取f0，如果训练集杂音多可以加上；杂音几乎没有可以不加--crepe，使用dio提取f0  
 
-    linux
-    > export PYTHONPATH=$PWD
-    
-    windows
-    > set PYTHONPATH=%cd%
-
-- 2， 重采样
-
-    生成采样率16000Hz音频, 存储路径为：./data_svc/waves-16k
-
-    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-16k -s 16000
-
-    生成采样率32000Hz音频, 存储路径为：./data_svc/waves-32k
-
-    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
-
-- 3， 使用16K音频，提取音高：注意f0_ceil=900，需要根据您数据的最高音进行修改
-    > python prepare/preprocess_f0.py -w data_svc/waves-16k/ -p data_svc/pitch
-
-    低质量音频使用下面指令处理
-
-    > python prepare/preprocess_f0_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
-
-- 4， 使用16k音频，提取内容编码
-    > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
-
-- 5， 使用16k音频，提取音色编码；应该将speaker改为timbre，才准确
-    > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
-
-- 6， 提取音色编码均值，用于推理；也可以在生成训练索引中，替换单个音频音色，作为发音人统一音色用于训练
-    > python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
-
-- 7， 使用32k音频，提取线性谱
-    > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
-
-- 8， 使用32k音频，生成训练索引
-    > python prepare/preprocess_train.py
-
-- 9， 训练文件调试
-    > python prepare/preprocess_zzz.py
-
+预处理完成后文件夹结构如下面所示
 ```shell
 data_svc/
 └── waves-16k
@@ -174,79 +146,71 @@ data_svc/
 ```
 
 ## 训练
-- 0， 如果基于预训练模型微调，需要下载预训练模型5.0.epoch1200.full.pth
+0. 参数调整  
+  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_555.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
+  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_555.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
+  `batch_size`：6G显存推荐设置为6，设置为8可以训练，但是一个step的速度会非常慢  
 
-    > 指定configs/base.yaml参数pretrain: "./5.0.epoch1200.full.pth"，并适当调小学习率
-
-- 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
-
-    linux
-    > export PYTHONPATH=$PWD
-    
-    windows
-    > set PYTHONPATH=%cd%
-
-- 2， 启动训练
-
-    > python svc_trainer.py -c configs/base.yaml -n sovits5.0
-
-- 3， 恢复训练
-
-    > python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
-
-- 4， 查看日志，release页面有完整的训练日志
-
-    > tensorboard --logdir logs/
+1. 开始训练  
+   ```
+   python svc_trainer.py -c configs/base.yaml -n sovits5.0
+   ```
+2. 恢复训练
+   ```
+   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
+   ```
+3. 训练日志可视化
+   ```
+   tensorboard --logdir logs/
+   ```
 
 ![sovits5 0_base](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/1628e775-5888-4eac-b173-a28dca978faa)
 
 ![sovits_spec](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/c4223cf3-b4a0-4325-bec0-6d46d195a1fc)
 
 ## 推理
+1. 导出推理模型：文本编码器，Flow网络，Decoder网络；判别器和后验编码器只在训练中使用  
+   ```
+   python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
+   ```
+2. 推理  
+- 如果不想手动调整f0，只需要最终的推理结果，运行下面的命令即可
+  ```
+  python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/修改成对应的名称.npy --wave test.wav --shift 0
+  ```
+- 如果需要手动调整f0，依据下面的流程操作
 
-- 1， 设置工作目录:heartpulse::heartpulse::heartpulse:不设置后面会报错
+  - 使用whisper提取内容编码，生成test.ppg.npy
+    ```
+    python whisper/inference.py -w test.wav -p test.ppg.npy
+    ```
 
-    linux
-    > export PYTHONPATH=$PWD
-    
-    windows
-    > set PYTHONPATH=%cd%
-
-- 2， 导出推理模型：文本编码器，Flow网络，Decoder网络；判别器和后验编码器只在训练中使用
-
-    > python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
-
-- 3， 使用whisper提取内容编码，没有采用一键推理，为了降低显存占用
-
-    > python whisper/inference.py -w test.wav -p test.ppg.npy
-
-    生成test.ppg.npy；如果下一步没有指定ppg文件，则调用程序自动生成
-
-- 4， 提取csv文本格式F0参数，Excel打开csv文件，对照Audition或者SonicVisualiser手动修改错误的F0
-
-    > python pitch/inference.py -w test.wav -p test.csv
-
+  - 提取csv文本格式F0参数，用Excel打开csv文件，对照Audition或者SonicVisualiser手动修改错误的F0
+     ```
+     python pitch/inference.py -w test.wav -p test.csv
+     ```
+  - 最终推理
+     ```
+     python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/修改成对应的名称.npy --wave test.wav --ppg test.ppg.npy --pit test.csv --shift 0
+     ```
 ![sonic visualiser](https://user-images.githubusercontent.com/16432329/237011482-51f3a45e-72c6-4d4a-b1df-f561d1df7132.png)
 
-- 5，指定参数，推理
-
-    > python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./configs/singers/singer0001.npy --wave test.wav --ppg test.ppg.npy --pit test.csv
-
-    当指定--ppg后，多次推理同一个音频时，可以避免重复提取音频内容编码；没有指定，也会自动提取；
-
-    当指定--pit后，可以加载手工调教的F0参数；没有指定，也会自动提取；
-
-    生成文件在当前目录svc_out.wav；
-
-    | args |--config | --model | --spk | --wave | --ppg | --pit | --shift |
+3. 一些注意点  
+    当指定--ppg后，多次推理同一个音频时，可以避免重复提取音频内容编码；没有指定，也会自动提取  
+    
+    当指定--pit后，可以加载手工调教的F0参数；没有指定，也会自动提取  
+    
+    生成文件在当前目录svc_out.wav
+    
+    | args | --config | --model | --spk | --wave | --ppg | --pit | --shift |
     | ---  | --- | --- | --- | --- | --- | --- | --- |
     | name | 配置文件 | 模型文件 | 音色文件 | 音频文件 | 音频内容 | 音高内容 | 升降调 |
 
 ## 捏音色
 纯属巧合的取名：average -> ave -> eva，夏娃代表者孕育和繁衍
-
-> python svc_eva.py
-
+```
+python svc_eva.py
+```
 ```python
 eva_conf = {
     './configs/singers/singer0022.npy': 0,
