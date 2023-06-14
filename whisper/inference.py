@@ -18,7 +18,10 @@ def load_model(path) -> Whisper:
     model = Whisper(dims)
     model.load_state_dict(checkpoint["model_state_dict"])
     del model.decoder
-    return model.to(device)
+    model.eval()
+    model.half()
+    model.to(device)
+    return model
 
 
 def pred_ppg(whisper: Whisper, wavPath, ppgPath):
@@ -31,7 +34,7 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
         idx_s = idx_s + 25 * 16000
         ppgln = 25 * 16000 // 320
         # short = pad_or_trim(short)
-        mel = log_mel_spectrogram(short).to(whisper.device)
+        mel = log_mel_spectrogram(short).half().to(whisper.device)
         with torch.no_grad():
             ppg = whisper.encoder(mel.unsqueeze(0)).squeeze().data.cpu().float().numpy()
             ppg = ppg[:ppgln,]  # [length, dim=1024]
@@ -40,7 +43,7 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
         short = audio[idx_s:audln]
         ppgln = (audln - idx_s) // 320
         # short = pad_or_trim(short)
-        mel = log_mel_spectrogram(short).to(whisper.device)
+        mel = log_mel_spectrogram(short).half().to(whisper.device)
         with torch.no_grad():
             ppg = whisper.encoder(mel.unsqueeze(0)).squeeze().data.cpu().float().numpy()
             ppg = ppg[:ppgln,]  # [length, dim=1024]
