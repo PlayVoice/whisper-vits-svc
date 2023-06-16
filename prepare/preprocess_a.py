@@ -54,8 +54,3 @@ if __name__ == "__main__":
             else:
                 process_num = args.thread_count
             process_files_with_thread_pool(wavPath, spks, outPath, args.sr, process_num)
-        else:
-            file = spks
-            if file.endswith(".wav"):
-                file = file[:-4]
-                resample_wave(f"{wavPath}/{file}.wav", f"{outPath}/{file}.wav", args.sr)

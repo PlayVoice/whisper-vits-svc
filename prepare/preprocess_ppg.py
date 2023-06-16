@@ -80,10 +80,3 @@ if __name__ == "__main__":
             #     results = [pool.apply_async(process_file, (file,)) for file in os.listdir(f"./{wavPath}/{spks}")]
             #     for result in tqdm(results, total=len(results)):
             #         result.wait()
-
-        else:
-            file = spks
-            if file.endswith(".wav"):
-                # print(file)
-                file = file[:-4]
-                pred_ppg(whisper, f"{wavPath}/{file}.wav", f"{ppgPath}/{file}.ppg")

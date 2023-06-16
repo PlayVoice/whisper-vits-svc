@@ -59,9 +59,3 @@ if __name__ == "__main__":
             else:
                 process_num = args.thread_count
             process_files_with_process_pool(wavPath, spks, pitPath, process_num)
-        else:
-            file = spks
-            if file.endswith(".wav"):
-                # print(file)
-                file = file[:-4]
-                compute_f0(f"{wavPath}/{file}.wav", f"{pitPath}/{file}.pit")
