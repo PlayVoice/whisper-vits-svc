@@ -59,7 +59,7 @@ if __name__ == "__main__":
     wavPath = args.wav
     ppgPath = args.ppg
 
-    whisper = load_model(os.path.join("whisper_pretrain", "medium.pt"))
+    whisper = load_model(os.path.join("whisper_pretrain", "large-v2.pt"))
 
     for spks in os.listdir(wavPath):
         if os.path.isdir(f"./{wavPath}/{spks}"):
