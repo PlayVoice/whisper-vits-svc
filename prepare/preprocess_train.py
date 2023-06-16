@@ -26,9 +26,9 @@ if __name__ == "__main__":
                         f"{path_wave}|{path_spec}|{path_pitch}|{path_whisper}|{path_spk}")
 
     random.shuffle(all_items)
-    valids = all_items[:50]
+    valids = all_items[:10]
     valids.sort()
-    trains = all_items[50:]
+    trains = all_items[10:]
     # trains.sort()
     fw = open("./files/valid.txt", "w", encoding="utf-8")
     for strs in valids:
