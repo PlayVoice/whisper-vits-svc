@@ -56,9 +56,3 @@ if __name__ == "__main__":
                     # print(file)
                     file = file[:-4]
                     pred_ppg(whisper, f"{wavPath}/{spks}/{file}.wav", f"{ppgPath}/{spks}/{file}.ppg")
-        else:
-            file = spks
-            if file.endswith(".wav"):
-                # print(file)
-                file = file[:-4]
-                pred_ppg(whisper, f"{wavPath}/{file}.wav", f"{ppgPath}/{file}.ppg")

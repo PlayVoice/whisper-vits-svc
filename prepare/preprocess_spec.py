@@ -48,14 +48,4 @@ if __name__ == "__main__":
                     # print(file)
                     file = file[:-4]
                     compute_spec(hps.data, f"{wavPath}/{spks}/{file}.wav", f"{spePath}/{spks}/{file}.pt")
-        else:
-            file = spks
-            if file.endswith(".wav"):
-                # print(file)
-                file = file[:-4]
-                compute_spec(hps.data, f"{wavPath}/{file}.wav", f"{spePath}/{file}.pt")
-
-
-
-
-
+ 

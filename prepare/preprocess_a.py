@@ -37,8 +37,3 @@ if __name__ == "__main__":
                 if file.endswith(".wav"):
                     file = file[:-4]
                     resample_wave(f"{wavPath}/{spks}/{file}.wav", f"{outPath}/{spks}/{file}.wav", args.sr)
-        else:
-            file = spks
-            if file.endswith(".wav"):
-                file = file[:-4]
-                resample_wave(f"{wavPath}/{file}.wav", f"{outPath}/{file}.wav", args.sr)

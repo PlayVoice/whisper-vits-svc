@@ -66,9 +66,3 @@ if __name__ == "__main__":
                     print(file)
                     file = file[:-4]
                     compute_f0(f"{wavPath}/{spks}/{file}.wav", f"{pitPath}/{spks}/{file}.pit", device)
-        else:
-            file = spks
-            if file.endswith(".wav"):
-                print(file)
-                file = file[:-4]
-                compute_f0(f"{wavPath}/{file}.wav", f"{pitPath}/{file}.pit", device)
