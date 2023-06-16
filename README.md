@@ -27,6 +27,13 @@
 
 - F0 can be edited using Excel
 
+## Branches
+- [main](https://github.com/PlayVoice/so-vits-svc-5.0) : whisper medium + hifigan
+
+- [bigvgan](https://github.com/PlayVoice/so-vits-svc-5.0/tree/bigvgan) : whisper medium + bigvgan
+
+- [bigvgan-large-v2](https://github.com/PlayVoice/so-vits-svc-5.0/tree/bigvgan-large-v2) : whisper large v2 + bigvgan
+
 ## Model properties
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/hifigan_release
