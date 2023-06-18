@@ -67,7 +67,7 @@ class WebUI:
             self.bt_refersh.click(fn=self.refresh_model, inputs=[self.model_name], outputs=[self.resume_model])
             self.bt_resume_train.click(fn=self.resume_train, inputs=[self.model_name, self.resume_model])
             #self.bt_infer.click(fn=self.inference, inputs=[self.input_wav, self.choose_model, self.keychange, self.id], outputs=self.output_wav)
-        ui.launch(inbrowser=False, server_port=2333, share=False)
+        ui.launch(inbrowser=True, server_port=2333, share=True)
 
     def openfolder(self):
         try:
