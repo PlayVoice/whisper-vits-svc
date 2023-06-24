@@ -66,17 +66,22 @@ if __name__ == "__main__":
             if not os.path.exists(f"./{ppgPath}/{spks}"):
                 os.makedirs(f"./{ppgPath}/{spks}")
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            if args.thread_count == 0:
-                process_num = os.cpu_count()
+            if args.thread_count == 1:
+                for file in os.listdir(f"./{wavPath}/{spks}"):
+                    if file.endswith(".wav"):
+                        print(file)
+                        file = file[:-4]
+                        pred_ppg(whisper, f"{wavPath}/{spks}/{file}.wav", f"{ppgPath}/{spks}/{file}.ppg")
             else:
-                process_num = args.thread_count
-
-            with ThreadPoolExecutor(max_workers=process_num) as executor:
-                futures = [executor.submit(process_file, file) for file in os.listdir(f"./{wavPath}/{spks}")]
-                for future in tqdm(as_completed(futures), total=len(futures)):
-                    pass
-
-            # with Pool(processes=process_num) as pool:
-            #     results = [pool.apply_async(process_file, (file,)) for file in os.listdir(f"./{wavPath}/{spks}")]
-            #     for result in tqdm(results, total=len(results)):
-            #         result.wait()
+                if args.thread_count == 0:
+                    process_num = os.cpu_count()
+                else:
+                    process_num = args.thread_count
+                with ThreadPoolExecutor(max_workers=process_num) as executor:
+                    futures = [executor.submit(process_file, file) for file in os.listdir(f"./{wavPath}/{spks}")]
+                    for future in tqdm(as_completed(futures), total=len(futures)):
+                        pass
+                # with Pool(processes=process_num) as pool:
+                #     results = [pool.apply_async(process_file, (file,)) for file in os.listdir(f"./{wavPath}/{spks}")]
+                #     for result in tqdm(results, total=len(results)):
+                #         result.wait()

@@ -8,6 +8,10 @@ import os
 from tqdm import tqdm
 
 
+def print_error(info):
+    print(f"\033[31m File isn't existed: {info}\033[0m")
+
+
 def process_file(file):
     if file.endswith(".wav"):
         file = file[:-4]
@@ -16,14 +20,27 @@ def process_file(file):
         path_spec = f"./data_svc/specs/{spks}/{file}.pt"
         path_pitch = f"./data_svc/pitch/{spks}/{file}.pit.npy"
         path_whisper = f"./data_svc/whisper/{spks}/{file}.ppg.npy"
-        assert os.path.isfile(path_spk), path_spk
-        assert os.path.isfile(path_wave), path_wave
-        assert os.path.isfile(path_spec), path_spec
-        assert os.path.isfile(path_pitch), path_pitch
-        assert os.path.isfile(path_whisper), path_whisper
-        all_items.append(
-            f"{path_wave}|{path_spec}|{path_pitch}|{path_whisper}|{path_spk}")
+        has_error = 0
+        if not os.path.isfile(path_spk):
+            print_error(path_spk)
+            has_error = 1
+        if not os.path.isfile(path_wave):
+            print_error(path_wave)
+            has_error = 1
+        if not os.path.isfile(path_spec):
+            print_error(path_spec)
+            has_error = 1
+        if not os.path.isfile(path_pitch):
+            print_error(path_pitch)
+            has_error = 1
+        if not os.path.isfile(path_whisper):
+            print_error(path_whisper)
+            has_error = 1
+        if has_error == 0:
+            all_items.append(
+                f"{path_wave}|{path_spec}|{path_pitch}|{path_whisper}|{path_spk}")
     return all_items
+
 
 if __name__ == "__main__":
     os.makedirs("./files/", exist_ok=True)
@@ -31,7 +48,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--thread_count", help="thread count to process, set 0 to use all cpu cores", dest="thread_count", type=int, default=1)
     args = parser.parse_args()
-    
+
     rootPath = "./data_svc/waves-32k/"
     all_items = []
     for spks in os.listdir(f"./{rootPath}"):

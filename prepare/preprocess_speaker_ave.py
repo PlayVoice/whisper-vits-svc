@@ -42,7 +42,8 @@ if __name__ == "__main__":
                 if source_embed is not None:
                     speaker_ave = speaker_ave + source_embed
                     subfile_num = subfile_num + 1
-
+        if subfile_num == 0:
+            continue
         speaker_ave = speaker_ave / subfile_num
 
         np.save(os.path.join(data_singer, f"{speaker}.spk.npy"),
