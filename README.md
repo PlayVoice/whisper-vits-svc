@@ -8,6 +8,8 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
+[CodeWithGPU](https://www.codewithgpu.com/i/PlayVoice/so-vits-svc-5.0/so-vits-svc-v5)
+
 </div>
 
 - 💗本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
@@ -96,6 +98,7 @@ dataset_raw
 ```
 
 ## 数据预处理
+
 ```shell
 python svc_preprocessing.py -t 2 --crepe
 ```
@@ -144,6 +147,43 @@ data_svc/
     ├── speaker0.spk.npy
     └── speaker1.spk.npy
 ```
+
+如果您有编程基础，推荐，逐步完成数据处理，也利于学习内部工作原理
+
+- 1， 重采样
+
+    生成采样率16000Hz音频, 存储路径为：./data_svc/waves-16k
+
+    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-16k -s 16000
+
+    生成采样率32000Hz音频, 存储路径为：./data_svc/waves-32k
+
+    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
+
+- 2， 使用16K音频，提取音高：注意f0_ceil=900，需要根据您数据的最高音进行修改
+    > python prepare/preprocess_f0.py -w data_svc/waves-16k/ -p data_svc/pitch
+
+    低质量音频使用下面指令处理
+
+    > python prepare/preprocess_f0_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
+
+- 3， 使用16k音频，提取内容编码
+    > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
+
+- 4， 使用16k音频，提取音色编码
+    > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
+
+- 5， 提取音色编码均值；用于推理，也可作为发音人统一音色用于生成训练索引（数据音色变化不大的情况下）
+    > python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
+
+- 6， 使用32k音频，提取线性谱
+    > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
+
+- 7， 使用32k音频，生成训练索引
+    > python prepare/preprocess_train.py
+
+- 8， 训练文件调试
+    > python prepare/preprocess_zzz.py
 
 ## 训练
 0. 参数调整  
