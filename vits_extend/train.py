@@ -10,6 +10,8 @@ from torch.distributed import init_process_group
 from torch.nn.parallel import DistributedDataParallel
 import itertools
 import traceback
+import utils
+
 
 from vits_extend.dataloader import create_dataloader_train
 from vits_extend.dataloader import create_dataloader_eval
@@ -271,7 +273,11 @@ def train(rank, args, chkpt_path, hp, hp_str):
                 'epoch': epoch,
                 'hp_str': hp_str,
             }, save_path)
+            keep_ckpts = getattr(hp.log, 'keep_ckpts', 0)
+            if keep_ckpts > 0:
+                utils.clean_checkpoints(path_to_models=f'{pth_dir}', n_ckpts_to_keep=keep_ckpts, sort_by_time=True)
             logger.info("Saved checkpoint to: %s" % save_path)
+
 
         scheduler_g.step()
         scheduler_d.step()
