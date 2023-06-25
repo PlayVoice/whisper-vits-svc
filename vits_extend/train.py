@@ -10,6 +10,8 @@ from torch.distributed import init_process_group
 from torch.nn.parallel import DistributedDataParallel
 import itertools
 import traceback
+import utils
+
 
 from vits_extend.dataloader import create_dataloader_train
 from vits_extend.dataloader import create_dataloader_eval
@@ -256,8 +258,8 @@ def train(rank, args, chkpt_path, hp, hp_str):
             if rank == 0 and step % hp.log.info_interval == 0:
                 writer.log_training(
                     loss_g, loss_d, loss_m, loss_s, loss_k, loss_r, score_loss.item(), step)
-                logger.info("g %.04f m %.04f s %.04f d %.04f k %.04f r %.04f i %.04f | step %d" % (
-                    loss_g, loss_m, loss_s, loss_d, loss_k, loss_r, loss_i, step))
+                logger.info("epoch %d | g %.04f m %.04f s %.04f d %.04f k %.04f r %.04f i %.04f | step %d" % (
+                    epoch, loss_g, loss_m, loss_s, loss_d, loss_k, loss_r, loss_i, step))
 
         if rank == 0 and epoch % hp.log.save_interval == 0:
             save_path = os.path.join(pth_dir, '%s_%04d.pt'
@@ -271,7 +273,11 @@ def train(rank, args, chkpt_path, hp, hp_str):
                 'epoch': epoch,
                 'hp_str': hp_str,
             }, save_path)
+            keep_ckpts = getattr(hp.log, 'keep_ckpts', 0)
+            if keep_ckpts > 0:
+                utils.clean_checkpoints(path_to_models=f'{pth_dir}', n_ckpts_to_keep=keep_ckpts, sort_by_time=True)
             logger.info("Saved checkpoint to: %s" % save_path)
+
 
         scheduler_g.step()
         scheduler_d.step()
