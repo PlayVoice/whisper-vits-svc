@@ -287,7 +287,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             """
             assert isinstance(n_ckpts_to_keep, int) and n_ckpts_to_keep >= 0
             ckpts_files = [f for f in os.listdir(path_to_models) if os.path.isfile(os.path.join(path_to_models, f))]
-            name_key = (lambda _f: int(re.compile('sovits5.0_(\d+)\.pt').match(_f).group(1)))
+            name_key = (lambda _f: int(re.compile(f'{args.name}_(\d+)\.pt').match(_f).group(1)))
             time_key = (lambda _f: os.path.getmtime(os.path.join(path_to_models, _f)))
             sort_key = time_key if sort_by_time else name_key
             x_sorted = lambda _x: sorted(
