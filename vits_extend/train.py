@@ -295,7 +295,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             if n_ckpts_to_keep == 0:
                 to_del = []
             else:
-                to_del = [os.path.join(path_to_models, fn) for fn in x_sorted('sovits5.0')[:-n_ckpts_to_keep]]
+                to_del = [os.path.join(path_to_models, fn) for fn in x_sorted(f'{args.name}')[:-n_ckpts_to_keep]]
             del_info = lambda fn: logger.info(f"Free up space by deleting ckpt {fn}")
             del_routine = lambda x: [os.remove(x), del_info(x)]
             rs = [del_routine(fn) for fn in to_del]
