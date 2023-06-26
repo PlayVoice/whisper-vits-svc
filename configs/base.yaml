@@ -6,7 +6,7 @@ train:
   betas: [0.8, 0.99]
   lr_decay: 0.999875
   eps: 1e-9
-  batch_size: 6
+  batch_size: 8
   c_stft: 9
   c_mel: 1.
   c_kl: 0.2
@@ -56,7 +56,7 @@ mrd:
 #############################
 log:
   info_interval: 100
-  eval_interval: 6
+  eval_interval: 1
   save_interval: 5
   num_audio: 6
   pth_dir: 'chkpt'
