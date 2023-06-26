@@ -61,7 +61,7 @@ log:
   num_audio: 6
   pth_dir: 'chkpt'
   log_dir: 'logs'
-  keep_ckpts: 0
+  keep_ckpts: 3
 #############################
 dist_config:
   dist_backend: "nccl"
