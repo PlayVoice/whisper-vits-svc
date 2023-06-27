@@ -1,9 +1,10 @@
-import os
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import librosa
 import argparse
 import numpy as np
-import torchcrepe
+import crepe
 
 
 def compute_f0_nn(filename, device):
@@ -18,11 +19,11 @@ def compute_f0_nn(filename, device):
     fmin = 50
     fmax = 1000
     # Select a model capacity--one of "tiny" or "full"
-    model = "full"
+    model = "tiny"
     # Pick a batch size that doesn't cause memory errors on your gpu
     batch_size = 512
     # Compute pitch using first gpu
-    pitch, periodicity = torchcrepe.predict(
+    pitch, periodicity = crepe.predict(
         audio,
         sr,
         hop_length,
@@ -36,8 +37,8 @@ def compute_f0_nn(filename, device):
     pitch = np.repeat(pitch, 2, -1)  # 320 -> 160 * 2
     periodicity = np.repeat(periodicity, 2, -1)  # 320 -> 160 * 2
     # CREPE was not trained on silent audio. some error on silent need filter.pitPath
-    periodicity = torchcrepe.filter.median(periodicity, 9)
-    pitch = torchcrepe.filter.mean(pitch, 5)
+    periodicity = crepe.filter.median(periodicity, 9)
+    pitch = crepe.filter.mean(pitch, 5)
     pitch[periodicity < 0.1] = 0
     pitch = pitch.squeeze(0)
     return pitch
