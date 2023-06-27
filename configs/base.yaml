@@ -28,6 +28,7 @@ data:
 #############################
 vits:
   ppg_dim: 1024
+  vec_dim: 256
   spk_dim: 256
   gin_channels: 256
   inter_channels: 192
