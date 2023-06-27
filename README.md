@@ -34,6 +34,8 @@
 
 - [bigvgan-large-v2](https://github.com/PlayVoice/so-vits-svc-5.0/tree/bigvgan-large-v2) : whisper large v2 + bigvgan
 
+- [bigvgan-mix](https://github.com/PlayVoice/so-vits-svc-5.0/tree/bigvgan-mix) : bigvgan + mix encoder: whisper + hubert + wavlm + ... 小孩子才做选择，大人全要
+
 ## Model properties
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/hifigan_release
