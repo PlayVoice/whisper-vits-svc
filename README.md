@@ -12,10 +12,10 @@
 
 </div>
 
-- 💗本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
-- 💗本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
-- 💗本项目不支持实时变声；（支持需要换掉whisper）
-- 💗本项目不会开发用于其他用途的一键包。（不会指没学会）
+- 本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
+- 本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
+- 本项目不支持实时变声；（支持需要换掉whisper）
+- 本项目不会开发用于其他用途的一键包。（不会指没学会）
 
 ![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
 
@@ -33,7 +33,7 @@
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
-- [sovits5.0_bigvgan_555.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_555.pth)模型包括：生成器+判别器=197M，可用作预训练模型
+- [sovits5.0_bigvgan_mix_pre.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_mix_pre.pth)模型包括：生成器+判别器=198M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
 - 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
@@ -50,7 +50,7 @@ https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 | PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
 | VAE perturbation | 本项目 | ✅ | 提升音质 | - |
 
-💗由于使用了数据扰动，相比其他项目需要更长的训练时间
+由于使用了数据扰动，相比其他项目需要更长的训练时间
 
 ## 安装环境
 1. 安装ffmpeg
@@ -78,6 +78,8 @@ https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 4.  下载[音色编码器](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把`best_model.pth.tar`放到`speaker_pretrain/`里面 （**不要解压**）
 
 5.  下载[whisper-medium模型](https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt)，把`medium.pt`放到`whisper_pretrain/`里面
+
+6.  下载[hubert_soft模型](https://github.com/bshall/hubert)，把`hubert-soft-0d54a1f4.pt`放到`hubert_pretrain/`里面
 
 ## 数据集准备
 1. 人声分离，如果数据集没有BGM直接跳过此步骤（推荐使用[UVR](https://github.com/Anjok07/ultimatevocalremovergui)中的3_HP-Vocal-UVR模型或者htdemucs_ft模型抠出数据集中的人声）  
@@ -129,6 +131,13 @@ data_svc/
 │    └── speaker1
 │           ├── 000001.pit.npy
 │           └── 000xxx.pit.npy
+└── hubert
+│    └── speaker0
+│    │      ├── 000001.vec.npy
+│    │      └── 000xxx.vec.npy
+│    └── speaker1
+│           ├── 000001.vec.npy
+│           └── 000xxx.vec.npy
 └── whisper
 │    └── speaker0
 │    │      ├── 000001.ppg.npy
@@ -170,25 +179,28 @@ data_svc/
 - 3， 使用16k音频，提取内容编码
     > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
 
-- 4， 使用16k音频，提取音色编码
+- 4， 使用16k音频，提取内容编码
+    > python prepare/preprocess_hubert.py -w data_svc/waves-16k/ -v data_svc/hubert
+
+- 5， 使用16k音频，提取音色编码
     > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
 
-- 5， 提取音色编码均值；用于推理，也可作为发音人统一音色用于生成训练索引（数据音色变化不大的情况下）
+- 6， 提取音色编码均值；用于推理，也可作为发音人统一音色用于生成训练索引（数据音色变化不大的情况下）
     > python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
 
-- 6， 使用32k音频，提取线性谱
+- 7， 使用32k音频，提取线性谱
     > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
 
-- 7， 使用32k音频，生成训练索引
+- 8， 使用32k音频，生成训练索引
     > python prepare/preprocess_train.py
 
-- 8， 训练文件调试
+- 9， 训练文件调试
     > python prepare/preprocess_zzz.py
 
 ## 训练
 0. 参数调整  
-  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_555.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
-  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_555.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
+  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_mix_pre.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
+  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_mix_pre.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
   `batch_size`：6G显存推荐设置为6，设置为8可以训练，但是一个step的速度会非常慢  
 
 1. 开始训练  
@@ -223,6 +235,11 @@ data_svc/
   - 使用whisper提取内容编码，生成test.ppg.npy
     ```
     python whisper/inference.py -w test.wav -p test.ppg.npy
+    ```
+
+  - 使用hubert提取内容编码，生成test.vec.npy
+    ```
+    python hubert/inference.py -w test.wav -v test.vec.npy
     ```
 
   - 提取csv文本格式F0参数，用Excel打开csv文件，对照Audition或者SonicVisualiser手动修改错误的F0
@@ -299,6 +316,8 @@ https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/proje
 https://github.com/brentspell/hifi-gan-bwe
 
 https://github.com/mozilla/TTS
+
+https://github.com/bshall/soft-vc
 
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
