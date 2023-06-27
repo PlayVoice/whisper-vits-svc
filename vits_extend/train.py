@@ -169,9 +169,10 @@ def train(rank, args, chkpt_path, hp, hp_str):
         model_g.train()
         model_d.train()
 
-        for ppg, ppg_l, pit, spk, spec, spec_l, audio, audio_l in loader:
+        for ppg, ppg_l, vec, pit, spk, spec, spec_l, audio, audio_l in loader:
 
             ppg = ppg.to(device)
+            vec = vec.to(device)
             pit = pit.to(device)
             spk = spk.to(device)
             spec = spec.to(device)
@@ -185,7 +186,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
             fake_audio, ids_slice, z_mask, \
                 (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q, logdet_f, logdet_r), spk_preds = model_g(
-                    ppg, pit, spec, spk, ppg_l, spec_l)
+                    ppg, vec, pit, spec, spk, ppg_l, spec_l)
 
 
             audio = commons.slice_segments(
