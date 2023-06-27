@@ -36,6 +36,12 @@ def main(args):
             f"Auto run : python whisper/inference.py -w {args.wave} -p {args.ppg}")
         os.system(f"python whisper/inference.py -w {args.wave} -p {args.ppg}")
 
+    if (args.vec == None):
+        args.vec = "svc_tmp.vec.npy"
+        print(
+            f"Auto run : python hubert/inference.py -w {args.wave} -v {args.vec}")
+        os.system(f"python hubert/inference.py -w {args.wave} -v {args.vec}")
+
     if (args.pit == None):
         args.pit = "svc_tmp.pit.csv"
         print(
@@ -58,6 +64,12 @@ def main(args):
     ppg = np.load(args.ppg)
     ppg = np.repeat(ppg, 2, 0)  # 320 PPG -> 160 * 2
     ppg = torch.FloatTensor(ppg)
+    # ppg = torch.zeros_like(ppg)
+
+    vec = np.load(args.vec)
+    vec = np.repeat(vec, 2, 0)  # 320 PPG -> 160 * 2
+    vec = torch.FloatTensor(vec)
+    # vec = torch.zeros_like(vec)
 
     pit = load_csv_pitch(args.pit)
     print("pitch shift: ", args.shift)
@@ -78,9 +90,12 @@ def main(args):
     pit = torch.FloatTensor(pit)
 
     len_pit = pit.size()[0]
+    len_vec = vec.size()[0]
     len_ppg = ppg.size()[0]
-    len_min = min(len_pit, len_ppg)
+    len_min = min(len_pit, len_vec)
+    len_min = min(len_min, len_ppg)
     pit = pit[:len_min]
+    vec = vec[:len_min, :]
     ppg = ppg[:len_min, :]
 
     with torch.no_grad():
@@ -116,11 +131,12 @@ def main(args):
                 cut_e_out = -1 * hop_frame * hop_size
 
             sub_ppg = ppg[cut_s:cut_e, :].unsqueeze(0).to(device)
+            sub_vec = vec[cut_s:cut_e, :].unsqueeze(0).to(device)
             sub_pit = pit[cut_s:cut_e].unsqueeze(0).to(device)
             sub_len = torch.LongTensor([cut_e - cut_s]).to(device)
             sub_har = source[:, :, cut_s *
                              hop_size:cut_e * hop_size].to(device)
-            sub_out = model.inference(sub_ppg, sub_pit, spk, sub_len, sub_har)
+            sub_out = model.inference(sub_ppg, sub_vec, sub_pit, spk, sub_len, sub_har)
             sub_out = sub_out[0, 0].data.cpu().detach().numpy()
 
             sub_out = sub_out[cut_s_out:cut_e_out]
@@ -135,10 +151,11 @@ def main(args):
                 cut_s = 0
                 cut_s_out = 0
             sub_ppg = ppg[cut_s:, :].unsqueeze(0).to(device)
+            sub_vec = vec[cut_s:, :].unsqueeze(0).to(device)
             sub_pit = pit[cut_s:].unsqueeze(0).to(device)
             sub_len = torch.LongTensor([all_frame - cut_s]).to(device)
             sub_har = source[:, :, cut_s * hop_size:].to(device)
-            sub_out = model.inference(sub_ppg, sub_pit, spk, sub_len, sub_har)
+            sub_out = model.inference(sub_ppg, sub_vec, sub_pit, spk, sub_len, sub_har)
             sub_out = sub_out[0, 0].data.cpu().detach().numpy()
 
             sub_out = sub_out[cut_s_out:]
@@ -160,6 +177,8 @@ if __name__ == '__main__':
                         help="Path of speaker.")
     parser.add_argument('--ppg', type=str,
                         help="Path of content vector.")
+    parser.add_argument('--vec', type=str,
+                        help="Path of hubert vector.")
     parser.add_argument('--pit', type=str,
                         help="Path of pitch csv file.")
     parser.add_argument('--shift', type=int, default=0,
