@@ -19,8 +19,6 @@
 
 ![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
 
-- 【低 配置】6G显存可训练（显存不足6G可以用[云端训练](https://www.codewithgpu.com/i/PlayVoice/so-vits-svc-5.0/so-vits-svc-v5)）
-
 - 【无 泄漏】支持多发音人
 
 - 【捏 音色】创造独有发音人
@@ -33,7 +31,7 @@
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
-- [sovits5.0_bigvgan_mix_pre.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_mix_pre.pth)模型包括：生成器+判别器=198M，可用作预训练模型
+- [sovits5.0_bigvgan_mix.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_mix.pth)模型包括：生成器+判别器=201M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
 - 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
@@ -48,6 +46,7 @@ https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 | one shot vits |  Samsung | ✅ | VITS 一句话克隆 | - |
 | SCLN |  Microsoft | ✅ | 改善克隆 | - |
 | PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
+| HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
 | VAE perturbation | 本项目 | ✅ | 提升音质 | - |
 
 由于使用了数据扰动，相比其他项目需要更长的训练时间
@@ -199,8 +198,8 @@ data_svc/
 
 ## 训练
 0. 参数调整  
-  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_mix_pre.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
-  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_mix_pre.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
+  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_mix.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
+  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_mix.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
   `batch_size`：6G显存推荐设置为6，设置为8可以训练，但是一个step的速度会非常慢  
 
 1. 开始训练  
@@ -248,7 +247,7 @@ data_svc/
      ```
   - 最终推理
      ```
-     python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/修改成对应的名称.npy --wave test.wav --ppg test.ppg.npy --pit test.csv --shift 0
+     python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/修改成对应的名称.npy --wave test.wav --ppg test.ppg.npy --vec test.vec.npy --pit test.csv --shift 0
      ```
 
 3. 一些注意点  
@@ -258,9 +257,9 @@ data_svc/
     
     生成文件在当前目录svc_out.wav
     
-    | args | --config | --model | --spk | --wave | --ppg | --pit | --shift |
-    | ---  | --- | --- | --- | --- | --- | --- | --- |
-    | name | 配置文件 | 模型文件 | 音色文件 | 音频文件 | 音频内容 | 音高内容 | 升降调 |
+    | args | --config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
+    | ---  | --- | --- | --- | --- | --- | --- | --- | --- |
+    | name | 配置文件 | 模型文件 | 音色文件 | 音频文件 | ppg内容 | hubert内容 | 音高内容 | 升降调 |
 
 ## 捏音色
 纯属巧合的取名：average -> ave -> eva，夏娃代表者孕育和繁衍
@@ -277,8 +276,6 @@ eva_conf = {
 ```
 
 生成的音色文件为：eva.spk.npy
-
-💗Flow和Decoder均需要输入音色，您甚至可以给两个模块输入不同的音色参数，捏出更独特的音色。
 
 ## 数据集
 
@@ -318,6 +315,8 @@ https://github.com/brentspell/hifi-gan-bwe
 https://github.com/mozilla/TTS
 
 https://github.com/bshall/soft-vc
+
+https://github.com/maxrmorrison/torchcrepe
 
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
