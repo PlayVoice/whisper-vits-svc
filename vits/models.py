@@ -181,7 +181,8 @@ class SynthesizerTrn(nn.Module):
         self.dec = Generator(hp=hp)
 
     def forward(self, ppg, vec, pit, spec, spk, ppg_l, spec_l):
-        ppg = ppg + torch.randn_like(ppg)  # Perturbation
+        ppg = ppg + torch.randn_like(ppg) * 1  # Perturbation
+        vec = vec + torch.randn_like(vec) * 2  # Perturbation
         g = self.emb_g(F.normalize(spk)).unsqueeze(-1)
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, vec, f0=f0_to_coarse(pit))
