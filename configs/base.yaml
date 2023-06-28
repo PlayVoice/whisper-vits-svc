@@ -33,7 +33,7 @@ vits:
   gin_channels: 256
   inter_channels: 192
   hidden_channels: 192
-  filter_channels: 512
+  filter_channels: 640
 #############################
 gen:
   upsample_input: 192
