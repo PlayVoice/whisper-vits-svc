@@ -1,3 +1,3 @@
 Path for:
 
-    medium.pt
+    large-v2.pt
