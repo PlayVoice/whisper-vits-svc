@@ -63,5 +63,5 @@ if __name__ == "__main__":
     wavPath = args.wav
     ppgPath = args.ppg
 
-    whisper = load_model(os.path.join("whisper_pretrain", "medium.pt"))
+    whisper = load_model(os.path.join("whisper_pretrain", "large-v2.pt"))
     pred_ppg(whisper, wavPath, ppgPath)
