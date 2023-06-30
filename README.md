@@ -31,7 +31,7 @@
 
 https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
-- [sovits5.0_bigvgan_mix.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_mix.pth)模型包括：生成器+判别器=201M，可用作预训练模型
+- [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_mix_v2.pth)模型包括：生成器+判别器=198M，可用作预训练模型
 - 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
 - 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
 
@@ -76,7 +76,7 @@ https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
 
 4.  下载[音色编码器](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把`best_model.pth.tar`放到`speaker_pretrain/`里面 （**不要解压**）
 
-5.  下载[whisper-medium模型](https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt)，把`medium.pt`放到`whisper_pretrain/`里面
+5.  下载[whisper-large-v2模型](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt)，把`large-v2.pt`放到`whisper_pretrain/`里面
 
 6.  下载[hubert_soft模型](https://github.com/bshall/hubert)，把`hubert-soft-0d54a1f4.pt`放到`hubert_pretrain/`里面
 
@@ -198,8 +198,8 @@ data_svc/
 
 ## 训练
 0. 参数调整  
-  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_mix.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
-  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_mix.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
+  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
+  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_mix_v2.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
   `batch_size`：6G显存推荐设置为6，设置为8可以训练，但是一个step的速度会非常慢  
 
 1. 开始训练  
