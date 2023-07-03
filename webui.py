@@ -2,22 +2,22 @@ import os
 import subprocess
 import yaml
 import sys
-import platform
 import webbrowser
 import gradio as gr
 
 class WebUI:
     def __init__(self):
-        self.names = []
-        self.info = Info()
         self.train_config_path = 'configs/train.yaml'
+        self.info = Info()
+        self.names = []
         self.main_ui()
+
 
     def main_ui(self):
         with gr.Blocks(theme=gr.themes.Base(primary_hue=gr.themes.colors.green)) as ui:
             gr.Markdown('# so-vits-svc5.0 WebUI')
 
-            with gr.Tab("训练"):
+            with gr.Tab("预处理-训练"):
                 with gr.Accordion('训练说明', open=False):
                     gr.Markdown(self.info.train)
                 gr.Markdown('### 预处理参数设置')
@@ -33,9 +33,12 @@ class WebUI:
                     self.info_interval = gr.Number(value=50, label='info_interval', info='训练日志记录间隔（step）', interactive=True)
                     self.eval_interval = gr.Number(value=1, label='eval_interval', info='验证集验证间隔（epoch）', interactive=True)
                     self.save_interval = gr.Number(value=5, label='save_interval', info='检查点保存间隔（epoch）', interactive=True)
+                    self.keep_ckpts = gr.Number(value=0, label='keep_ckpts', info='保留最新的检查点文件(0保存全部)',interactive=True)
+                with gr.Row():
+                    self.slow_model = gr.Checkbox(label="slow_model", info='是否添加底模', value=True, interactive=True)
                 gr.Markdown('### 开始训练')
                 with gr.Row():
-                    self.bt_open_dataset_folder = gr.Button('打开数据集文件夹')
+                    self.bt_open_dataset_folder = gr.Button(value='打开数据集文件夹')
                     self.bt_onekey_train = gr.Button('一键训练', variant="primary")
                     self.bt_tb = gr.Button('启动Tensorboard', variant="primary")
                 gr.Markdown('### 恢复训练')
@@ -45,35 +48,68 @@ class WebUI:
                         self.bt_refersh = gr.Button('刷新')
                         self.bt_resume_train = gr.Button('恢复训练', variant="primary")
 
-            with gr.Tab('推理 (施工中，不可用) '):
+            with gr.Tab('推理'):
                 with gr.Accordion('推理说明', open=False):
                     gr.Markdown(self.info.inference)
                 gr.Markdown('### 一键推理（不需要手动修改f0）')
                 with gr.Row():
                     with gr.Column():
-                        #self.choose_model = gr.Dropdown(label='模型文件', choices=sorted(model_file))
-                        #self.choose_voice = gr.Dropdown(label='音色文件', choices=sorted(voice_file))
+                        with open("svc_out.wav", "wb") as f:
+                            pass
                         self.keychange = gr.Slider(-24, 24, value=0, step=1, label='变调')
                         self.bt_refresh = gr.Button(value='刷新模型和音色')
-                        self.bt_infer = gr.Button(value='开始转换', variant="primary")
-                    with gr.Column():
-                        self.input_wav = gr.Audio(type='filepath', label='选择待转换音频')
-                        self.output_wav = gr.Audio(type='filepath', label='输出音频')
+                        self.file_list = gr.Markdown(value="", label="文件列表")
+
+                        with gr.Row():
+                            self.choose_model = gr.Button(value='导出模型', fn=self.choose_model)
+                            self.out_model = gr.Dropdown(choices=sorted(self.names), label='out_model',
+                                                            info='选择需要导出的模型', interactive=True)
+                        self.bt_infer = gr.Button(value='开始转换', variant="primary", outputs=self.output_wav)
+                        self.input_wav = gr.Audio(type='filepath', label='选择待转换音频', source='upload')
+                        audio_path = gr.State(value="svc_out.wav")
+                        self.output_wav = gr.Audio(type='filepath', label='输出音频', value=audio_path.value, source="upload", visible=False, interactive=True)
+
 
             self.bt_open_dataset_folder.click(fn=self.openfolder)
             self.bt_onekey_train.click(fn=self.onekey_training, inputs=[self.model_name, self.f0_extractor, self.thread_count, self.learning_rate,
-                                          self.batch_size, self.info_interval, self.eval_interval, self.save_interval])
+                                          self.batch_size, self.info_interval, self.eval_interval, self.save_interval, self.keep_ckpts])
             self.bt_tb.click(fn=self.tensorboard)
             self.bt_refersh.click(fn=self.refresh_model, inputs=[self.model_name], outputs=[self.resume_model])
             self.bt_resume_train.click(fn=self.resume_train, inputs=[self.model_name, self.resume_model])
             #self.bt_infer.click(fn=self.inference, inputs=[self.input_wav, self.choose_model, self.keychange, self.id], outputs=self.output_wav)
         ui.launch(inbrowser=True, server_port=2333, share=True)
-
     def openfolder(self):
         try:
-            os.startfile('dataset_raw')
+            if sys.platform.startswith('win'):
+                os.startfile('dataset_raw')
+            elif sys.platform.startswith('linux'):
+                subprocess.call(['xdg-open', 'dataset_raw'])
+            elif sys.platform.startswith('darwin'):
+                subprocess.call(['open', 'dataset_raw'])
+            else:
+                print('打开文件夹失败！')
         except BaseException:
             print('打开文件夹失败！')
+
+    def refresh_model(self, model_name):
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.model_root = os.path.join(self.script_dir, f"chkpt/{model_name}")
+        self.names = []
+        for self.name in os.listdir(self.model_root):
+            if self.name.endswith(".pt"):
+                self.names.append(self.name)
+        self.file_list_text = "## chkpt文件夹\n"
+        for root, dirs, files in os.walk("chkpt"):
+            self.file_list_text += f"- {os.path.relpath(root)}\n"
+            for file in files:
+                self.file_list_text += f"  - {file}\n"
+        self.file_list_text += "\n---\n"
+        self.file_list_text += "## data_svc/singer文件夹\n"
+        for root, dirs, files in os.walk("data_svc/singer"):
+            self.file_list_text += f"- {os.path.relpath(root)}\n"
+            for file in files:
+                self.file_list_text += f"  - {file}\n"
+        return {"choices": sorted(self.names), "file_list": self.file_list_text, "__type__": "update"}
 
     def preprocessing(self, f0_extractor, thread_count):
         print('开始预处理')
@@ -85,18 +121,25 @@ class WebUI:
             output = train_process.stdout.readline().decode('utf-8')
             print(output, end='')
 
-    def create_config(self, model_name, learning_rate, batch_size, info_interval, eval_interval, save_interval):
-        with open('configs/base.yaml', 'r', encoding='utf-8') as f:
-            cfg = yaml.load(f.read(), Loader=yaml.FullLoader)
-        cfg['train']['model'] = str(model_name)
-        cfg['train']['learning_rate'] = float(learning_rate)
-        cfg['train']['batch_size'] = int(batch_size)
-        cfg['log']['info_interval'] = int(info_interval)
-        cfg['log']['eval_interval'] = str(eval_interval)
-        cfg['log']['save_interval'] = str(save_interval)
-        print('配置文件信息：' + str(cfg))
-        with open(self.train_config_path, 'w', encoding='utf-8') as f:
-            yaml.dump(cfg, f)
+
+    def create_config(self, model_name, learning_rate, batch_size, info_interval, eval_interval, save_interval,
+                      keep_ckpts ,slow_model):
+        with open("configs/train.yaml", "r") as f:
+            config = yaml.safe_load(f)
+        config['train']['model'] = model_name
+        config['train']['learning_rate'] = learning_rate
+        config['train']['batch_size'] = batch_size
+        config["log"]["info_interval"] = info_interval
+        config["log"]["eval_interval"] = eval_interval
+        config["log"]["save_interval"] = save_interval
+        config["log"]["keep_ckpts"] = keep_ckpts
+        if slow_model:
+            config["train"]["pretrain"] = "sovits5.0_bigvgan_mix_v2.pth"
+        else:
+            config["train"]["pretrain"] = ""
+        with open("configs/train.yaml", "w") as f:
+            yaml.safe_dump(config, f)
+        return f"已将log参数更新为{config['log']}"
 
     def training(self, model_name):
         print('开始训练')
@@ -105,11 +148,18 @@ class WebUI:
             output = train_process.stdout.readline().decode('utf-8')
             print(output, end='')
 
-    def onekey_training(self, model_name, f0_extractor, thread_count, learning_rate, batch_size, info_interval, eval_interval, save_interval):
-        self.create_config(model_name, learning_rate, batch_size, info_interval, eval_interval, save_interval)
+    def onekey_training(self, model_name, f0_extractor, thread_count, learning_rate, batch_size, info_interval, eval_interval, save_interval, keep_ckpts):
+        print(self, model_name, f0_extractor, thread_count, learning_rate, batch_size, info_interval, eval_interval,
+              save_interval, keep_ckpts)
+        self.create_config(model_name, learning_rate, batch_size, info_interval, eval_interval, save_interval, keep_ckpts)
         self.preprocessing(f0_extractor, thread_count)
         self.training(model_name)
 
+    def choose_model(self):
+        # 选择模型的函数
+        #
+        #
+        pass
     def tensorboard(self):
         if sys.platform.startswith('win'):
             tb_process = subprocess.Popen('tensorboard --logdir=logs --port=6006', stdout=subprocess.PIPE)
@@ -144,18 +194,30 @@ class WebUI:
             output = train_process.stdout.readline().decode('utf-8')
             print(output, end='')
 
-    def inference():
-        pass
+    def inference(self, input_wav, choose_model, keychange, id):
+        try:
+            shutil.copy(input_wav, ".")
+            input_wav_name = os.path.basename(input_wav).replace(' ', '')
+            args = ["python", "svc_inference.py", "--config", "configs/base.yaml", "--model", "sovits5.0.pth", "--spk",
+                    f"./data_svc/singer/{choose_model}.npy", "--wave", input_wav_name, "--shift", str(keychange)]
+            subprocess.run(args)
+            os.system(
+                f"python infer.py --input_wav {input_wav} --choose_model {choose_model} --keychange {keychange} --id {id}")
+            return {"visible": True, "__type__": "update"}
+        except BaseException:
+            print('音频转换失败！')
 
 
 class Info:
     def __init__(self) -> None:
+        # 初始化训练说明和推理说明信息
         self.train = '''
-### 待补充
+### 无
         '''
         self.inference = '''
-### 待补充
+### 无
         '''
 
 
 webui = WebUI()
+
