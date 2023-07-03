@@ -40,7 +40,7 @@ def compute_f0(filename, save, device):
     # CREPE was not trained on silent audio. some error on silent need filter.pitPath
     periodicity = torchcrepe.filter.median(periodicity, 9)
     pitch = torchcrepe.filter.mean(pitch, 5)
-    pitch[periodicity < 0.1] = 0
+    # pitch[periodicity < 0.1] = 0
     pitch = pitch.squeeze(0)
     np.save(save, pitch, allow_pickle=False)
 
