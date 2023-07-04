@@ -8,84 +8,52 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
-[CodeWithGPU](https://www.codewithgpu.com/i/PlayVoice/so-vits-svc-5.0/so-vits-svc-v5)
-
+[中文文档](./README_ZH.md)
+ 
 </div>
 
-- 本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
-- 本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
-- 本项目不支持实时变声；（支持需要换掉whisper）
-- 本项目不会开发用于其他用途的一键包。（不会指没学会）
+- This project is target for: beginners in deep learning, the basic operation of Python and PyTorch is the prerequisite for using this project;
+- This project aims to help deep learning beginners get rid of boring pure theoretical learning, and master the basic knowledge of deep learning by combining it with practice;
+- This project does not support real-time voice change; (support needs to replace whisper)
+- This project will not develop one-click packages for other purposes；
 
-![sovits_framework](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/402cf58d-6d03-4d0b-9d6a-94f079898672)
+![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
-- 【无 泄漏】支持多发音人
+- 6G memory GPU can be used to trained
 
-- 【捏 音色】创造独有发音人
+- support for multiple speakers
 
-- 【带 伴奏】也能进行转换，轻度伴奏
+- create unique speakers through speaker mixing
 
-- 【用 Excel】进行原始调教，纯手工
+- even with light accompaniment can also be converted
 
-## 项目说明：
+- F0 can be edited using Excel
 
-https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release
+## Model properties
 
-- [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/download/bigvgan_release/sovits5.0_bigvgan_mix_v2.pth)模型包括：生成器+判别器=198M，可用作预训练模型
-- 发音人（56个）文件在configs/singers目录中，可进行推理测试，尤其测试音色泄露
-- 发音人22，30，47，51辨识度较高，训练音频样本在configs/singers_sample目录中
+| Feature | From | Status | Function |
+| --- | --- | --- | --- |
+| whisper | OpenAI | ✅ | strong noise immunity |
+| bigvgan  | NVIDA | ✅ | alias and snake | The formant is clearer and the sound quality is obviously improved |
+| natural speech | Microsoft | ✅ | reduce mispronunciation |
+| neural source-filter | NII | ✅ | solve the problem of audio F0 discontinuity |
+| speaker encoder | Google | ✅ | Timbre Encoding and Clustering |
+| GRL for speaker | Ubisoft |✅ | Preventing Encoder Leakage Timbre |
+| one shot vits |  Samsung | ✅ | Voice Clone |
+| SCLN |  Microsoft | ✅ | Improve Clone |
+| PPG perturbation | this project | ✅ | Improved noise immunity and de-timbre |
+| HuBERT perturbation | this project | ✅ | Improved noise immunity and de-timbre |
+| VAE perturbation | this project | ✅ | Improve sound quality |
 
-| Feature | From | Status | Function | Remarks |
-| --- | --- | --- | --- | --- |
-| whisper | OpenAI | ✅ | 强大的抗噪能力 | 参数修改 |
-| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新bigvgan分支训练，共振峰更清晰，提升音质明显 |
-| natural speech | Microsoft | ✅ | 减少发音错误 | - |
-| neural source-filter | NII | ✅ | 解决断音问题 | 参数优化 |
-| speaker encoder | Google | ✅ | 音色编码与聚类 | - |
-| GRL for speaker | Ubisoft |✅ | 防止编码器泄漏音色 | 原理类似判别器的对抗训练 |
-| one shot vits |  Samsung | ✅ | VITS 一句话克隆 | - |
-| SCLN |  Microsoft | ✅ | 改善克隆 | - |
-| PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
-| HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
-| VAE perturbation | 本项目 | ✅ | 提升音质 | - |
+due to the use of data perturbation, it takes longer to train than other projects.
 
-由于使用了数据扰动，相比其他项目需要更长的训练时间
+## Dataset preparation
 
-## 安装环境
-1. 安装ffmpeg
-- Linux
-   ```
-   apt update && sudo apt install ffmpeg
-   ```
-- Windows  
+Necessary pre-processing:
+- 1 accompaniment separation, [UVR](https://github.com/Anjok07/ultimatevocalremovergui)
+- 2 cut audio, less than 30 seconds for whisper, [slicer](https://github.com/flutydeer/audio-slicer)
 
-  - 有conda环境运行下面的命令来安装ffmpeg  
-
-    ```
-    conda install ffmpeg
-    ```
-  - 没有conda环境从[CODEX FFMPEG](https://www.gyan.dev/ffmpeg/builds/)下载已经编译好的ffmpeg，并且正确配置ffmpeg的环境变量  
-
-2. 安装[PyTorch](https://pytorch.org/get-started/locally/)
-
-3.  安装项目依赖  
-    ```
-    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
-    ```
-    **注意：不能额外安装whisper，否则会和代码内置whisper冲突**  
-
-4.  下载[音色编码器](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把`best_model.pth.tar`放到`speaker_pretrain/`里面 （**不要解压**）
-
-5.  下载[whisper-large-v2模型](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt)，把`large-v2.pt`放到`whisper_pretrain/`里面
-
-6.  下载[hubert_soft模型](https://github.com/bshall/hubert)，把`hubert-soft-0d54a1f4.pt`放到`hubert_pretrain/`里面
-
-## 数据集准备
-1. 人声分离，如果数据集没有BGM直接跳过此步骤（推荐使用[UVR](https://github.com/Anjok07/ultimatevocalremovergui)中的3_HP-Vocal-UVR模型或者htdemucs_ft模型抠出数据集中的人声）  
-2. 用[slicer](https://github.com/flutydeer/audio-slicer)剪切音频，whisper要求为小于30秒（建议丢弃不足2秒的音频，短音频大多没有音素，有可能会影响训练效果）  
-3. 手动筛选经过第1步和第2步处理过的音频，裁剪或者丢弃杂音明显的音频，如果数据集没有BGM直接跳过此步骤  
-4. 用Adobe Audition进行响度平衡处理  
-5. 按下面文件结构，将数据集放入dataset_raw目录  
+then put the dataset into the dataset_raw directory according to the following file structure
 ```shell
 dataset_raw
 ├───speaker0
@@ -98,15 +66,56 @@ dataset_raw
     └───000xxx.wav
 ```
 
-## 数据预处理
+## Install dependencies
 
-```shell
-python svc_preprocessing.py -t 2 --crepe
-```
--t：指定线程数，必须是正整数且不得超过CPU总核心数，一般写2就可以了  
---crepe：使用crepe提取f0，如果训练集杂音多可以加上；杂音几乎没有可以不加--crepe，使用dio提取f0  
+- 1 software dependency
+  
+  > apt update && sudo apt install ffmpeg
+  
+  > pip install -r requirements.txt
 
-预处理完成后文件夹结构如下面所示
+- 2 download the Timbre Encoder: [Speaker-Encoder by @mueller91](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), put `best_model.pth.tar`  into `speaker_pretrain/`
+
+- 3 download whisper model [whisper-large-v2](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt), Make sure to download `large-v2.pt`，put it into `whisper_pretrain/`
+
+- 4 whisper is built-in, do not install it additionally, it will conflict and report an error
+
+- 5 download [hubert_soft model](https://github.com/bshall/hubert/releases/tag/v0.1)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`
+
+## Data preprocessing
+
+- 1， re-sampling
+
+    generate audio with a sampling rate of 16000Hz：./data_svc/waves-16k
+
+    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-16k -s 16000
+
+    generate audio with a sampling rate of 32000Hz：./data_svc/waves-32k
+
+    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
+
+- 2， use 16K audio to extract pitch：
+
+    > python prepare/preprocess_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
+
+- 3， use 16K audio to extract ppg
+    > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
+
+- 4， use 16k audio to extract timbre code
+    > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
+
+- 5， extract the average value of the timbre code for inference; it can also replace a single audio timbre in generating the training index, and use it as the unified timbre of the speaker for training
+    > python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
+
+- 6， use 32k audio to extract the linear spectrum
+    > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
+
+- 7， use 32k audio to generate training index
+    > python prepare/preprocess_train.py
+
+- 8， training file debugging
+    > python prepare/preprocess_zzz.py
+
 ```shell
 data_svc/
 └── waves-16k
@@ -156,113 +165,64 @@ data_svc/
     └── speaker1.spk.npy
 ```
 
-如果您有编程基础，推荐，逐步完成数据处理，也利于学习内部工作原理
+## Train
+- 1， if fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)
 
-- 1， 重采样
+    > set pretrain: "./sovits5.0_bigvgan_mix_v2.pth" in configs/base.yaml，and adjust the learning rate appropriately, eg 5e-5
 
-    生成采样率16000Hz音频, 存储路径为：./data_svc/waves-16k
+- 2， start training
 
-    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-16k -s 16000
+    > python svc_trainer.py -c configs/base.yaml -n sovits5.0
 
-    生成采样率32000Hz音频, 存储路径为：./data_svc/waves-32k
+- 3， resume training
 
-    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
+    > python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
 
-- 2， 使用16K音频，提取音高
+- 4， view log
 
-    > python prepare/preprocess_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
-
-- 3， 使用16k音频，提取内容编码
-    > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
-
-- 4， 使用16k音频，提取内容编码
-    > python prepare/preprocess_hubert.py -w data_svc/waves-16k/ -v data_svc/hubert
-
-- 5， 使用16k音频，提取音色编码
-    > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
-
-- 6， 提取音色编码均值；用于推理，也可作为发音人统一音色用于生成训练索引（数据音色变化不大的情况下）
-    > python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
-
-- 7， 使用32k音频，提取线性谱
-    > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
-
-- 8， 使用32k音频，生成训练索引
-    > python prepare/preprocess_train.py
-
-- 9， 训练文件调试
-    > python prepare/preprocess_zzz.py
-
-## 训练
-0. 参数调整  
-  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
-  并且修改`configs/base.yaml`的参数`pretrain: "./sovits5.0_bigvgan_mix_v2.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
-  `batch_size`：6G显存推荐设置为6，设置为8可以训练，但是一个step的速度会非常慢  
-
-1. 开始训练  
-   ```
-   python svc_trainer.py -c configs/base.yaml -n sovits5.0
-   ```
-2. 恢复训练
-   ```
-   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
-   ```
-3. 训练日志可视化
-   ```
-   tensorboard --logdir logs/
-   ```
+    > tensorboard --logdir logs/
 
 ![sovits5 0_base](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/1628e775-5888-4eac-b173-a28dca978faa)
 
-![sovits_spec](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/c4223cf3-b4a0-4325-bec0-6d46d195a1fc)
+## Inference
 
-## 推理
-1. 导出推理模型：文本编码器，Flow网络，Decoder网络；判别器和后验编码器只在训练中使用  
-   ```
-   python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
-   ```
-2. 推理  
-- 如果不想手动调整f0，只需要最终的推理结果，运行下面的命令即可
-  ```
-  python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/修改成对应的名称.npy --wave test.wav --shift 0
-  ```
-- 如果需要手动调整f0，依据下面的流程操作
+- 1， export inference model: text encoder, Flow network, Decoder network
 
-  - 使用whisper提取内容编码，生成test.ppg.npy
-    ```
-    python whisper/inference.py -w test.wav -p test.ppg.npy
-    ```
+    > python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
 
-  - 使用hubert提取内容编码，生成test.vec.npy
-    ```
-    python hubert/inference.py -w test.wav -v test.vec.npy
-    ```
+- 2， use whisper to extract content encoding, without using one-click reasoning, in order to reduce GPU memory usage
 
-  - 提取csv文本格式F0参数，用Excel打开csv文件，对照Audition或者SonicVisualiser手动修改错误的F0
-     ```
-     python pitch/inference.py -w test.wav -p test.csv
-     ```
-  - 最终推理
-     ```
-     python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/修改成对应的名称.npy --wave test.wav --ppg test.ppg.npy --vec test.vec.npy --pit test.csv --shift 0
-     ```
+    > python whisper/inference.py -w test.wav -p test.ppg.npy
 
-3. 一些注意点  
-    当指定--ppg后，多次推理同一个音频时，可以避免重复提取音频内容编码；没有指定，也会自动提取  
+- 3， use hubert to extract content vector, without using one-click reasoning, in order to reduce GPU memory usage
     
-    当指定--pit后，可以加载手工调教的F0参数；没有指定，也会自动提取  
-    
-    生成文件在当前目录svc_out.wav
-    
-    | args | --config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
-    | ---  | --- | --- | --- | --- | --- | --- | --- | --- |
-    | name | 配置文件 | 模型文件 | 音色文件 | 音频文件 | ppg内容 | hubert内容 | 音高内容 | 升降调 |
+    > python hubert/inference.py -w test.wav -v test.vec.npy
 
-## 捏音色
-纯属巧合的取名：average -> ave -> eva，夏娃代表者孕育和繁衍
-```
-python svc_eva.py
-```
+- 4， extract the F0 parameter to the csv text format, open the csv file in Excel, and manually modify the wrong F0 according to Audition or SonicVisualiser
+
+    > python pitch/inference.py -w test.wav -p test.csv
+
+- 5，specify parameters and infer
+
+    > python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./configs/singers/singer0001.npy --wave test.wav --ppg test.ppg.npy --vec test.vec.npy --pit test.csv
+
+    when --ppg is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
+
+    when --vec is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
+
+    when --pit is specified, the manually tuned F0 parameter can be loaded; if not specified, it will be automatically extracted;
+
+    generate files in the current directory:svc_out.wav
+
+    | args |--config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
+    | ---  | --- | --- | --- | --- | --- | --- | --- |
+    | name | config path | model path | speaker | wave input | wave ppg | wave hubert | wave pitch | pitch shift |
+
+## Creat singer
+named by pure coincidence：average -> ave -> eva，eve(eva) represents conception and reproduction
+
+> python svc_eva.py
+
 ```python
 eva_conf = {
     './configs/singers/singer0022.npy': 0,
@@ -272,9 +232,9 @@ eva_conf = {
 }
 ```
 
-生成的音色文件为：eva.spk.npy
+the generated singer file is：eva.spk.npy
 
-## 数据集
+## Data set
 
 | Name | URL |
 | --- | --- |
@@ -293,7 +253,7 @@ eva_conf = {
 |Aishell-3      |http://www.aishelltech.com/aishell_3|
 |VCTK           |https://datashare.ed.ac.uk/handle/10283/2651|
 
-## 代码来源和参考文献
+## Code sources and references
 
 https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
@@ -331,7 +291,7 @@ https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 [Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
 
-## 基于数据扰动防止音色泄露的方法
+## Method of Preventing Timbre Leakage Based on Data Perturbation
 
 https://github.com/auspicious3000/contentvec/blob/main/contentvec/data/audio/audio_utils_1.py
 
@@ -343,15 +303,8 @@ https://github.com/biggytruck/SpeechSplit2/blob/main/utils.py
 
 https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 
-## 贡献者
+## Contributors
 
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
-
-## 交流群
-<div align="center">
-
-![炼丹师公会-SVC群聊二维码](https://github.com/PlayVoice/vits_chinese/assets/16432329/1d728f61-be74-4706-9ecf-5cb0be4c094c)
-
-</div>
