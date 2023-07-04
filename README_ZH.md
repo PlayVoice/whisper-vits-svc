@@ -27,19 +27,19 @@
 
 ## 项目说明：
 
-| Feature | From | Status | Function | Remarks |
-| --- | --- | --- | --- | --- |
-| whisper | OpenAI | ✅ | 强大的抗噪能力 | 参数修改 |
-| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活 | GPU占用略多，主分支删除；新bigvgan分支训练，共振峰更清晰，提升音质明显 |
-| natural speech | Microsoft | ✅ | 减少发音错误 | - |
-| neural source-filter | NII | ✅ | 解决断音问题 | 参数优化 |
-| speaker encoder | Google | ✅ | 音色编码与聚类 | - |
-| GRL for speaker | Ubisoft |✅ | 防止编码器泄漏音色 | 原理类似判别器的对抗训练 |
-| one shot vits |  Samsung | ✅ | VITS 一句话克隆 | - |
-| SCLN |  Microsoft | ✅ | 改善克隆 | - |
-| PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
-| HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 | - |
-| VAE perturbation | 本项目 | ✅ | 提升音质 | - |
+| Feature | From | Status | Function |
+| --- | --- | --- | --- |
+| whisper | OpenAI | ✅ | 强大的抗噪能力 |
+| bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活，共振峰更清晰，提升音质明显 |
+| natural speech | Microsoft | ✅ | 减少发音错误 |
+| neural source-filter | NII | ✅ | 解决断音问题 |
+| speaker encoder | Google | ✅ | 音色编码与聚类 |
+| GRL for speaker | Ubisoft |✅ | 对抗去音色 |
+| one shot vits |  Samsung | ✅ | VITS 一句话克隆 |
+| SCLN |  Microsoft | ✅ | 改善克隆 |
+| PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
+| HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
+| VAE perturbation | 本项目 | ✅ | 提升音质 |
 
 由于使用了数据扰动，相比其他项目需要更长的训练时间
 
