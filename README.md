@@ -101,19 +101,22 @@ dataset_raw
 - 3， use 16K audio to extract ppg
     > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
 
-- 4， use 16k audio to extract timbre code
+- 4， use 16K audio to extract hubert
+    > python prepare/preprocess_hubert.py -w data_svc/waves-16k/ -v data_svc/hubert
+
+- 5， use 16k audio to extract timbre code
     > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
 
-- 5， extract the average value of the timbre code for inference; it can also replace a single audio timbre in generating the training index, and use it as the unified timbre of the speaker for training
+- 6， extract the average value of the timbre code for inference; it can also replace a single audio timbre in generating the training index, and use it as the unified timbre of the speaker for training
     > python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
 
-- 6， use 32k audio to extract the linear spectrum
+- 7， use 32k audio to extract the linear spectrum
     > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
 
-- 7， use 32k audio to generate training index
+- 8， use 32k audio to generate training index
     > python prepare/preprocess_train.py
 
-- 8， training file debugging
+- 9， training file debugging
     > python prepare/preprocess_zzz.py
 
 ```shell
@@ -215,7 +218,7 @@ data_svc/
     generate files in the current directory:svc_out.wav
 
     | args |--config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
-    | ---  | --- | --- | --- | --- | --- | --- | --- |
+    | ---  | --- | --- | --- | --- | --- | --- | --- | --- |
     | name | config path | model path | speaker | wave input | wave ppg | wave hubert | wave pitch | pitch shift |
 
 ## Creat singer
