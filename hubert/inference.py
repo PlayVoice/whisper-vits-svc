@@ -16,16 +16,6 @@ def load_model(path, device):
     return model
 
 
-def pred_all(model, wavPath, vecPath, device):
-    feats = load_audio(wavPath)
-    feats = torch.from_numpy(feats).to(device)
-    feats = feats[None, None, :].half()
-    with torch.no_grad():
-        vec = model.units(feats).squeeze().data.cpu().float().numpy()
-        # print(vec.shape)   # [length, dim=256] hop=320
-        np.save(vecPath, vec, allow_pickle=False)
-
-
 def pred_vec(model, wavPath, vecPath, device):
     audio = load_audio(wavPath)
     audln = audio.shape[0]
@@ -45,6 +35,7 @@ def pred_vec(model, wavPath, vecPath, device):
         feats = feats[None, None, :].half()
         with torch.no_grad():
             vec = model.units(feats).squeeze().data.cpu().float().numpy()
+            # print(vec.shape)   # [length, dim=256] hop=320
             vec_a.extend(vec)
     np.save(vecPath, vec_a, allow_pickle=False)
 

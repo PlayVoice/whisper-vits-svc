@@ -16,7 +16,7 @@ def create_dataloader_train(hps, n_gpus, rank):
         shuffle=True)
     train_loader = DataLoader(
         train_dataset,
-        num_workers=2,
+        num_workers=4,
         shuffle=False,
         pin_memory=True,
         collate_fn=collate_fn,

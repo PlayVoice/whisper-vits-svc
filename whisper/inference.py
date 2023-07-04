@@ -10,14 +10,22 @@ from whisper.audio import load_audio, pad_or_trim, log_mel_spectrogram
 
 def load_model(path) -> Whisper:
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    checkpoint = torch.load(path, map_location=device)
+    checkpoint = torch.load(path, map_location="cpu")
     dims = ModelDimensions(**checkpoint["dims"])
+    print(dims)
     model = Whisper(dims)
-    model.load_state_dict(checkpoint["model_state_dict"])
     del model.decoder
+    # cut = len(model.encoder.blocks) // 2
+    # cut = -1 * cut
+    # del model.encoder.blocks[cut:]
+    model.load_state_dict(checkpoint["model_state_dict"], strict=False)
     model.eval()
     model.half()
     model.to(device)
+    # torch.save({
+    #     'dims': checkpoint["dims"],
+    #     'model_state_dict': model.state_dict(),
+    # }, "large-v2.pt")
     return model
 
 
@@ -26,10 +34,10 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
     audln = audio.shape[0]
     ppg_a = []
     idx_s = 0
-    while (idx_s + 25 * 16000 < audln):
-        short = audio[idx_s:idx_s + 25 * 16000]
-        idx_s = idx_s + 25 * 16000
-        ppgln = 25 * 16000 // 320
+    while (idx_s + 15 * 16000 < audln):
+        short = audio[idx_s:idx_s + 15 * 16000]
+        idx_s = idx_s + 15 * 16000
+        ppgln = 15 * 16000 // 320
         # short = pad_or_trim(short)
         mel = log_mel_spectrogram(short).half().to(whisper.device)
         with torch.no_grad():

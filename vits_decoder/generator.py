@@ -113,7 +113,7 @@ class Generator(torch.nn.Module):
 
     def forward(self, spk, x, f0):
         # Perturbation
-        x = x + torch.randn_like(x)        
+        x = x + torch.randn_like(x)
         # adapter
         x = self.adapter(x, spk)
         x = self.conv_pre(x)

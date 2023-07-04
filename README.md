@@ -168,12 +168,9 @@ data_svc/
 
     > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
 
-- 2， 使用16K音频，提取音高：注意f0_ceil=900，需要根据您数据的最高音进行修改
-    > python prepare/preprocess_f0.py -w data_svc/waves-16k/ -p data_svc/pitch
+- 2， 使用16K音频，提取音高
 
-    低质量音频使用下面指令处理
-
-    > python prepare/preprocess_f0_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
+    > python prepare/preprocess_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
 
 - 3， 使用16k音频，提取内容编码
     > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
