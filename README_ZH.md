@@ -43,6 +43,8 @@
 
 由于使用了数据扰动，相比其他项目需要更长的训练时间
 
+https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/63858332-cc0d-40e1-a216-6fe8bf638f7c
+
 ## 安装环境
 1. 安装ffmpeg
 - Linux
