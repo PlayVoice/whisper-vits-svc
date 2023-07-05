@@ -2,7 +2,7 @@ train:
   model: "sovits"
   seed: 1234
   epochs: 10000
-  learning_rate: 2e-4
+  learning_rate: 5e-5
   betas: [0.8, 0.99]
   lr_decay: 0.999875
   eps: 1e-9
@@ -11,7 +11,7 @@ train:
   c_mel: 1.
   c_kl: 0.2
   port: 8001
-  pretrain: ""
+  pretrain: "./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth"
 #############################
 data: 
   training_files: "files/train.txt"
