@@ -34,7 +34,7 @@ https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-
 ## Model properties
 
 | Feature | From | Status | Function |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | whisper | OpenAI | ✅ | strong noise immunity |
 | bigvgan  | NVIDA | ✅ | alias and snake | The formant is clearer and the sound quality is obviously improved |
 | natural speech | Microsoft | ✅ | reduce mispronunciation |

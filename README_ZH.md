@@ -30,7 +30,7 @@ https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/63858332-cc0d-40e1-
 ## 模型特点：
 
 | Feature | From | Status | Function |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | whisper | OpenAI | ✅ | 强大的抗噪能力 |
 | bigvgan  | NVIDA | ✅ | 抗锯齿与蛇形激活，共振峰更清晰，提升音质明显 |
 | natural speech | Microsoft | ✅ | 减少发音错误 |
