@@ -254,7 +254,7 @@ data_svc/
     生成文件在当前目录svc_out.wav
     
     | args | --config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
-    | ---  | --- | --- | --- | --- | --- | --- | --- | --- |
+    | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
     | name | 配置文件 | 模型文件 | 音色文件 | 音频文件 | ppg内容 | hubert内容 | 音高内容 | 升降调 |
 
 ## 捏音色
@@ -276,7 +276,7 @@ eva_conf = {
 ## 数据集
 
 | Name | URL |
-| --- | --- |
+| :--- | :--- |
 |KiSing         |http://shijt.site/index.php/2021/05/16/kising-the-first-open-source-mandarin-singing-voice-synthesis-corpus/|
 |PopCS          |https://github.com/MoonInTheRiver/DiffSinger/blob/master/resources/apply_form.md|
 |opencpop       |https://wenet.org.cn/opencpop/download/|

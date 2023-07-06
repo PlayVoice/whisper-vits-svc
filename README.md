@@ -226,7 +226,7 @@ data_svc/
     generate files in the current directory:svc_out.wav
 
     | args |--config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
-    | ---  | --- | --- | --- | --- | --- | --- | --- | --- |
+    | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
     | name | config path | model path | speaker | wave input | wave ppg | wave hubert | wave pitch | pitch shift |
 
 ## Creat singer
@@ -248,7 +248,7 @@ the generated singer file is：eva.spk.npy
 ## Data set
 
 | Name | URL |
-| --- | --- |
+| :--- | :--- |
 |KiSing         |http://shijt.site/index.php/2021/05/16/kising-the-first-open-source-mandarin-singing-voice-synthesis-corpus/|
 |PopCS          |https://github.com/MoonInTheRiver/DiffSinger/blob/master/resources/apply_form.md|
 |opencpop       |https://wenet.org.cn/opencpop/download/|
