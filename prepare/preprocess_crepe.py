@@ -21,7 +21,7 @@ def compute_f0(filename, save, device):
     fmin = 50
     fmax = 1000
     # Select a model capacity--one of "tiny" or "full"
-    model = "tiny"
+    model = "full"
     # Pick a batch size that doesn't cause memory errors on your gpu
     batch_size = 512
     # Compute pitch using first gpu

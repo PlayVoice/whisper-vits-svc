@@ -25,7 +25,9 @@
 
 - 【用 Excel】进行原始调教，纯手工
 
-## 项目说明：
+https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/63858332-cc0d-40e1-a216-6fe8bf638f7c
+
+## 模型特点：
 
 | Feature | From | Status | Function |
 | --- | --- | --- | --- |
@@ -40,10 +42,6 @@
 | PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
 | HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
 | VAE perturbation | 本项目 | ✅ | 提升音质 |
-
-由于使用了数据扰动，相比其他项目需要更长的训练时间
-
-https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/63858332-cc0d-40e1-a216-6fe8bf638f7c
 
 ## 安装环境
 1. 安装ffmpeg
@@ -74,7 +72,9 @@ https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/63858332-cc0d-40e1-
 
 6.  下载[hubert_soft模型](https://github.com/bshall/hubert/releases/tag/v0.1)，把`hubert-soft-0d54a1f4.pt`放到`hubert_pretrain/`里面
 
-7.  下载[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), 把它放到`vits_pretrain/`里面，推理测试
+7.  下载音高提取模型[crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，把`full.pth`放到`crepe/assets`里面
+
+8.  下载[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), 把它放到`vits_pretrain/`里面，推理测试
 
     > python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth --spk ./configs/singers/singer0001.npy --wave test.wav
 
@@ -102,8 +102,6 @@ dataset_raw
 python svc_preprocessing.py -t 2
 ```
 -t：指定线程数，必须是正整数且不得超过CPU总核心数，一般写2就可以了
-
-项目默认使用crepe的tiny模型提取f0，如果需要[full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)需要额外下载
 
 预处理完成后文件夹结构如下面所示
 ```shell

@@ -15,7 +15,7 @@ def compute_f0_nn(filename, device):
     hop_length = 320
     fmin = 50
     fmax = 1000
-    model = "tiny"
+    model = "full"
     batch_size = 512
     pitch = crepe.predict(
         audio,

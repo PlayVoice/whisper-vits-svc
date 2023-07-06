@@ -29,6 +29,8 @@
 
 - F0 can be edited using Excel
 
+https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-9a14-9cbc1e0e7c3a
+
 ## Model properties
 
 | Feature | From | Status | Function |
@@ -82,7 +84,9 @@ dataset_raw
 
 - 5 download [hubert_soft model](https://github.com/bshall/hubert/releases/tag/v0.1)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`
 
-- 6 download pretrain model [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), and put it into `vits_pretrain/`
+- 6 download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`
+
+- 7 download pretrain model [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), and put it into `vits_pretrain/`
 
     > python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth --spk ./configs/singers/singer0001.npy --wave test.wav
 
