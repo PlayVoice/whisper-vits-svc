@@ -46,6 +46,7 @@ https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-
 | PPG perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | HuBERT perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | VAE perturbation | this project | ✅ | Improve sound quality |
+| MIX encoder | this project | ✅ | Improve conversion stability |
 
 due to the use of data perturbation, it takes longer to train than other projects.
 

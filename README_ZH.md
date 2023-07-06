@@ -42,6 +42,7 @@ https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/63858332-cc0d-40e1-
 | PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
 | HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
 | VAE perturbation | 本项目 | ✅ | 提升音质 |
+| Mix encoder | 本项目 | ✅ | 提升转换稳定性 |
 
 ## 安装环境
 1. 安装ffmpeg
