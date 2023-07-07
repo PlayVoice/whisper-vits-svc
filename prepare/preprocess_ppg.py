@@ -29,7 +29,7 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
     audio = load_audio(wavPath)
     audln = audio.shape[0]
     ppgln = audln // 320
-    # audio = pad_or_trim(audio)
+    audio = pad_or_trim(audio)
     mel = log_mel_spectrogram(audio).half().to(whisper.device)
     with torch.no_grad():
         ppg = whisper.encoder(mel.unsqueeze(0)).squeeze().data.cpu().float().numpy()
