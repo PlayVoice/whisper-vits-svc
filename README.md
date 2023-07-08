@@ -11,20 +11,20 @@
  
 </div>
 
-- This project is target for: beginners in deep learning, the basic operation of Python and PyTorch is the prerequisite for using this project;
-- This project aims to help deep learning beginners get rid of boring pure theoretical learning, and master the basic knowledge of deep learning by combining it with practice;
-- This project does not support real-time voice change; (support needs to replace whisper)
-- This project will not develop one-click packages for other purposes；
+- This project targets deep learning beginners, basic knowledge of Python and PyTorch are the prerequisites for this project;
+- This project aims to help deep learning beginners get rid of boring pure theoretical learning, and master the basic knowledge of deep learning by combining it with practices;
+- This project does not support real-time voice converting; (need to replace whisper if real-time voice converting is what you are looking for)
+- This project will not develop one-click packages for other purposes;
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
-- 6G memory GPU can be used to trained
+- 6GB low minimum VRAM requirement for training 
 
 - support for multiple speakers
 
 - create unique speakers through speaker mixing
 
-- even with light accompaniment can also be converted
+- even voices with light accompaniment can also be converted
 
 - F0 can be edited using Excel
 
@@ -51,14 +51,49 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 
 due to the use of data perturbation, it takes longer to train than other projects.
 
+## Setup Environment
+
+1. ffmpeg
+  - Linux(Ubuntu/debian, replace package manager for your environment)
+    ```shell
+    sudo apt update && apt install ffmpeg
+    ```
+  - Windows with conda
+    ```shell
+    conda install ffmpeg
+    ```
+  - Windows without conda
+    Download pre-compiled ffmpeg from [CODEX FFMPEG](https://www.gyan.dev/ffmpeg/builds/) and setup `PATH` correctly.
+    
+2. Install [PyTorch](https://pytorch.org/get-started/locally/).
+
+3. Install project dependencies
+    ```shell
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+    ```
+    **Note: whisper is already built-in, do not install it again otherwise it will cuase conflict and error**
+4. Download the Timbre Encoder: [Speaker-Encoder by @mueller91](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), put `best_model.pth.tar`  into `speaker_pretrain/`.
+
+5. Download whisper model [whisper-large-v2](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt). Make sure to download `large-v2.pt`，put it into `whisper_pretrain/`.
+
+6. Download [hubert_soft model](https://github.com/bshall/hubert/releases/tag/v0.1)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`.
+
+7. Download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`.
+
+8. Download pretrain model [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), and put it into `vits_pretrain/`.
+    ```shell
+    python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth --spk ./configs/singers/singer0001.npy --wave test.wav
+    ```
+
 ## Dataset preparation
 
 Necessary pre-processing:
-- 1 accompaniment separation, [UVR](https://github.com/Anjok07/ultimatevocalremovergui)
-- 2 cut audio, less than 30 seconds for whisper, [slicer](https://github.com/flutydeer/audio-slicer)
-
-then put the dataset into the dataset_raw directory according to the following file structure
-```shell
+1. Separate vocie and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
+2. Cut audio input to shorter length with [slicer](https://github.com/flutydeer/audio-slicer), whisper takes input less than 30 seconds.
+3. Manually check generated audio input, remove inputs shorter than 2 seconds or with obivous noise.
+4. Adjust loudness if necessary, recommand Adobe Audiiton.
+5. Put the dataset into the `dataset_raw` directory following the structure below.
+```
 dataset_raw
 ├───speaker0
 │   ├───000001.wav
@@ -70,66 +105,13 @@ dataset_raw
     └───000xxx.wav
 ```
 
-## Install dependencies
-
-- 1 software dependency
-  
-  > apt update && sudo apt install ffmpeg
-  
-  > pip install -r requirements.txt
-
-- 2 download the Timbre Encoder: [Speaker-Encoder by @mueller91](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), put `best_model.pth.tar`  into `speaker_pretrain/`
-
-- 3 download whisper model [whisper-large-v2](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt), Make sure to download `large-v2.pt`，put it into `whisper_pretrain/`
-
-    **Tip: whisper is built-in, do not install it additionally, it will conflict and report an error**
-
-- 4 download [hubert_soft model](https://github.com/bshall/hubert/releases/tag/v0.1)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`
-
-- 5 download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`
-
-- 6 download pretrain model [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), and put it into `vits_pretrain/`
-
-    > python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth --spk ./configs/singers/singer0001.npy --wave test.wav
-
 ## Data preprocessing
-
-- 1， re-sampling
-
-    generate audio with a sampling rate of 16000Hz：./data_svc/waves-16k
-
-    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-16k -s 16000
-
-    generate audio with a sampling rate of 32000Hz：./data_svc/waves-32k
-
-    > python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
-
-- 2， use 16K audio to extract pitch：
-
-    > python prepare/preprocess_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
-
-- 3， use 16K audio to extract ppg
-    > python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
-
-- 4， use 16K audio to extract hubert
-    > python prepare/preprocess_hubert.py -w data_svc/waves-16k/ -v data_svc/hubert
-
-- 5， use 16k audio to extract timbre code
-    > python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
-
-- 6， extract the average value of the timbre code for inference; it can also replace a single audio timbre in generating the training index, and use it as the unified timbre of the speaker for training
-    > python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
-
-- 7， use 32k audio to extract the linear spectrum
-    > python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
-
-- 8， use 32k audio to generate training index
-    > python prepare/preprocess_train.py
-
-- 9， training file debugging
-    > python prepare/preprocess_zzz.py
-
 ```shell
+python sve_preprocessing.py -t 2
+```
+`-t`: threading, max number should not exceed CPU core count, usually 2 is enough.
+After preprocessing you will get an output with following structure.
+```
 data_svc/
 └── waves-16k
 │    └── speaker0
@@ -178,54 +160,113 @@ data_svc/
     └── speaker1.spk.npy
 ```
 
+1.  Re-sampling
+    - Generate audio with a sampling rate of 16000Hz in `./data_svc/waves-16k` 
+    ```
+    python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-16k -s 16000
+    ```
+    
+    - Generate audio with a sampling rate of 32000Hz in `./data_svc/waves-32k`
+    ```
+    python prepare/preprocess_a.py -w ./dataset_raw -o ./data_svc/waves-32k -s 32000
+    ```
+2. Use 16K audio to extract pitch
+    ```
+    python prepare/preprocess_crepe.py -w data_svc/waves-16k/ -p data_svc/pitch
+    ```
+3. Use 16K audio to extract ppg
+    ```
+    python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper
+    ```
+4. Use 16K audio to extract hubert
+    ```
+    python prepare/preprocess_hubert.py -w data_svc/waves-16k/ -v data_svc/hubert
+    ```
+5. Use 16k audio to extract timbre code
+    ```
+    python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
+    ```
+6. Extract the average value of the timbre code for inference; it can also replace a single audio timbre in generating the training index, and use it as the unified timbre of the speaker for training 
+    ```
+    python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
+    ``` 
+7. use 32k audio to extract the linear spectrum
+    ```
+    python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
+    ``` 
+8. Use 32k audio to generate training index
+    ```
+    python prepare/preprocess_train.py
+    ```
+11. Training file debugging
+    ```
+    python prepare/preprocess_zzz.py
+    ```
+
 ## Train
-- 1， if fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)
-
-    > set pretrain: "./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth" in configs/base.yaml，and adjust the learning rate appropriately, eg 5e-5
-
-- 2， start training
-
-    > python svc_trainer.py -c configs/base.yaml -n sovits5.0
-
-- 3， resume training
-
-    > python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
-
-- 4， view log
-
-    > tensorboard --logdir logs/
+1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release). Put pretrained model under project root, change this line
+    ```
+    pretrain: "./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth"
+    ```
+    in `configs/base.yaml`，and adjust the learning rate appropriately, eg 5e-5.
+   
+   `batch_szie`: for GPU with 6G VRAM, 6 is the recommended value, 8 will work but step speed will be much slower.
+2. Start training
+   ```
+   python svc_trainer.py -c configs/base.yaml -n sovits5.0
+   ``` 
+3. Resume training
+   ```
+   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
+   ```
+4. Log visualization
+   ```
+   tensorboard --logdir logs/
+   ```
 
 ![sovits5 0_base](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/1628e775-5888-4eac-b173-a28dca978faa)
 
+![sovits_spec](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/c4223cf3-b4a0-4325-bec0-6d46d195a1fc)
+
 ## Inference
 
-- 1， export inference model: text encoder, Flow network, Decoder network
+1. Export inference model: text encoder, Flow network, Decoder network
+   ```
+   python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
+   ```
+2. Inference
+   - if there is no need to adjust `f0`, just run the following command.
+   ```
+   python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/your_singer.spk.npy --wave test.wav --shift 0
+   ```
+   - if `f0` will be adjusted manually, follow the steps:
+     1. use whisper to extract content encoding, generate `test.vec.npy`.
+       ```
+       python whisper/inference.py -w test.wav -p test.ppg.npy
+       ```
+     2. use hubert to extract content vector, without using one-click reasoning, in order to reduce GPU memory usage
+       ```
+       python hubert/inference.py -w test.wav -v test.vec.npy
+       ```
+     3. extract the F0 parameter to the csv text format, open the csv file in Excel, and manually modify the wrong F0 according to Audition or SonicVisualiser
+       ```
+       python pitch/inference.py -w test.wav -p test.csv
+       ```
+     4. final inference
+       ```
+       python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/your_singer.spk.npy --wave test.wav --ppg test.ppg.npy --vec test.vec.npy --pit test.csv --shift 0
+       ```
+3. Notes
 
-    > python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
+    - when `--ppg` is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
 
-- 2， use whisper to extract content encoding, without using one-click reasoning, in order to reduce GPU memory usage
+    - when `--vec` is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
 
-    > python whisper/inference.py -w test.wav -p test.ppg.npy
+    - when `--pit` is specified, the manually tuned F0 parameter can be loaded; if not specified, it will be automatically extracted;
 
-- 3， use hubert to extract content vector, without using one-click reasoning, in order to reduce GPU memory usage
-    
-    > python hubert/inference.py -w test.wav -v test.vec.npy
+    - generate files in the current directory:svc_out.wav
 
-- 4， extract the F0 parameter to the csv text format, open the csv file in Excel, and manually modify the wrong F0 according to Audition or SonicVisualiser
-
-    > python pitch/inference.py -w test.wav -p test.csv
-
-- 5，specify parameters and infer
-
-    > python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/your_singer.spk.npy --wave test.wav --ppg test.ppg.npy --vec test.vec.npy --pit test.csv
-
-    when --ppg is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
-
-    when --vec is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
-
-    when --pit is specified, the manually tuned F0 parameter can be loaded; if not specified, it will be automatically extracted;
-
-    generate files in the current directory:svc_out.wav
+4. Arguments ref
 
     | args |--config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
     | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -234,7 +275,9 @@ data_svc/
 ## Creat singer
 named by pure coincidence：average -> ave -> eva，eve(eva) represents conception and reproduction
 
-> python svc_eva.py
+```
+python svc_eva.py
+```
 
 ```python
 eva_conf = {
@@ -245,7 +288,7 @@ eva_conf = {
 }
 ```
 
-the generated singer file is：eva.spk.npy
+the generated singer file will be `eva.spk.npy`.
 
 ## Data set
 
