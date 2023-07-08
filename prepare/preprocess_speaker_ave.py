@@ -36,7 +36,7 @@ if __name__ == "__main__":
             process_num = thread_count
             
         with ThreadPoolExecutor(max_workers=10) as executor:
-            for file in tqdm(os.listdir(os.path.join(data_speaker, speaker))):
+            for file in tqdm(os.path.join(data_speaker, speaker)):
                 future = executor.submit(load_embed_file, file)
                 source_embed = future.result()
                 if source_embed is not None:
