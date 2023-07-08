@@ -27,6 +27,8 @@
 
 https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/63858332-cc0d-40e1-a216-6fe8bf638f7c
 
+Powered by [@ShadowVap](https://space.bilibili.com/491283091)
+
 ## 模型特点：
 
 | Feature | From | Status | Function |

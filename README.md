@@ -31,6 +31,8 @@
 
 https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-9a14-9cbc1e0e7c3a
 
+Powered by [@ShadowVap](https://space.bilibili.com/491283091)
+
 ## Model properties
 
 | Feature | From | Status | Function |
