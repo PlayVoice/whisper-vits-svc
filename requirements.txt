@@ -1,6 +1,4 @@
 fsspec
-ffmpeg-python
-praat-parselmouth
 pyworld
 matplotlib
 soundfile
