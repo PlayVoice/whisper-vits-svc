@@ -46,37 +46,24 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | Mix encoder | 本项目 | ✅ | 提升转换稳定性 |
 
 ## 安装环境
-1. 安装ffmpeg
-- Linux
-   ```
-   apt update && sudo apt install ffmpeg
-   ```
-- Windows  
 
-  - 有conda环境运行下面的命令来安装ffmpeg  
+1. 安装[PyTorch](https://pytorch.org/get-started/locally/)
 
-    ```
-    conda install ffmpeg
-    ```
-  - 没有conda环境从[CODEX FFMPEG](https://www.gyan.dev/ffmpeg/builds/)下载已经编译好的ffmpeg，并且正确配置ffmpeg的环境变量  
-
-2. 安装[PyTorch](https://pytorch.org/get-started/locally/)
-
-3.  安装项目依赖  
+2.  安装项目依赖  
     ```
     pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
     ```
     **注意：不能额外安装whisper，否则会和代码内置whisper冲突**  
 
-4.  下载[音色编码器](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把`best_model.pth.tar`放到`speaker_pretrain/`里面 （**不要解压**）
+3.  下载[音色编码器](https://drive.google.com/drive/folders/15oeBYf6Qn1edONkVLXe82MzdIi3O_9m3), 把`best_model.pth.tar`放到`speaker_pretrain/`里面 （**不要解压**）
 
-5.  下载[whisper-large-v2模型](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt)，把`large-v2.pt`放到`whisper_pretrain/`里面
+4.  下载[whisper-large-v2模型](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt)，把`large-v2.pt`放到`whisper_pretrain/`里面
 
-6.  下载[hubert_soft模型](https://github.com/bshall/hubert/releases/tag/v0.1)，把`hubert-soft-0d54a1f4.pt`放到`hubert_pretrain/`里面
+5.  下载[hubert_soft模型](https://github.com/bshall/hubert/releases/tag/v0.1)，把`hubert-soft-0d54a1f4.pt`放到`hubert_pretrain/`里面
 
-7.  下载音高提取模型[crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，把`full.pth`放到`crepe/assets`里面
+6.  下载音高提取模型[crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，把`full.pth`放到`crepe/assets`里面
 
-8.  下载[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), 把它放到`vits_pretrain/`里面，推理测试
+7.  下载[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), 把它放到`vits_pretrain/`里面，推理测试
 
     > python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth --spk ./configs/singers/singer0001.npy --wave test.wav
 
