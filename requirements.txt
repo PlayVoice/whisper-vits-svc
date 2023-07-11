@@ -10,3 +10,4 @@ transformers
 tqdm
 librosa
 omegaconf
+gradio==3.36.1
