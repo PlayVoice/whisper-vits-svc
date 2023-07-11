@@ -68,9 +68,9 @@ due to the use of data perturbation, it takes longer to train than other project
 
 6. Download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`.
 
-7. Download pretrain model [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), and put it into `vits_pretrain/`.
+7. Download pretrain model [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0/), and put it into `vits_pretrain/`.
     ```shell
-    python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth --spk ./configs/singers/singer0001.npy --wave test.wav
+    python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
     ```
 
 ## Dataset preparation
@@ -192,9 +192,9 @@ data_svc/
     ```
 
 ## Train
-1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release). Put pretrained model under project root, change this line
+1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
     ```
-    pretrain: "./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth"
+    pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"
     ```
     in `configs/base.yaml`，and adjust the learning rate appropriately, eg 5e-5.
    
