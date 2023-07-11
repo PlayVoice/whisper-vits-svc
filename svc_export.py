@@ -52,7 +52,7 @@ def main(args):
         hp.data.segment_size // hp.data.hop_length,
         hp)
 
-    save_pretrain(args.checkpoint_path, "sovits5.0.pretrain.pth")
+    # save_pretrain(args.checkpoint_path, "sovits5.0.pretrain.pth")
     load_model(args.checkpoint_path, model)
     save_model(model, "sovits5.0.pth")
 
