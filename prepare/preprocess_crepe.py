@@ -14,8 +14,8 @@ def compute_f0(filename, save, device):
     assert sr == 16000
     # Load audio
     audio = torch.tensor(np.copy(audio))[None]
-    # Here we'll use a 20 millisecond hop length
-    hop_length = 320
+    # Here we'll use a 10 millisecond hop length
+    hop_length = 160
     # Provide a sensible frequency range for your domain (upper limit is 2006 Hz)
     # This would be a reasonable range for speech
     fmin = 50
@@ -36,8 +36,6 @@ def compute_f0(filename, save, device):
         device=device,
         return_periodicity=True,
     )
-    pitch = np.repeat(pitch, 2, -1)  # 320 -> 160 * 2
-    periodicity = np.repeat(periodicity, 2, -1)  # 320 -> 160 * 2
     # CREPE was not trained on silent audio. some error on silent need filter.pitPath
     periodicity = crepe.filter.median(periodicity, 9)
     pitch = crepe.filter.mean(pitch, 5)
