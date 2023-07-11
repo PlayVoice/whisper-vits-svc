@@ -11,8 +11,8 @@ def compute_f0_nn(filename, device):
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
     audio = torch.tensor(np.copy(audio))[None]
-    # Here we'll use a 20 millisecond hop length
-    hop_length = 320
+    # Here we'll use a 10 millisecond hop length
+    hop_length = 160
     fmin = 50
     fmax = 1000
     model = "full"
@@ -28,7 +28,6 @@ def compute_f0_nn(filename, device):
         device=device,
         return_periodicity=False,
     )
-    pitch = np.repeat(pitch, 2, -1)  # 320 -> 160 * 2
     pitch = crepe.filter.mean(pitch, 5)
     pitch = pitch.squeeze(0)
     return pitch
