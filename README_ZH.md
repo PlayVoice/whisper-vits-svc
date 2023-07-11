@@ -63,9 +63,9 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 
 6.  下载音高提取模型[crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，把`full.pth`放到`crepe/assets`里面
 
-7.  下载[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release/), 把它放到`vits_pretrain/`里面，推理测试
+7.  下载[sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0/), 把它放到`vits_pretrain/`里面，推理测试
 
-    > python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth --spk ./configs/singers/singer0001.npy --wave test.wav
+    > python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
 
 ## 数据集准备
 1. 人声分离，如果数据集没有BGM直接跳过此步骤（推荐使用[UVR](https://github.com/Anjok07/ultimatevocalremovergui)中的3_HP-Vocal-UVR模型或者htdemucs_ft模型抠出数据集中的人声）  
@@ -181,8 +181,8 @@ data_svc/
 
 ## 训练
 0. 参数调整  
-  如果基于预训练模型微调，需要下载预训练模型[sovits5.0_bigvgan_mix_v2.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/bigvgan_release)并且放在项目根目录下面  
-  并且修改`configs/base.yaml`的参数`pretrain: "./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
+  如果基于预训练模型微调，需要下载预训练模型[sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0)并且放在项目根目录下面  
+  并且修改`configs/base.yaml`的参数`pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"`，并适当调小学习率（建议从5e-5开始尝试）  
   `batch_size`：6G显存推荐设置为6，设置为8可以训练，但是一个step的速度会非常慢  
 
 1. 开始训练  
