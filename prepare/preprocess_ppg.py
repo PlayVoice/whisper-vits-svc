@@ -15,9 +15,9 @@ def load_model(path) -> Whisper:
     print(dims)
     model = Whisper(dims)
     del model.decoder
-    # cut = len(model.encoder.blocks) // 2
-    # cut = -1 * cut
-    # del model.encoder.blocks[cut:]
+    cut = len(model.encoder.blocks) // 4
+    cut = -1 * cut
+    del model.encoder.blocks[cut:]
     model.load_state_dict(checkpoint["model_state_dict"], strict=False)
     model.eval()
     model.half()
