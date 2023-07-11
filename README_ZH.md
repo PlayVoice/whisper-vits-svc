@@ -38,7 +38,7 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | neural source-filter | NII | ✅ | 解决断音问题 |
 | speaker encoder | Google | ✅ | 音色编码与聚类 |
 | GRL for speaker | Ubisoft |✅ | 对抗去音色 |
-| one shot vits |  Samsung | ✅ | VITS 一句话克隆 |
+| SNAC |  Samsung | ✅ | VITS 一句话克隆 |
 | SCLN |  Microsoft | ✅ | 改善克隆 |
 | PPG perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
 | HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
