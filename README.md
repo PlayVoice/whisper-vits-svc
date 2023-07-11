@@ -42,7 +42,7 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | neural source-filter | NII | ✅ | solve the problem of audio F0 discontinuity |
 | speaker encoder | Google | ✅ | Timbre Encoding and Clustering |
 | GRL for speaker | Ubisoft |✅ | Preventing Encoder Leakage Timbre |
-| one shot vits |  Samsung | ✅ | Voice Clone |
+| SNAC |  Samsung | ✅ | One Shot Clone of VITS |
 | SCLN |  Microsoft | ✅ | Improve Clone |
 | PPG perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | HuBERT perturbation | this project | ✅ | Improved noise immunity and de-timbre |
