@@ -48,8 +48,13 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | HuBERT perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | VAE perturbation | this project | ✅ | Improve sound quality |
 | MIX encoder | this project | ✅ | Improve conversion stability |
+| USP infer | this project | ✅ | Improve conversion stability |
 
 due to the use of data perturbation, it takes longer to train than other projects.
+
+**USP : Unvoice and Silence whith Pitch when infer**
+![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ab2ed117-2b4f-42b6-aec2-cd4c37865cab)
+
 
 ## Setup Environment
 
