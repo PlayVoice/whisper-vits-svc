@@ -52,7 +52,7 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 
 due to the use of data perturbation, it takes longer to train than other projects.
 
-**USP : Unvoice and Silence whith Pitch when infer**
+**USP : Unvoice and Silence with Pitch when infer**
 ![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ba733b48-8a89-4612-83e0-a0745587d150)
 
 
