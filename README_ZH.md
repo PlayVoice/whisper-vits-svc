@@ -44,6 +44,10 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | HuBERT perturbation | 本项目 | ✅ | 提升抗噪性和去音色 |
 | VAE perturbation | 本项目 | ✅ | 提升音质 |
 | Mix encoder | 本项目 | ✅ | 提升转换稳定性 |
+| USP 推理 | 本项目 | ✅ | 提升转换稳定性 |
+
+**USP : 即使unvoice和silence在推理的时候，也有Pitch，这个Pitch平滑链接voice段**
+![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ab2ed117-2b4f-42b6-aec2-cd4c37865cab)
 
 ## 安装环境
 
