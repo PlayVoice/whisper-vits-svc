@@ -7,7 +7,7 @@ import numpy as np
 import crepe
 
 
-def compute_f0_nn(filename, device):
+def compute_f0_voice(filename, device):
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
     audio = torch.tensor(np.copy(audio))[None]
@@ -28,6 +28,33 @@ def compute_f0_nn(filename, device):
         device=device,
         return_periodicity=False,
     )
+    pitch = crepe.filter.mean(pitch, 5)
+    pitch = pitch.squeeze(0)
+    return pitch
+
+
+def compute_f0_sing(filename, device):
+    audio, sr = librosa.load(filename, sr=16000)
+    assert sr == 16000
+    audio = torch.tensor(np.copy(audio))[None]
+    # Here we'll use a 20 millisecond hop length
+    hop_length = 320
+    fmin = 50
+    fmax = 1000
+    model = "full"
+    batch_size = 512
+    pitch = crepe.predict(
+        audio,
+        sr,
+        hop_length,
+        fmin,
+        fmax,
+        model,
+        batch_size=batch_size,
+        device=device,
+        return_periodicity=False,
+    )
+    pitch = np.repeat(pitch, 2, -1)  # 320 -> 160 * 2
     pitch = crepe.filter.mean(pitch, 5)
     pitch = pitch.squeeze(0)
     return pitch
@@ -63,7 +90,7 @@ if __name__ == "__main__":
     print(args.pit)
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    pitch = compute_f0_nn(args.wav, device)
+    pitch = compute_f0_sing(args.wav, device)
     save_csv_pitch(pitch, args.pit)
     #tmp = load_csv_pitch(args.pit)
     #save_csv_pitch(tmp, "tmp.csv")
