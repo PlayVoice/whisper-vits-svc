@@ -357,3 +357,7 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
+
+## Relevant Projects
+- [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
+- [NSF-BigVGAN](https://github.com/PlayVoice/NSF-BigVGAN): vocoder for more work
