@@ -12,7 +12,7 @@ def load_model(path) -> Whisper:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint = torch.load(path, map_location="cpu")
     dims = ModelDimensions(**checkpoint["dims"])
-    print(dims)
+    # print(dims)
     model = Whisper(dims)
     del model.decoder
     cut = len(model.encoder.blocks) // 4
