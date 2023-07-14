@@ -11,7 +11,7 @@ train:
   c_mel: 1.
   c_kl: 0.2
   port: 8001
-  pretrain: "./vits_pretrain/sovits5.0_bigvgan_mix_v2.pth"
+  pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"
 #############################
 data: 
   training_files: "files/train.txt"
