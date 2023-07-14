@@ -102,9 +102,6 @@ class WebUI:
 
                     with gr.Column():
 
-                        with open("svc_out.wav", "wb") as f:
-                            pass
-
                         self.keychange = gr.Slider(-24, 24, value=0, step=1, label=i18n('变调'))
 
                         self.file_list = gr.Markdown(value="", label=i18n("文件列表"))
