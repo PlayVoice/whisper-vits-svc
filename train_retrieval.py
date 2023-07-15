@@ -98,7 +98,9 @@ def create_index_for_speaker(base_path: Path, indexes_path: Path, speaker: str) 
 
 
 def get_speaker_list(base_path: Path):
-    speakers_path = base_path / "data_svc" / "waves-16k"
+    speakers_path = base_path / "data_svc" / "hubert"
+    if not speakers_path.exists():
+        raise FileNotFoundError(f"path {speakers_path} does not exists")
     return [speaker_dir.name for speaker_dir in speakers_path.iterdir() if speaker_dir.is_dir()]
 
 
