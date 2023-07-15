@@ -292,7 +292,7 @@ if __name__ == '__main__':
     parser.add_argument('--enable-retrieval', action="store_true",
                         help="Enable index feature retrieval")
     parser.add_argument('--retrieval-ratio', type=float, default=.5,
-                        help="ration of feature retrieval effect. Must be in range 0..1")
+                        help="ratio of feature retrieval effect. Must be in range 0..1")
     parser.add_argument('--n-retrieval-vectors', type=int, default=3, choices=[1, 2, 3],
                         help="get n nearest vectors from retrieval index. Must be in range 1..3")
     parser.add_argument('--debug', action="store_true")
