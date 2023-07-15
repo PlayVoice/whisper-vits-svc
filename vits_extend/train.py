@@ -274,7 +274,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             }, save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
 
-        # 删除模型，释放空间
+
         def clean_checkpoints(path_to_models=f'{pth_dir}', n_ckpts_to_keep=hp.log.keep_ckpts, sort_by_time=True):
             """Freeing up space by deleting saved ckpts
             Arguments:

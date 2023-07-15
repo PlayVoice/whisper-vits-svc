@@ -442,4 +442,3 @@ class I18nAuto:
 if __name__ == "__main__":
     i18n = I18nAuto()
     webui = WebUI()
-

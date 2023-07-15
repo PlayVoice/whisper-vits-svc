@@ -44,16 +44,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args.wav)
     print(args.spe)
-    if not os.path.exists(args.spe):
-        os.makedirs(args.spe)
+
+    os.makedirs(args.spe, exist_ok=True)
     wavPath = args.wav
     spePath = args.spe
     hps = OmegaConf.load("./configs/base.yaml")
 
     for spks in os.listdir(wavPath):
         if os.path.isdir(f"./{wavPath}/{spks}"):
-            if not os.path.exists(f"./{spePath}/{spks}"):
-                os.makedirs(f"./{spePath}/{spks}")
+            os.makedirs(f"./{spePath}/{spks}", exist_ok=True)
             if args.thread_count == 0:
                 process_num = os.cpu_count()
             else:

@@ -23,8 +23,7 @@ if __name__ == "__main__":
     data_singer = parser.parse_args().dataset_singer
     thread_count = parser.parse_args().thread_count
 
-    if not os.path.exists(data_singer):
-        os.makedirs(data_singer)
+    os.makedirs(data_singer, exist_ok=True)
 
     for speaker in os.listdir(data_speaker):
         print(speaker)

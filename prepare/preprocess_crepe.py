@@ -66,8 +66,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args.wav)
     print(args.pit)
-    if not os.path.exists(args.pit):
-        os.makedirs(args.pit)
+    os.makedirs(args.pit, exist_ok=True)
     wavPath = args.wav
     pitPath = args.pit
 
@@ -77,8 +76,7 @@ if __name__ == "__main__":
 
     for spks in os.listdir(wavPath):
         if os.path.isdir(f"./{wavPath}/{spks}"):
-            if not os.path.exists(f"./{pitPath}/{spks}"):
-                os.makedirs(f"./{pitPath}/{spks}")
+            os.makedirs(f"./{pitPath}/{spks}", exist_ok=True)
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
             if args.thread_count == 0:
                 process_num = os.cpu_count()

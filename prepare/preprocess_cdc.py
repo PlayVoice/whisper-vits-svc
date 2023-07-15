@@ -39,7 +39,7 @@ if __name__ == "__main__":
     outPath = args.outPath
     for spks in os.listdir(rootPath):
         if (os.path.isdir(f"./{rootPath}/{spks}")):
-            print(f"-----------{spks}-----------")
+            print(f">>>>>>>>>>>{spks}<<<<<<<<<<<")
             os.makedirs(f"./{outPath}/{spks}", exist_ok=True)
             for file in os.listdir(f"./{rootPath}/{spks}"):
                 if (file.endswith(".wav")):

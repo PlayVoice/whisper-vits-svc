@@ -44,8 +44,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args.wav)
     print(args.vec)
-    if not os.path.exists(args.vec):
-        os.makedirs(args.vec)
+    os.makedirs(args.vec, exist_ok=True)
 
     wavPath = args.wav
     vecPath = args.vec
@@ -57,8 +56,7 @@ if __name__ == "__main__":
 
     for spks in os.listdir(wavPath):
         if os.path.isdir(f"./{wavPath}/{spks}"):
-            if not os.path.exists(f"./{vecPath}/{spks}"):
-                os.makedirs(f"./{vecPath}/{spks}")
+            os.makedirs(f"./{vecPath}/{spks}", exist_ok=True)
             print(f">>>>>>>>>>{spks}<<<<<<<<<<")
             if args.thread_count == 1:
                 for file in os.listdir(f"./{wavPath}/{spks}"):

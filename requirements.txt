@@ -4,7 +4,6 @@ matplotlib
 soundfile
 scikit-learn
 scipy
-torchcrepe
 tensorboard
 transformers
 tqdm

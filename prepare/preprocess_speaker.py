@@ -18,12 +18,10 @@ from speaker.infer import read_json
 
 def get_spk_wavs(dataset_path, output_path):
     wav_files = []
-    if not os.path.exists(f"./{output_path}"):
-      os.makedirs(f"./{output_path}")
+    os.makedirs(f"./{output_path}", exist_ok=True)
     for spks in os.listdir(dataset_path):
         if os.path.isdir(f"./{dataset_path}/{spks}"):
-            if not os.path.exists(f"./{output_path}/{spks}"):
-              os.makedirs(f"./{output_path}/{spks}")
+            os.makedirs(f"./{output_path}/{spks}", exist_ok=True)
             for file in os.listdir(f"./{dataset_path}/{spks}"):
                 if file.endswith(".wav"):
                     wav_files.append(f"./{dataset_path}/{spks}/{file}")
