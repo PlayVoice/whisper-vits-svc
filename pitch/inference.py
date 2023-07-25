@@ -11,6 +11,7 @@ def compute_f0_voice(filename, device):
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
     audio = torch.tensor(np.copy(audio))[None]
+    audio = audio + torch.randn_like(audio) * 0.001
     # Here we'll use a 10 millisecond hop length
     hop_length = 160
     fmin = 50
@@ -37,6 +38,7 @@ def compute_f0_sing(filename, device):
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
     audio = torch.tensor(np.copy(audio))[None]
+    audio = audio + torch.randn_like(audio) * 0.001
     # Here we'll use a 20 millisecond hop length
     hop_length = 320
     fmin = 50
