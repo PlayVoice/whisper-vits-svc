@@ -73,6 +73,8 @@ due to the use of data perturbation, it takes longer to train than other project
 
 6. Download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`.
 
+   **Note: crepe full.pth is 84.9 MB, not 6kb**
+   
 7. Download pretrain model [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0/), and put it into `vits_pretrain/`.
     ```shell
     python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
@@ -361,4 +363,4 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 ## Relevant Projects
 - [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
 - [NSF-BigVGAN](https://github.com/PlayVoice/NSF-BigVGAN): vocoder for more work
-- [X-Sing](https://github.com/PlayVoice/X-Sing): more work
+- [X-SING](https://github.com/PlayVoice/X-SING): more work
