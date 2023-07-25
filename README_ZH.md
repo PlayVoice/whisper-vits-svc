@@ -13,7 +13,7 @@
 - 本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
 - 本项目不支持实时变声；（支持需要换掉whisper）
 - 本项目不会开发用于其他用途的一键包
-- **本项目只是使用简洁明了的代码结构，方便学习研究，效果远不如[so-vits-svc](https://github.com/svc-develop-team/so-vits-svc)**
+- **本项目使用简洁明了的代码结构，用于学习研究；不研究代码，只要效果，可直接用[so-vits-svc](https://github.com/svc-develop-team/so-vits-svc)**
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
@@ -68,6 +68,8 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 
 6.  下载音高提取模型[crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，把`full.pth`放到`crepe/assets`里面
 
+    **注意：full.pth为84.9M，请确认文件大小无误**
+    
 7.  下载[sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0/), 把它放到`vits_pretrain/`里面，推理测试
 
     > python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
@@ -342,9 +344,9 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
 
-## 学习交流群：没有一键包
+## 学习交流群：非一键包
 <div align="center">
 
-![炼丹师公会-SVC群聊二维码](https://github.com/PlayVoice/vits_chinese/assets/16432329/1d728f61-be74-4706-9ecf-5cb0be4c094c)
+![X·SING-QQ](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/dfbb4740-447e-40f0-9193-c974c4b6ceb0)
 
 </div>
