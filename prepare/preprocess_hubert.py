@@ -3,11 +3,17 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
 import argparse
 import torch
+import librosa
+
 from tqdm import tqdm
 from multiprocessing import Pool
-from whisper.audio import load_audio
 from hubert import hubert_model
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+
+def load_audio(file: str, sr: int = 16000):
+    x, sr = librosa.load(file, sr=sr)
+    return x
 
 
 def load_model(path, device):
