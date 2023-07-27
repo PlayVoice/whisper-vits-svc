@@ -34,7 +34,7 @@ def merge_model(model1, model2, rate):
     model_keys = model1.keys()
     model_merge = collections.OrderedDict()
     for key in model_keys:
-        key_merge = rate * model1[key] + (1-rate)*model2[key]
+        key_merge = rate * model1[key] + (1 - rate) * model2[key]
         model_merge[key] = key_merge
     return model_merge
 
