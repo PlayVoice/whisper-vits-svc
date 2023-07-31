@@ -198,7 +198,7 @@ data_svc/
    ```
 2. 恢复训练
    ```
-   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
+   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/sovits5.0_***.pt
    ```
 3. 训练日志可视化
    ```
