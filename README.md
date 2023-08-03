@@ -212,7 +212,7 @@ data_svc/
    ``` 
 3. Resume training
    ```
-   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
+   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/sovits5.0_***.pt
    ```
 4. Log visualization
    ```
