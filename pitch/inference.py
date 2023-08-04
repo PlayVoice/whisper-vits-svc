@@ -7,6 +7,23 @@ import numpy as np
 import crepe
 
 
+def compute_f0_mouth(path, device):
+    # pip install praat-parselmouth
+    import parselmouth
+
+    x, sr = librosa.load(path, sr=16000)
+    assert sr == 16000
+    lpad = 1024 // 160
+    rpad = lpad
+    f0 = parselmouth.Sound(x, sr).to_pitch_ac(
+        time_step=160 / sr,
+        voicing_threshold=0.5,
+        pitch_floor=30,
+        pitch_ceiling=1000).selected_array['frequency']
+    f0 = np.pad(f0, [[lpad, rpad]], mode='constant')
+    return f0
+
+
 def compute_f0_voice(filename, device):
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
@@ -29,7 +46,7 @@ def compute_f0_voice(filename, device):
         device=device,
         return_periodicity=False,
     )
-    pitch = crepe.filter.mean(pitch, 5)
+    pitch = crepe.filter.mean(pitch, 3)
     pitch = pitch.squeeze(0)
     return pitch
 
