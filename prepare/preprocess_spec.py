@@ -30,17 +30,20 @@ def process_file(file):
         file = file[:-4]
         compute_spec(hps.data, f"{wavPath}/{spks}/{file}.wav", f"{spePath}/{spks}/{file}.pt")
 
-def process_files_with_thread_pool(wavPath, spks, max_workers):
+
+def process_files_with_thread_pool(wavPath, spks, thread_num):
     files = os.listdir(f"./{wavPath}/{spks}")
-    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-        list(tqdm(executor.map(process_file, files), total=len(files)))
+    with ThreadPoolExecutor(max_workers=thread_num) as executor:
+        list(tqdm(executor.map(process_file, files), total=len(files), desc=f'Processing spec {spks}'))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter embed parameter ...'
-    parser.add_argument("-w", "--wav", help="wav", dest="wav")
-    parser.add_argument("-s", "--spe", help="spe", dest="spe")
+    parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
+    parser.add_argument("-s", "--spe", help="spe", dest="spe", required=True)
     parser.add_argument("-t", "--thread_count", help="thread count to process, set 0 to use all cpu cores", dest="thread_count", type=int, default=1)
+
     args = parser.parse_args()
     print(args.wav)
     print(args.spe)
@@ -54,7 +57,7 @@ if __name__ == "__main__":
         if os.path.isdir(f"./{wavPath}/{spks}"):
             os.makedirs(f"./{spePath}/{spks}", exist_ok=True)
             if args.thread_count == 0:
-                process_num = os.cpu_count()
+                process_num = os.cpu_count() // 2 + 1
             else:
                 process_num = args.thread_count
             process_files_with_thread_pool(wavPath, spks, process_num)

@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 
+
 def load_embed_file(file):
     if file.endswith(".npy"):
         source_embed = np.load(
@@ -11,6 +12,7 @@ def load_embed_file(file):
         source_embed = source_embed.astype(np.float32)
         return source_embed
     return None
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -30,7 +32,7 @@ if __name__ == "__main__":
         subfile_num = 0
         speaker_ave = 0
         if thread_count == 0:
-            process_num = os.cpu_count()
+            process_num = os.cpu_count() // 2 + 1
         else:
             process_num = thread_count
             

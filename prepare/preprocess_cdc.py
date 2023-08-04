@@ -3,6 +3,7 @@ import argparse
 import torch
 import torchaudio
 
+from tqdm import tqdm
 from scipy.io.wavfile import read
 from scipy.io.wavfile import write
 # torch=1.9.0 ->  pip install torchaudio==0.9.0 -i https://mirrors.aliyun.com/pypi/simple/
@@ -29,20 +30,23 @@ def cut_direct_content(iWave, oWave):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter parameter ...'
-    parser.add_argument("-i", help="input path", dest="inPath")
-    parser.add_argument("-o", help="output path", dest="outPath")
+    parser.add_argument("-i", help="input path", dest="inPath", required=True)
+    parser.add_argument("-o", help="output path", dest="outPath", required=True)
+
     args = parser.parse_args()
     print(args.inPath)
     print(args.outPath)
+
     os.makedirs(args.outPath, exist_ok=True)
     rootPath = args.inPath
     outPath = args.outPath
+
     for spks in os.listdir(rootPath):
         if (os.path.isdir(f"./{rootPath}/{spks}")):
-            print(f">>>>>>>>>>>{spks}<<<<<<<<<<<")
             os.makedirs(f"./{outPath}/{spks}", exist_ok=True)
-            for file in os.listdir(f"./{rootPath}/{spks}"):
-                if (file.endswith(".wav")):
-                    iWave = f"./{rootPath}/{spks}/{file}"
-                    oWave = f"./{outPath}/{spks}/{file}"
-                    cut_direct_content(iWave, oWave)
+
+            files = [f for f in os.listdir(f"./{rootPath}/{spks}") if f.endswith(".wav")]
+            for file in tqdm(files, desc=f'Processing cdc {spks}'):
+                iWave = f"./{rootPath}/{spks}/{file}"
+                oWave = f"./{outPath}/{spks}/{file}"
+                cut_direct_content(iWave, oWave)

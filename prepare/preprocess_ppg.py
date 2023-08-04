@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 import torch
 import random
+from tqdm import tqdm
 from whisper.model import Whisper, ModelDimensions
 from whisper.audio import load_audio, pad_or_trim, log_mel_spectrogram
 
@@ -41,8 +42,8 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.description = 'please enter embed parameter ...'
-    parser.add_argument("-w", "--wav", help="wav", dest="wav")
-    parser.add_argument("-p", "--ppg", help="ppg", dest="ppg")
+    parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
+    parser.add_argument("-p", "--ppg", help="ppg", dest="ppg", required=True)
     args = parser.parse_args()
     print(args.wav)
     print(args.ppg)
@@ -58,8 +59,9 @@ if __name__ == "__main__":
     for spks in spkPaths:
         if os.path.isdir(f"./{wavPath}/{spks}"):
             os.makedirs(f"./{ppgPath}/{spks}", exist_ok=True)
-            print(f">>>>>>>>>>{spks}<<<<<<<<<<")
-            for file in os.listdir(f"./{wavPath}/{spks}"):
+
+            files = [f for f in os.listdir(f"./{wavPath}/{spks}") if f.endswith(".wav")]
+            for file in tqdm(files, desc=f'Processing ppg {spks}'):
                 if file.endswith(".wav"):
                     # print(file)
                     file = file[:-4]
