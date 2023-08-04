@@ -1,5 +1,10 @@
+import os
+import torch
 import argparse
 import subprocess
+
+assert torch.cuda.is_available(), "\033[31m You need GPU to Train! \033[0m"
+print("CPU Count is :", os.cpu_count())
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", type=int, default=0, help="thread count")
@@ -23,4 +28,6 @@ commands = [
 for command in commands:
    print(f"Command: {command}")
    process = subprocess.Popen(command, shell=True)
-   process.wait()
+   outcode = process.wait()
+   if (outcode):
+      break
