@@ -102,7 +102,7 @@ dataset_raw
 
 ## Data preprocessing
 ```shell
-python sve_preprocessing.py -t 2
+python svc_preprocessing.py -t 2
 ```
 `-t`: threading, max number should not exceed CPU core count, usually 2 is enough.
 After preprocessing you will get an output with following structure.
