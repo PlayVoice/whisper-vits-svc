@@ -265,7 +265,7 @@ python svc_merge.py --model1 模型1.pt --model1 模型2.pt --rate 模型1占比
 ```
 对不同epoch的模型进行融合，可以获得比较平均的性能、削弱过拟合
 
-**问题：对不同发音人的模型进行融合会发生什么**
+例如：python svc_merge.py --model1 chkpt\sovits5.0\sovits5.0_1045.pt --model2 chkpt\sovits5.0\sovits5.0_1050.pt --rate 0.4
 
 ## 捏音色
 纯属巧合的取名：average -> ave -> eva，夏娃代表者孕育和繁衍
