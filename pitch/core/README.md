@@ -1,9 +1,3 @@
-[![Python Package using Conda](https://github.com/groupmm/libf0/actions/workflows/test_conda.yml/badge.svg)](https://github.com/groupmm/libf0/actions/workflows/test_conda.yml)
-[![Python package](https://github.com/groupmm/libf0/actions/workflows/test_pip.yml/badge.svg)](https://github.com/groupmm/libf0/actions/workflows/test_pip.yml)
-
-
-# Core
-
 This repository contains a Python package called libf0 which provides open-source  implementations for four popular model-based F0-estimation approaches, YIN (Cheveigné & Kawahara, 2002), pYIN (Mauch & Dixon, 2014), an approach inspired by Melodia (Salamon & Gómez, 2012), and SWIPE (Camacho & Harris, 2008).
 
 If you use the libf0 in your research, please consider the following references.
