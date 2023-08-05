@@ -26,6 +26,64 @@ def load_svc_model(checkpoint_path, model):
     return model
 
 
+def svc_infer(model, spk, pit, ppg, vec, hp, device):
+    len_pit = pit.size()[0]
+    len_vec = vec.size()[0]
+    len_ppg = ppg.size()[0]
+    len_min = min(len_pit, len_vec)
+    len_min = min(len_min, len_ppg)
+    pit = pit[:len_min]
+    vec = vec[:len_min, :]
+    ppg = ppg[:len_min, :]
+
+    with torch.no_grad():
+        spk = spk.unsqueeze(0).to(device)
+        source = pit.unsqueeze(0).to(device)
+        source = model.pitch2source(source)
+        pitwav = model.source2wav(source)
+        write("svc_out_pit.wav", hp.data.sampling_rate, pitwav)
+
+        hop_size = hp.data.hop_length
+        all_frame = len_min
+        hop_frame = 10
+        out_chunk = 2500  # 25 S
+        out_index = 0
+        out_audio = []
+
+        while (out_index < all_frame):
+
+            if (out_index == 0):  # start frame
+                cut_s = 0
+                cut_s_out = 0
+            else:
+                cut_s = out_index - hop_frame
+                cut_s_out = hop_frame * hop_size
+
+            if (out_index + out_chunk + hop_frame > all_frame):  # end frame
+                cut_e = all_frame
+                cut_e_out = -1
+            else:
+                cut_e = out_index + out_chunk + hop_frame
+                cut_e_out = -1 * hop_frame * hop_size
+
+            sub_ppg = ppg[cut_s:cut_e, :].unsqueeze(0).to(device)
+            sub_vec = vec[cut_s:cut_e, :].unsqueeze(0).to(device)
+            sub_pit = pit[cut_s:cut_e].unsqueeze(0).to(device)
+            sub_len = torch.LongTensor([cut_e - cut_s]).to(device)
+            sub_har = source[:, :, cut_s *
+                             hop_size:cut_e * hop_size].to(device)
+            sub_out = model.inference(
+                sub_ppg, sub_vec, sub_pit, spk, sub_len, sub_har)
+            sub_out = sub_out[0, 0].data.cpu().detach().numpy()
+
+            sub_out = sub_out[cut_s_out:cut_e_out]
+            out_audio.extend(sub_out)
+            out_index = out_index + out_chunk
+
+        out_audio = np.asarray(out_audio)
+    return out_audio
+
+
 def main(args):
     if (args.ppg == None):
         args.ppg = "svc_tmp.ppg.npy"
@@ -83,82 +141,9 @@ def main(args):
         shift = args.shift
         shift = 2 ** (shift / 12)
         pit = pit * shift
-
     pit = torch.FloatTensor(pit)
 
-    len_pit = pit.size()[0]
-    len_vec = vec.size()[0]
-    len_ppg = ppg.size()[0]
-    len_min = min(len_pit, len_vec)
-    len_min = min(len_min, len_ppg)
-    pit = pit[:len_min]
-    vec = vec[:len_min, :]
-    ppg = ppg[:len_min, :]
-
-    with torch.no_grad():
-
-        spk = spk.unsqueeze(0).to(device)
-        source = pit.unsqueeze(0).to(device)
-        source = model.pitch2source(source)
-        pitwav = model.source2wav(source)
-        write("svc_out_pit.wav", hp.data.sampling_rate, pitwav)
-
-        hop_size = hp.data.hop_length
-        all_frame = len_min
-        hop_frame = 10
-        out_chunk = 2500  # 25 S
-        out_index = 0
-        out_audio = []
-        has_audio = False
-
-        while (out_index + out_chunk < all_frame):
-            has_audio = True
-            if (out_index == 0):  # start frame
-                cut_s = 0
-                cut_s_out = 0
-            else:
-                cut_s = out_index - hop_frame
-                cut_s_out = hop_frame * hop_size
-
-            if (out_index + out_chunk + hop_frame > all_frame):  # end frame
-                cut_e = out_index + out_chunk
-                cut_e_out = 0
-            else:
-                cut_e = out_index + out_chunk + hop_frame
-                cut_e_out = -1 * hop_frame * hop_size
-
-            sub_ppg = ppg[cut_s:cut_e, :].unsqueeze(0).to(device)
-            sub_vec = vec[cut_s:cut_e, :].unsqueeze(0).to(device)
-            sub_pit = pit[cut_s:cut_e].unsqueeze(0).to(device)
-            sub_len = torch.LongTensor([cut_e - cut_s]).to(device)
-            sub_har = source[:, :, cut_s *
-                             hop_size:cut_e * hop_size].to(device)
-            sub_out = model.inference(sub_ppg, sub_vec, sub_pit, spk, sub_len, sub_har)
-            sub_out = sub_out[0, 0].data.cpu().detach().numpy()
-
-            sub_out = sub_out[cut_s_out:cut_e_out]
-            out_audio.extend(sub_out)
-            out_index = out_index + out_chunk
-
-        if (out_index < all_frame):
-            if (has_audio):
-                cut_s = out_index - hop_frame
-                cut_s_out = hop_frame * hop_size
-            else:
-                cut_s = 0
-                cut_s_out = 0
-            sub_ppg = ppg[cut_s:, :].unsqueeze(0).to(device)
-            sub_vec = vec[cut_s:, :].unsqueeze(0).to(device)
-            sub_pit = pit[cut_s:].unsqueeze(0).to(device)
-            sub_len = torch.LongTensor([all_frame - cut_s]).to(device)
-            sub_har = source[:, :, cut_s * hop_size:].to(device)
-            sub_out = model.inference(sub_ppg, sub_vec, sub_pit, spk, sub_len, sub_har)
-            sub_out = sub_out[0, 0].data.cpu().detach().numpy()
-
-            sub_out = sub_out[cut_s_out:]
-            out_audio.extend(sub_out)
-        out_audio = np.asarray(out_audio)
-
+    out_audio = svc_infer(model, spk, pit, ppg, vec, hp, device)
     write("svc_out.wav", hp.data.sampling_rate, out_audio)
 
 
