@@ -24,6 +24,19 @@ def compute_f0_mouth(path, device):
     return f0
 
 
+def comput_f0_salience(filename, device):
+    from pitch.core.salience import salience
+    audio, sr = librosa.load(filename, sr=16000)
+    assert sr == 16000
+    f0, t, s = salience(
+        audio,
+        Fs=sr,
+        H=160,
+        F_min=30.0,
+        F_max=1760.0)
+    return f0
+
+
 def compute_f0_voice(filename, device):
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
