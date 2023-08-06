@@ -7,6 +7,10 @@ import numpy as np
 import crepe
 
 
+def move_average(a, n, mode="same"):
+    return (np.convolve(a, np.ones((n,))/n, mode=mode))
+
+
 def compute_f0_mouth(path, device):
     # pip install praat-parselmouth
     import parselmouth
@@ -24,16 +28,19 @@ def compute_f0_mouth(path, device):
     return f0
 
 
-def comput_f0_salience(filename, device):
+def compute_f0_salience(filename, device):
     from pitch.core.salience import salience
     audio, sr = librosa.load(filename, sr=16000)
     assert sr == 16000
     f0, t, s = salience(
         audio,
         Fs=sr,
-        H=160,
-        F_min=30.0,
+        H=320,
+        N=2048,
+        F_min=45.0,
         F_max=1760.0)
+    f0 = np.repeat(f0, 2, -1)  # 320 -> 160 * 2
+    f0 = move_average(f0, 3)
     return f0
 
 
