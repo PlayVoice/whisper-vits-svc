@@ -267,6 +267,11 @@ data_svc/
     | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
     | name | config path | model path | speaker | wave input | wave ppg | wave hubert | wave pitch | pitch shift |
 
+5. post by vad
+```
+python svc_inference_post.py --ref test.wav --svc svc_out.wav --out svc_out_post.wav
+```
+
 ## Creat singer
 named by pure coincidence：average -> ave -> eva，eve(eva) represents conception and reproduction
 
