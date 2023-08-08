@@ -308,6 +308,7 @@ the generated singer file will be `eva.spk.npy`.
 |DSD100         |https://sigsep.github.io/datasets/dsd100.html|
 |Aishell-3      |http://www.aishelltech.com/aishell_3|
 |VCTK           |https://datashare.ed.ac.uk/handle/10283/2651|
+|Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
 
 ## Code sources and references
 
