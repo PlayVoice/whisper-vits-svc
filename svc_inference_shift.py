@@ -60,11 +60,11 @@ def main(args):
 
     for shift in range(shift_l, shift_r + 1):
         print(shift)
-        pit = np.array(pit)
-        pit = pit * 2 ** (shift / 12)
-        pit = torch.FloatTensor(pit)
+        tmp = np.array(pit)
+        tmp = tmp * (2 ** (shift / 12))
+        tmp = torch.FloatTensor(tmp)
 
-        out_audio = svc_infer(model, spk, pit, ppg, vec, hp, device)
+        out_audio = svc_infer(model, spk, tmp, ppg, vec, hp, device)
         write(os.path.join("./_svc_out", f"svc_out_{shift}.wav"),
               hp.data.sampling_rate, out_audio)
 
