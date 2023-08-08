@@ -18,7 +18,7 @@ commands = [
    "python prepare/preprocess_ppg.py -w data_svc/waves-16k/ -p data_svc/whisper",
    "python prepare/preprocess_hubert.py -w data_svc/waves-16k/ -v data_svc/hubert",
    "python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker -t 0",
-   "python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer -t 0",
+   "python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer",
    "python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs -t 0",
    "python prepare/preprocess_train.py",
    "python prepare/preprocess_zzz.py",
