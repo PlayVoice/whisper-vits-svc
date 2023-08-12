@@ -46,7 +46,6 @@ def compute_f0(filename, save, device):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter embed parameter ...'
     parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
     parser.add_argument("-p", "--pit", help="pit", dest="pit", required=True)
 

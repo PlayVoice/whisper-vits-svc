@@ -28,7 +28,6 @@ def trim_silence(iWave, oWave):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter parameter ...'
     parser.add_argument("-i", help="input path", dest="inPath", required=True)
     parser.add_argument("-o", help="output path", dest="outPath", required=True)
 

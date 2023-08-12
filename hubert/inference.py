@@ -52,9 +52,8 @@ def pred_vec(model, wavPath, vecPath, device):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter embed parameter ...'
-    parser.add_argument("-w", "--wav", help="wav", dest="wav")
-    parser.add_argument("-v", "--vec", help="vec", dest="vec")
+    parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
+    parser.add_argument("-v", "--vec", help="vec", dest="vec", required=True)
     args = parser.parse_args()
     print(args.wav)
     print(args.vec)

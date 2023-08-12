@@ -121,9 +121,8 @@ def load_csv_pitch(path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter embed parameter ...'
-    parser.add_argument("-w", "--wav", help="wav", dest="wav")
-    parser.add_argument("-p", "--pit", help="pit", dest="pit")  # csv for excel
+    parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
+    parser.add_argument("-p", "--pit", help="pit", dest="pit", required=True)  # csv for excel
     args = parser.parse_args()
     print(args.wav)
     print(args.pit)
@@ -131,5 +130,5 @@ if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
     pitch = compute_f0_sing(args.wav, device)
     save_csv_pitch(pitch, args.pit)
-    #tmp = load_csv_pitch(args.pit)
-    #save_csv_pitch(tmp, "tmp.csv")
+    # tmp = load_csv_pitch(args.pit)
+    # save_csv_pitch(tmp, "tmp.csv")

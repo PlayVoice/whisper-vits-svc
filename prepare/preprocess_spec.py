@@ -39,7 +39,6 @@ def process_files_with_thread_pool(wavPath, spks, thread_num):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter embed parameter ...'
     parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
     parser.add_argument("-s", "--spe", help="spe", dest="spe", required=True)
     parser.add_argument("-t", "--thread_count", help="thread count to process, set 0 to use all cpu cores", dest="thread_count", type=int, default=1)

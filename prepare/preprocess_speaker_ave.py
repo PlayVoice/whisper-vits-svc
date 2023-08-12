@@ -7,7 +7,6 @@ from tqdm import tqdm
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter embed parameter ...'
     parser.add_argument("dataset_speaker", type=str)
     parser.add_argument("dataset_singer", type=str)
 

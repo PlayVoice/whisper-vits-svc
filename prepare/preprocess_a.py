@@ -32,7 +32,6 @@ def process_files_with_thread_pool(wavPath, spks, outPath, sr, thread_num=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter embed parameter ...'
     parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
     parser.add_argument("-o", "--out", help="out", dest="out", required=True)
     parser.add_argument("-s", "--sr", help="sample rate", dest="sr", type=int, required=True)

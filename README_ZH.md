@@ -306,6 +306,7 @@ eva_conf = {
 |DSD100         |https://sigsep.github.io/datasets/dsd100.html|
 |Aishell-3      |http://www.aishelltech.com/aishell_3|
 |VCTK           |https://datashare.ed.ac.uk/handle/10283/2651|
+|Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
 
 ## 代码来源和参考文献
 
@@ -362,10 +363,3 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
-
-## 学习交流群：非一键包
-<div align="center">
-
-![X·SING-QQ](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/dfbb4740-447e-40f0-9193-c974c4b6ceb0)
-
-</div>
