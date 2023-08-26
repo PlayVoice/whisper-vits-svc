@@ -368,5 +368,6 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 
 ## Relevant Projects
 - [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
+- [Grad-SVC](https://github.com/PlayVoice/Grad-SVC): diffusion based svc
 - [NSF-BigVGAN](https://github.com/PlayVoice/NSF-BigVGAN): vocoder for more work
 - [X-SING](https://github.com/PlayVoice/X-SING): more work
