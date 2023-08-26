@@ -1,12 +1,9 @@
 import tqdm
-import torch
 import torch.nn.functional as F
 
 
-def validate(hp, args, generator, discriminator, valloader, stft, writer, step, device):
+def validate(hp, generator, valloader, stft, writer, step, device):
     generator.eval()
-    discriminator.eval()
-    torch.backends.cudnn.benchmark = False
 
     loader = tqdm.tqdm(valloader, desc='Validation loop')
     mel_loss = 0.0
@@ -42,7 +39,4 @@ def validate(hp, args, generator, discriminator, valloader, stft, writer, step, 
                 audio, fake_audio, spec_fake, spec_real, idx, step)
 
     mel_loss = mel_loss / len(valloader.dataset)
-
-    writer.log_validation(mel_loss, generator, discriminator, step)
-
-    torch.backends.cudnn.benchmark = True
+    writer.log_validation(mel_loss, step)

@@ -6,9 +6,10 @@ from torch.nn import functional as F
 from vits import attentions
 from vits import commons
 from vits import modules
-from vits.utils import f0_to_coarse
+
 from vits_decoder.generator import Generator
-from vits.modules_grl import SpeakerClassifier
+from grad.diffusion import Diffusion
+from grad.utils import f0_to_coarse, rand_ids_segments, slice_segments
 
 
 class TextEncoder(nn.Module):
@@ -157,10 +158,6 @@ class SynthesizerTrn(nn.Module):
             3,
             0.1,
         )
-        self.speaker_classifier = SpeakerClassifier(
-            hp.vits.hidden_channels,
-            hp.vits.spk_dim,
-        )
         self.enc_q = PosteriorEncoder(
             spec_channels,
             hp.vits.inter_channels,
@@ -178,6 +175,9 @@ class SynthesizerTrn(nn.Module):
             4,
             gin_channels=hp.vits.spk_dim
         )
+        self.post = Diffusion(hp.vits.inter_channels,
+                              64,
+                              emb_dim=hp.vits.spk_dim)
         self.dec = Generator(hp=hp)
 
     def forward(self, ppg, vec, pit, spec, spk, ppg_l, spec_l):
@@ -186,26 +186,39 @@ class SynthesizerTrn(nn.Module):
         g = self.emb_g(F.normalize(spk)).unsqueeze(-1)
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, vec, f0=f0_to_coarse(pit))
+        # wave encoder
         z_q, m_q, logs_q, spec_mask = self.enc_q(spec, spec_l, g=g)
-
-        z_slice, pit_slice, ids_slice = commons.rand_slice_segments_with_pitch(
-            z_q, pit, spec_l, self.segment_size)
-        audio = self.dec(spk, z_slice, pit_slice)
-
         # SNAC to flow
-        z_f, logdet_f = self.flow(z_q, spec_mask, g=spk)
         z_r, logdet_r = self.flow(z_p, spec_mask, g=spk, reverse=True)
-        # speaker
-        spk_preds = self.speaker_classifier(x)
-        return audio, ids_slice, spec_mask, (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q, logdet_f, logdet_r), spk_preds
 
-    def infer(self, ppg, vec, pit, spk, ppg_l):
+        # Cut a small segment of mel-spectrogram in order to increase batch size
+        out_size = self.segment_size
+        ids = rand_ids_segments(ppg_l, out_size)
+        mel = slice_segments(z_q, ids, out_size)
+
+        mask_y = slice_segments(ppg_mask, ids, out_size)
+        mu_y = slice_segments(z_r, ids, out_size)
+        # grad
+        diff_loss, xt = self.post.compute_loss(spk, mel, mask_y, mu_y)
+        return diff_loss
+
+    def infer(self, ppg, vec, pit, spk, ppg_l, n_timesteps=50, temperature=1.0, stoc=False):
         ppg = ppg + torch.randn_like(ppg) * 0.0001  # Perturbation
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, vec, f0=f0_to_coarse(pit))
-        z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
-        o = self.dec(spk, z * ppg_mask, f0=pit)
+        z1, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
+        # Sample latent representation from terminal distribution N(mu_y, I)
+        z2 = z1 + torch.randn_like(z1, device=z1.device) / temperature
+        # Generate sample by performing reverse dynamics
+        z3 = self.post(spk, z1, ppg_mask, z2, n_timesteps, stoc)
+        o = self.dec(spk, z3 * ppg_mask, f0=pit)
         return o
+    
+    def train_post(self):
+        for param in self.parameters():
+            param.requires_grad = False
+        for param in self.post.parameters():
+            param.requires_grad = True
 
 
 class SynthesizerInfer(nn.Module):
@@ -236,6 +249,9 @@ class SynthesizerInfer(nn.Module):
             4,
             gin_channels=hp.vits.spk_dim
         )
+        self.post = Diffusion(hp.vits.inter_channels,
+                              64,
+                              emb_dim=hp.vits.spk_dim)
         self.dec = Generator(hp=hp)
 
     def remove_weight_norm(self):
@@ -248,9 +264,20 @@ class SynthesizerInfer(nn.Module):
     def source2wav(self, source):
         return self.dec.source2wav(source)
 
-    def inference(self, ppg, vec, pit, spk, ppg_l, source):
+    def inference_no_post(self, ppg, vec, pit, spk, ppg_l, source):
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, vec, f0=f0_to_coarse(pit))
         z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
         o = self.dec.inference(spk, z * ppg_mask, source)
+        return o
+    
+    def inference(self, ppg, vec, pit, spk, ppg_l, source, n_timesteps=50, temperature=1.0, stoc=False):
+        z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
+            ppg, ppg_l, vec, f0=f0_to_coarse(pit))
+        z1, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
+        # Sample latent representation from terminal distribution N(mu_y, I)
+        z2 = z1 + torch.randn_like(z1, device=z1.device) / temperature
+        # Generate sample by performing reverse dynamics
+        z3 = self.post(spk, z1, ppg_mask, z2, n_timesteps, stoc)
+        o = self.dec.inference(spk, z3 * ppg_mask, source)
         return o

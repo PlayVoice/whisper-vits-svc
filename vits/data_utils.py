@@ -3,9 +3,13 @@ import numpy as np
 import random
 import torch
 import torch.utils.data
+from scipy.io.wavfile import read
+from grad.utils import fix_len_compatibility
 
 
-from vits.utils import load_wav_to_torch
+def load_wav_to_torch(full_path):
+    sampling_rate, data = read(full_path)
+    return torch.FloatTensor(data.astype(np.float32)), sampling_rate
 
 
 def load_filepaths(filename, split="|"):
@@ -27,8 +31,8 @@ class TextAudioSpeakerSet(torch.utils.data.Dataset):
     def _filter(self):
         lengths = []
         items_new = []
-        items_min = int(self.segment_size / self.hop_length * 4)  # 1 S
-        items_max = int(self.segment_size / self.hop_length * 16)  # 4 S
+        items_min = self.segment_size * 1
+        items_max = self.segment_size * 3
         for wavpath, spec, pitch, vec, ppg, spk in self.items:
             if not os.path.isfile(wavpath):
                 continue
@@ -140,6 +144,7 @@ class TextAudioSpeakerCollate:
         )
 
         max_spe_len = max([x[0].size(1) for x in batch])
+        max_spe_len = fix_len_compatibility(max_spe_len)
         max_wav_len = max([x[1].size(1) for x in batch])
         spe_lengths = torch.LongTensor(len(batch))
         wav_lengths = torch.LongTensor(len(batch))
@@ -150,6 +155,7 @@ class TextAudioSpeakerCollate:
         wav_padded.zero_()
 
         max_ppg_len = max([x[2].size(0) for x in batch])
+        max_ppg_len = fix_len_compatibility(max_ppg_len)
         ppg_lengths = torch.FloatTensor(len(batch))
         ppg_padded = torch.FloatTensor(
             len(batch), max_ppg_len, batch[0][2].size(1))

@@ -20,3 +20,9 @@ Diffusion插件
 ## 说明
 - 自测，Diffusion插件没有明显的效果，可能是因为本项目本来电音就少
 - 没有明显的效果，指音质没有明显变差和变好
+
+## 训练
+基于训练好的SVC模型训练插件，训练步骤自行研究~~~
+
+## Diffusion来源
+https://github.com/huawei-noah/Speech-Backbones/blob/main/Grad-TTS [paper](https://arxiv.org/abs/2105.06337)

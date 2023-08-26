@@ -28,15 +28,6 @@ def load_model(checkpoint_path, model):
     return model
 
 
-def save_pretrain(checkpoint_path, save_path):
-    assert os.path.isfile(checkpoint_path)
-    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
-    torch.save({
-        'model_g': checkpoint_dict['model_g'],
-        'model_d': checkpoint_dict['model_d'],
-    }, save_path)
-
-
 def save_model(model, checkpoint_path):
     if hasattr(model, 'module'):
         state_dict = model.module.state_dict()
@@ -52,7 +43,6 @@ def main(args):
         hp.data.segment_size // hp.data.hop_length,
         hp)
 
-    # save_pretrain(args.checkpoint_path, "sovits5.0.pretrain.pth")
     load_model(args.checkpoint_path, model)
     save_model(model, "sovits5.0.pth")
 

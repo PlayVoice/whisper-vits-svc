@@ -45,7 +45,7 @@ def svc_infer(model, spk, pit, ppg, vec, hp, device):
 
         hop_size = hp.data.hop_length
         all_frame = len_min
-        hop_frame = 10
+        hop_frame = 8
         out_chunk = 2500  # 25 S
         out_index = 0
         out_audio = []
@@ -60,8 +60,8 @@ def svc_infer(model, spk, pit, ppg, vec, hp, device):
                 cut_s_out = hop_frame * hop_size
 
             if (out_index + out_chunk + hop_frame > all_frame):  # end frame
-                cut_e = all_frame
-                cut_e_out = -1
+                cut_e = 4 * (all_frame // 4)
+                cut_e_out = -1 * (all_frame % 4) * hop_size - 1
             else:
                 cut_e = out_index + out_chunk + hop_frame
                 cut_e_out = -1 * hop_frame * hop_size
