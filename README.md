@@ -15,7 +15,7 @@
 ![plug-in-diffusion](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/54a61c90-a97b-404d-9cc9-a2151b2db28f)
 Diffusion插件
 
-![svc_plug_in](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/9cfc6378-5e4b-44f8-bae7-5ba32a4d19b5)
+![svc_plug_in](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/aa209a3e-4e6f-4e0c-833b-345d5e757e8e)
 </div>
 
 ## 说明
