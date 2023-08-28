@@ -4,7 +4,7 @@ import random
 import torch
 import torch.utils.data
 from scipy.io.wavfile import read
-from grad.utils import fix_len_compatibility
+from vits_plug.utils import fix_len_compatibility
 
 
 def load_wav_to_torch(full_path):
