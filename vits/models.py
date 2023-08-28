@@ -8,8 +8,8 @@ from vits import commons
 from vits import modules
 
 from vits_decoder.generator import Generator
-from grad.diffusion import Diffusion
-from grad.utils import f0_to_coarse, rand_ids_segments, slice_segments
+from vits_plug.diffusion import Diffusion
+from vits_plug.utils import f0_to_coarse, rand_ids_segments, slice_segments
 
 
 class TextEncoder(nn.Module):
@@ -175,7 +175,7 @@ class SynthesizerTrn(nn.Module):
             4,
             gin_channels=hp.vits.spk_dim
         )
-        self.post = Diffusion(hp.vits.inter_channels,
+        self.plug = Diffusion(hp.vits.inter_channels,
                               64,
                               emb_dim=hp.vits.spk_dim)
         self.dec = Generator(hp=hp)
@@ -191,33 +191,33 @@ class SynthesizerTrn(nn.Module):
         # SNAC to flow
         z_r, logdet_r = self.flow(z_p, spec_mask, g=spk, reverse=True)
 
-        # Cut a small segment of mel-spectrogram in order to increase batch size
+        # Cut a small segment of vector in order to increase batch size
         out_size = self.segment_size
         ids = rand_ids_segments(ppg_l, out_size)
-        mel = slice_segments(z_q, ids, out_size)
+        obj = slice_segments(z_q, ids, out_size)
 
         mask_y = slice_segments(ppg_mask, ids, out_size)
         mu_y = slice_segments(z_r, ids, out_size)
-        # grad
-        diff_loss, xt = self.post.compute_loss(spk, mel, mask_y, mu_y)
+        # Grad_TTS
+        diff_loss, xt = self.plug.compute_loss(spk, obj, mask_y, mu_y)
         return diff_loss
 
     def infer(self, ppg, vec, pit, spk, ppg_l, n_timesteps=50, temperature=1.0, stoc=False):
         ppg = ppg + torch.randn_like(ppg) * 0.0001  # Perturbation
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, vec, f0=f0_to_coarse(pit))
-        z1, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
+        z_f, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
         # Sample latent representation from terminal distribution N(mu_y, I)
-        z2 = z1 + torch.randn_like(z1, device=z1.device) / temperature
+        z_s = z_f + torch.randn_like(z_f, device=z_f.device) / temperature
         # Generate sample by performing reverse dynamics
-        z3 = self.post(spk, z1, ppg_mask, z2, n_timesteps, stoc)
-        o = self.dec(spk, z3 * ppg_mask, f0=pit)
+        z = self.plug(spk, z_s, ppg_mask, z_f, n_timesteps, stoc)
+        o = self.dec(spk, z * ppg_mask, f0=pit)
         return o
     
-    def train_post(self):
+    def train_plug(self):
         for param in self.parameters():
             param.requires_grad = False
-        for param in self.post.parameters():
+        for param in self.plug.parameters():
             param.requires_grad = True
 
 
@@ -249,7 +249,7 @@ class SynthesizerInfer(nn.Module):
             4,
             gin_channels=hp.vits.spk_dim
         )
-        self.post = Diffusion(hp.vits.inter_channels,
+        self.plug = Diffusion(hp.vits.inter_channels,
                               64,
                               emb_dim=hp.vits.spk_dim)
         self.dec = Generator(hp=hp)
@@ -264,20 +264,20 @@ class SynthesizerInfer(nn.Module):
     def source2wav(self, source):
         return self.dec.source2wav(source)
 
-    def inference_no_post(self, ppg, vec, pit, spk, ppg_l, source):
+    def inference_no_plug(self, ppg, vec, pit, spk, ppg_l, source):
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, vec, f0=f0_to_coarse(pit))
         z, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
         o = self.dec.inference(spk, z * ppg_mask, source)
         return o
     
-    def inference(self, ppg, vec, pit, spk, ppg_l, source, n_timesteps=50, temperature=1.0, stoc=False):
+    def inference(self, ppg, vec, pit, spk, ppg_l, source, n_timesteps=25, temperature=1.0, stoc=False):
         z_p, m_p, logs_p, ppg_mask, x = self.enc_p(
             ppg, ppg_l, vec, f0=f0_to_coarse(pit))
-        z1, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
+        z_f, _ = self.flow(z_p, ppg_mask, g=spk, reverse=True)
         # Sample latent representation from terminal distribution N(mu_y, I)
-        z2 = z1 + torch.randn_like(z1, device=z1.device) / temperature
+        z_s = z_f + torch.randn_like(z_f, device=z_f.device) / temperature
         # Generate sample by performing reverse dynamics
-        z3 = self.post(spk, z1, ppg_mask, z2, n_timesteps, stoc)
-        o = self.dec.inference(spk, z3 * ppg_mask, source)
+        z = self.plug(spk, z_s, ppg_mask, z_f, n_timesteps, stoc)
+        o = self.dec.inference(spk, z * ppg_mask, source)
         return o
