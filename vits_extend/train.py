@@ -41,7 +41,7 @@ def train(args, chkpt_path, hp):
         hp)
     model_g.to(device)
     # train post only
-    model_g.train_post()
+    model_g.train_plug()
 
     optim_g = torch.optim.AdamW(model_g.parameters(),
                                 lr=hp.train.learning_rate,
