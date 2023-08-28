@@ -1,5 +1,5 @@
 <div align="center">
-<h1> Plug-in diffusion based Grad-TTS from HUAWEI Noah's Ark Lab </h1>
+<h1> Plug-in diffusion based on Grad-TTS from HUAWEI Noah's Ark Lab </h1>
 
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/maxmax20160403/sovits5.0)
 <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/PlayVoice/so-vits-svc-5.0">
