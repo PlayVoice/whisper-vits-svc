@@ -55,6 +55,9 @@ due to the use of data perturbation, it takes longer to train than other project
 **USP : Unvoice and Silence with Pitch when infer**
 ![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ba733b48-8a89-4612-83e0-a0745587d150)
 
+## Plug-In-Diffusion
+
+![plug-in-diffusion](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/54a61c90-a97b-404d-9cc9-a2151b2db28f)
 
 ## Setup Environment
 
