@@ -44,6 +44,7 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | GRL for speaker | Ubisoft |✅ | Preventing Encoder Leakage Timbre |
 | SNAC |  Samsung | ✅ | One Shot Clone of VITS |
 | SCLN |  Microsoft | ✅ | Improve Clone |
+| Diffusion |  HuaWei | ✅ | Improve sound quality |
 | PPG perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | HuBERT perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | VAE perturbation | this project | ✅ | Improve sound quality |
@@ -326,6 +327,8 @@ https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
 https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
+
+https://github.com/huawei-noah/Speech-Backbones/tree/main/Grad-TTS
 
 https://github.com/brentspell/hifi-gan-bwe
 
