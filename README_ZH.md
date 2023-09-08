@@ -13,7 +13,7 @@
 - 本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
 - 本项目不支持实时变声；（支持需要换掉whisper）
 - 本项目不会开发用于其他用途的一键包
-- **本项目使用简洁明了的代码结构，用于学习研究；不研究代码，只要效果，可直接用[so-vits-svc](https://github.com/svc-develop-team/so-vits-svc)**
+- **本项目使用简洁明了的代码结构，用于学习研究；不研究代码，只要效果，可直接用[so-vits-svc](https://github.com/svc-develop-team/so-vits-svc)**（它抄过去了）
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
