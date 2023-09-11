@@ -309,6 +309,8 @@ eva_conf = {
 |Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
 
 ## 代码来源和参考文献
+https://github.com/Francis-Komizu/Sovits
+##
 
 https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
