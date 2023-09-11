@@ -315,7 +315,8 @@ the generated singer file will be `eva.spk.npy`.
 |Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
 
 ## Code sources and references
-
+https://github.com/Francis-Komizu/Sovits
+##
 https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
 https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
