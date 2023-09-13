@@ -9,11 +9,12 @@
 
 </div>
 
+## 本项目使用简洁明了的代码结构，用于深度学习技术的研究；如果你寻找的是直接可用的项目，本项目并不适合你。
+
 - 本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
 - 本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
 - 本项目不支持实时变声；（支持需要换掉whisper）
 - 本项目不会开发用于其他用途的一键包
-- **本项目使用简洁明了的代码结构，用于学习研究；不研究代码，只要效果，可直接用[so-vits-svc](https://github.com/svc-develop-team/so-vits-svc)**
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
@@ -309,8 +310,6 @@ eva_conf = {
 |Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
 
 ## 代码来源和参考文献
-https://github.com/Francis-Komizu/Sovits
-##
 
 https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
@@ -365,3 +364,7 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
+
+## 特别感谢
+
+https://github.com/Francis-Komizu/Sovits
