@@ -315,8 +315,7 @@ the generated singer file will be `eva.spk.npy`.
 |Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
 
 ## Code sources and references
-https://github.com/Francis-Komizu/Sovits
-##
+
 https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
 https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
@@ -372,6 +371,10 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 <a href="https://github.com/PlayVoice/so-vits-svc/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
+
+## Thanks to
+
+https://github.com/Francis-Komizu/Sovits
 
 ## Relevant Projects
 - [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
