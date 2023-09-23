@@ -8,6 +8,8 @@
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
 [中文文档](./README_ZH.md)
+
+WIP Ver
  
 </div>
 
@@ -28,10 +30,6 @@
 
 - F0 can be edited using Excel
 
-https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-9a14-9cbc1e0e7c3a
-
-Powered by [@ShadowVap](https://space.bilibili.com/491283091)
-
 ## Model properties
 
 | Feature | From | Status | Function |
@@ -50,15 +48,11 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | VAE perturbation | this project | ✅ | Improve sound quality |
 | MIX encoder | this project | ✅ | Improve conversion stability |
 | USP infer | this project | ✅ | Improve conversion stability |
+| VITS2 | SK Telecom | TODO | |
+| HiFTNet | Columbia University | TODO | |
+| RoFormer | Zhuiyi Technology | TODO | |
 
 due to the use of data perturbation, it takes longer to train than other projects.
-
-**USP : Unvoice and Silence with Pitch when infer**
-![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ba733b48-8a89-4612-83e0-a0745587d150)
-
-## Plug-In-Diffusion
-
-![plug-in-diffusion](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/54a61c90-a97b-404d-9cc9-a2151b2db28f)
 
 ## Setup Environment
 
@@ -79,7 +73,7 @@ due to the use of data perturbation, it takes longer to train than other project
 
    **Note: crepe full.pth is 84.9 MB, not 6kb**
    
-7. Download pretrain model [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0/), and put it into `vits_pretrain/`.
+7. Download pretrain model [sovits5.0.pretrain.pth](), and put it into `vits_pretrain/`.
     ```shell
     python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
     ```
@@ -90,8 +84,7 @@ Necessary pre-processing:
 1. Separate vocie and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
 2. Cut audio input to shorter length with [slicer](https://github.com/flutydeer/audio-slicer), whisper takes input less than 30 seconds.
 3. Manually check generated audio input, remove inputs shorter than 2 seconds or with obivous noise.
-4. Adjust loudness if necessary, recommand Adobe Audiiton.
-5. Put the dataset into the `dataset_raw` directory following the structure below.
+4. Put the dataset into the `dataset_raw` directory following the structure below.
 ```
 dataset_raw
 ├───speaker0
@@ -105,60 +98,6 @@ dataset_raw
 ```
 
 ## Data preprocessing
-```shell
-python svc_preprocessing.py -t 2
-```
-`-t`: threading, max number should not exceed CPU core count, usually 2 is enough.
-After preprocessing you will get an output with following structure.
-```
-data_svc/
-└── waves-16k
-│    └── speaker0
-│    │      ├── 000001.wav
-│    │      └── 000xxx.wav
-│    └── speaker1
-│           ├── 000001.wav
-│           └── 000xxx.wav
-└── waves-32k
-│    └── speaker0
-│    │      ├── 000001.wav
-│    │      └── 000xxx.wav
-│    └── speaker1
-│           ├── 000001.wav
-│           └── 000xxx.wav
-└── pitch
-│    └── speaker0
-│    │      ├── 000001.pit.npy
-│    │      └── 000xxx.pit.npy
-│    └── speaker1
-│           ├── 000001.pit.npy
-│           └── 000xxx.pit.npy
-└── hubert
-│    └── speaker0
-│    │      ├── 000001.vec.npy
-│    │      └── 000xxx.vec.npy
-│    └── speaker1
-│           ├── 000001.vec.npy
-│           └── 000xxx.vec.npy
-└── whisper
-│    └── speaker0
-│    │      ├── 000001.ppg.npy
-│    │      └── 000xxx.ppg.npy
-│    └── speaker1
-│           ├── 000001.ppg.npy
-│           └── 000xxx.ppg.npy
-└── speaker
-│    └── speaker0
-│    │      ├── 000001.spk.npy
-│    │      └── 000xxx.spk.npy
-│    └── speaker1
-│           ├── 000001.spk.npy
-│           └── 000xxx.spk.npy
-└── singer
-    ├── speaker0.spk.npy
-    └── speaker1.spk.npy
-```
-
 1.  Re-sampling
     - Generate audio with a sampling rate of 16000Hz in `./data_svc/waves-16k` 
     ```
@@ -185,7 +124,7 @@ data_svc/
     ```
     python prepare/preprocess_speaker.py data_svc/waves-16k/ data_svc/speaker
     ```
-6. Extract the average value of the timbre code for inference; it can also replace a single audio timbre in generating the training index, and use it as the unified timbre of the speaker for training 
+6. Extract the average value of the timbre code for inference
     ```
     python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
     ``` 
@@ -197,13 +136,13 @@ data_svc/
     ```
     python prepare/preprocess_train.py
     ```
-11. Training file debugging
+9. Training file debugging
     ```
     python prepare/preprocess_zzz.py
     ```
 
 ## Train
-1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
+1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](). Put pretrained model under project root, change this line
     ```
     pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"
     ```
@@ -223,10 +162,6 @@ data_svc/
    tensorboard --logdir logs/
    ```
 
-![sovits5 0_base](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/1628e775-5888-4eac-b173-a28dca978faa)
-
-![sovits_spec](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/c4223cf3-b4a0-4325-bec0-6d46d195a1fc)
-
 ## Inference
 
 1. Export inference model: text encoder, Flow network, Decoder network
@@ -234,38 +169,13 @@ data_svc/
    python svc_export.py --config configs/base.yaml --checkpoint_path chkpt/sovits5.0/***.pt
    ```
 2. Inference
-   - if there is no need to adjust `f0`, just run the following command.
+   Just run the following command.
    ```
    python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/your_singer.spk.npy --wave test.wav --shift 0
    ```
-   - if `f0` will be adjusted manually, follow the steps:
-     1. use whisper to extract content encoding, generate `test.vec.npy`.
-       ```
-       python whisper/inference.py -w test.wav -p test.ppg.npy
-       ```
-     2. use hubert to extract content vector, without using one-click reasoning, in order to reduce GPU memory usage
-       ```
-       python hubert/inference.py -w test.wav -v test.vec.npy
-       ```
-     3. extract the F0 parameter to the csv text format, open the csv file in Excel, and manually modify the wrong F0 according to Audition or SonicVisualiser
-       ```
-       python pitch/inference.py -w test.wav -p test.csv
-       ```
-     4. final inference
-       ```
-       python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/your_singer.spk.npy --wave test.wav --ppg test.ppg.npy --vec test.vec.npy --pit test.csv --shift 0
-       ```
-3. Notes
+   generate files in the current directory:svc_out.wav
 
-    - when `--ppg` is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
-
-    - when `--vec` is specified, when the same audio is reasoned multiple times, it can avoid repeated extraction of audio content codes; if it is not specified, it will be automatically extracted;
-
-    - when `--pit` is specified, the manually tuned F0 parameter can be loaded; if not specified, it will be automatically extracted;
-
-    - generate files in the current directory:svc_out.wav
-
-4. Arguments ref
+3. Arguments ref
 
     | args |--config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
     | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -276,59 +186,25 @@ data_svc/
 python svc_inference_post.py --ref test.wav --svc svc_out.wav --out svc_out_post.wav
 ```
 
-## Creat singer
-named by pure coincidence：average -> ave -> eva，eve(eva) represents conception and reproduction
-
-```
-python svc_eva.py
-```
-
-```python
-eva_conf = {
-    './configs/singers/singer0022.npy': 0,
-    './configs/singers/singer0030.npy': 0,
-    './configs/singers/singer0047.npy': 0.5,
-    './configs/singers/singer0051.npy': 0.5,
-}
-```
-
-the generated singer file will be `eva.spk.npy`.
-
-## Data set
-
-| Name | URL |
-| :--- | :--- |
-|KiSing         |http://shijt.site/index.php/2021/05/16/kising-the-first-open-source-mandarin-singing-voice-synthesis-corpus/|
-|PopCS          |https://github.com/MoonInTheRiver/DiffSinger/blob/master/resources/apply_form.md|
-|opencpop       |https://wenet.org.cn/opencpop/download/|
-|Multi-Singer   |https://github.com/Multi-Singer/Multi-Singer.github.io|
-|M4Singer       |https://github.com/M4Singer/M4Singer/blob/master/apply_form.md|
-|CSD            |https://zenodo.org/record/4785016#.YxqrTbaOMU4|
-|KSS            |https://www.kaggle.com/datasets/bryanpark/korean-single-speaker-speech-dataset|
-|JVS MuSic      |https://sites.google.com/site/shinnosuketakamichi/research-topics/jvs_music|
-|PJS            |https://sites.google.com/site/shinnosuketakamichi/research-topics/pjs_corpus|
-|JUST Song      |https://sites.google.com/site/shinnosuketakamichi/publication/jsut-song|
-|MUSDB18        |https://sigsep.github.io/datasets/musdb.html#musdb18-compressed-stems|
-|DSD100         |https://sigsep.github.io/datasets/dsd100.html|
-|Aishell-3      |http://www.aishelltech.com/aishell_3|
-|VCTK           |https://datashare.ed.ac.uk/handle/10283/2651|
-|Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
-
 ## Code sources and references
 
-https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
+https://github.com/facebookresearch/speech-resynthesis
 
-https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
+https://github.com/jaywalnut310/vits
 
-https://github.com/openai/whisper/ [paper](https://arxiv.org/abs/2212.04356)
+https://github.com/openai/whisper
 
-https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
+https://github.com/NVIDIA/BigVGAN
 
-https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
+https://github.com/mindslab-ai/univnet
+
+https://github.com/maxrmorrison/torchcrepe
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
 
 https://github.com/huawei-noah/Speech-Backbones/tree/main/Grad-TTS
+
+https://github.com/shivammehta25/Matcha-TTS
 
 https://github.com/brentspell/hifi-gan-bwe
 
@@ -336,9 +212,9 @@ https://github.com/mozilla/TTS
 
 https://github.com/bshall/soft-vc
 
-https://github.com/maxrmorrison/torchcrepe
+https://github.com/OlaWod/FreeVC
 
-https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
+https://github.com/yl4579/HiFTNet
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
@@ -354,17 +230,12 @@ https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 [Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
 
-## Method of Preventing Timbre Leakage Based on Data Perturbation
+[VITS2: Improving Quality and Efficiency of Single-Stage Text-to-Speech with Adversarial Learning and Architecture Design](https://arxiv.org/abs/2307.16430)
 
-https://github.com/auspicious3000/contentvec/blob/main/contentvec/data/audio/audio_utils_1.py
+[HiFTNet: A Fast High-Quality Neural Vocoder with Harmonic-plus-Noise Filter and Inverse Short Time Fourier Transform](https://arxiv.org/abs/2309.09493)
 
-https://github.com/revsic/torch-nansy/blob/main/utils/augment/praat.py
+[RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
 
-https://github.com/revsic/torch-nansy/blob/main/utils/augment/peq.py
-
-https://github.com/biggytruck/SpeechSplit2/blob/main/utils.py
-
-https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 
 ## Contributors
 
@@ -375,9 +246,3 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 ## Thanks to
 
 https://github.com/Francis-Komizu/Sovits
-
-## Relevant Projects
-- [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
-- [Grad-SVC](https://github.com/PlayVoice/Grad-SVC): diffusion based svc
-- [NSF-BigVGAN](https://github.com/PlayVoice/NSF-BigVGAN): vocoder for more work
-- [X-SING](https://github.com/PlayVoice/X-SING): more work
