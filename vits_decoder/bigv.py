@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from torch.nn import Conv1d
 from torch.nn.utils import weight_norm, remove_weight_norm
-from .alias.act import SnakeAlias
+from .alias.act import SnakeBeta
 
 
 def init_weights(m, mean=0.0, std=0.01):
@@ -44,7 +44,7 @@ class AMPBlock(torch.nn.Module):
 
         # periodic nonlinearity with snakebeta function and anti-aliasing
         self.activations = nn.ModuleList([
-            SnakeAlias(channels) for _ in range(self.num_layers)
+            SnakeBeta(channels, alpha_logscale=True) for _ in range(self.num_layers)
         ])
 
     def forward(self, x):
