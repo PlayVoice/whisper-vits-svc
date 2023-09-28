@@ -48,8 +48,8 @@ WIP Ver
 | VAE perturbation | this project | ✅ | Improve sound quality |
 | MIX encoder | this project | ✅ | Improve conversion stability |
 | USP infer | this project | ✅ | Improve conversion stability |
-| VITS2 | SK Telecom | TODO | |
-| HiFTNet | Columbia University | TODO | |
+| ~~VITS2~~ | SK Telecom | ~~✅~~ | ~~Overuse of resources~~ |
+| HiFTNet | Columbia University | ✅ | NSF-iSTFTNet for speed up |
 | RoFormer | Zhuiyi Technology | TODO | |
 
 due to the use of data perturbation, it takes longer to train than other projects.
