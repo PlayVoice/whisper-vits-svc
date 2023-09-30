@@ -183,16 +183,25 @@ class Generator(torch.nn.Module):
         return audio.cpu().detach().numpy()
 
     def inference(self, spk, x, har_source):
+        # Perturbation
+        x = x + torch.randn_like(x) * 0.1
         # adapter
         x = self.adapter(x, spk)
         x = self.conv_pre(x)
-        x = x * torch.tanh(F.softplus(x))
+        # nsf
+        har_source = har_source.squeeze(1)
+        har_spec, har_phase = self.stft.transform(har_source)
+        har = torch.cat([har_spec, har_phase], dim=1)
 
         for i in range(self.num_upsamples):
+            x = F.leaky_relu(x, 0.1)
             # upsampling
             x = self.ups[i](x)
+            if i == self.num_upsamples - 1:
+                x = self.reflection_pad(x)
             # nsf
-            x_source = self.noise_convs[i](har_source)
+            x_source = self.noise_convs[i](har)
+            x_source = self.noise_res[i](x_source)
             x = x + x_source
             # AMP blocks
             xs = None
@@ -204,7 +213,9 @@ class Generator(torch.nn.Module):
             x = xs / self.num_kernels
 
         # post conv
-        x = self.activation_post(x)
+        x = F.leaky_relu(x)
         x = self.conv_post(x)
-        x = torch.tanh(x)
+        spec = torch.exp(x[:, :self.post_n_fft // 2 + 1, :])
+        phase = torch.sin(x[:, self.post_n_fft // 2 + 1:, :])
+        x = self.stft.inverse(spec, phase)
         return x
