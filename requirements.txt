@@ -9,8 +9,8 @@ transformers
 tqdm
 librosa
 omegaconf
-gradio==3.36.1
 ruamel.yaml
 resampy
 numpy==1.24
 chardet
+praat-parselmouth

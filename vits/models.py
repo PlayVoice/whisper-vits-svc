@@ -61,7 +61,7 @@ class ResidualCouplingBlock(nn.Module):
         kernel_size,
         dilation_rate,
         n_layers,
-        n_flows=4,
+        n_flows=3,
         gin_channels=0,
     ):
         super().__init__()

@@ -6,8 +6,6 @@
 <img alt="GitHub forks" src="https://img.shields.io/github/forks/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
-
-WIP Ver
  
 </div>
 
@@ -54,12 +52,8 @@ WIP Ver
 4. Download whisper model [whisper-large-v2](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt). Make sure to download `large-v2.pt`，put it into `whisper_pretrain/`.
 
 5. Download [hubert_soft model](https://github.com/bshall/hubert/releases/tag/v0.1)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`.
-
-6. Download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`.
-
-   **Note: crepe full.pth is 84.9 MB, not 6kb**
    
-7. Download pretrain model [sovits5.0.pretrain.pth](), and put it into `vits_pretrain/`.
+6. Download pretrain model [sovits5.0.pretrain.pth](https://github.com/PlayVoice/whisper-vits-svc/releases/tag/HiFTNet), and put it into `vits_pretrain/`.
     ```shell
     python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
     ```
@@ -168,11 +162,6 @@ dataset_raw
     | args |--config | --model | --spk | --wave | --ppg | --vec | --pit | --shift |
     | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
     | name | config path | model path | speaker | wave input | wave ppg | wave hubert | wave pitch | pitch shift |
-
-5. post by vad
-```
-python svc_inference_post.py --ref test.wav --svc svc_out.wav --out svc_out_post.wav
-```
 
 ## Code sources and references
 
