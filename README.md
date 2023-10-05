@@ -148,6 +148,8 @@ dataset_raw
    tensorboard --logdir logs/
    ```
 
+![HiFTNet](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/82f7fe77-7e5b-45ed-b948-2a83cf5df73c)
+
 ## Inference
 
 1. Export inference model: text encoder, Flow network, Decoder network
