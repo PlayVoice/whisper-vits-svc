@@ -8,7 +8,6 @@ from vits import commons
 from vits import modules
 from vits.utils import f0_to_coarse
 from vits_decoder.generator import Generator
-from vits.modules_grl import SpeakerClassifier
 
 
 class TextEncoder(nn.Module):
@@ -24,8 +23,10 @@ class TextEncoder(nn.Module):
                  p_dropout):
         super().__init__()
         self.out_channels = out_channels
-        self.pre = nn.Conv1d(in_channels, hidden_channels, kernel_size=5, padding=2)
-        self.hub = nn.Conv1d(vec_channels, hidden_channels, kernel_size=5, padding=2)
+        self.pre = attentions.ConvReluNorm(in_channels, hidden_channels, hidden_channels,
+                                           kernel_size=5, n_layers=4, p_dropout=0.5)
+        self.hub = attentions.ConvReluNorm(vec_channels, hidden_channels, hidden_channels,
+                                           kernel_size=5, n_layers=4, p_dropout=0.5)
         self.pit = nn.Embedding(256, hidden_channels)
         self.enc = attentions.Encoder(
             hidden_channels,
@@ -41,9 +42,9 @@ class TextEncoder(nn.Module):
         x_mask = torch.unsqueeze(commons.sequence_mask(x_lengths, x.size(2)), 1).to(
             x.dtype
         )
-        x = self.pre(x) * x_mask
+        x = self.pre(x, x_mask)
         v = torch.transpose(v, 1, -1)  # [b, h, t]
-        v = self.hub(v) * x_mask
+        v = self.hub(v, x_mask)
         x = x + v + self.pit(f0).transpose(1, 2)
         x = self.enc(x * x_mask, x_mask)
         stats = self.proj(x) * x_mask
@@ -93,10 +94,6 @@ class ResidualCouplingBlock(nn.Module):
                 total_logdet += log_det
             return x, total_logdet
 
-    def remove_weight_norm(self):
-        for i in range(self.n_flows):
-            self.flows[i * 2].remove_weight_norm()
-
 
 class PosteriorEncoder(nn.Module):
     def __init__(
@@ -132,9 +129,6 @@ class PosteriorEncoder(nn.Module):
         z = (m + torch.randn_like(m) * torch.exp(logs)) * x_mask
         return z, m, logs, x_mask
 
-    def remove_weight_norm(self):
-        self.enc.remove_weight_norm()
-
 
 class SynthesizerTrn(nn.Module):
     def __init__(
@@ -156,10 +150,6 @@ class SynthesizerTrn(nn.Module):
             6,
             3,
             0.1,
-        )
-        self.speaker_classifier = SpeakerClassifier(
-            hp.vits.hidden_channels,
-            hp.vits.spk_dim,
         )
         self.enc_q = PosteriorEncoder(
             spec_channels,
@@ -195,9 +185,7 @@ class SynthesizerTrn(nn.Module):
         # SNAC to flow
         z_f, logdet_f = self.flow(z_q, spec_mask, g=spk)
         z_r, logdet_r = self.flow(z_p, spec_mask, g=spk, reverse=True)
-        # speaker
-        spk_preds = self.speaker_classifier(x)
-        return audio, ids_slice, spec_mask, (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q, logdet_f, logdet_r), spk_preds
+        return audio, ids_slice, spec_mask, (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q, logdet_f, logdet_r)
 
     def infer(self, ppg, vec, pit, spk, ppg_l):
         ppg = ppg + torch.randn_like(ppg) * 0.0001  # Perturbation
@@ -239,7 +227,6 @@ class SynthesizerInfer(nn.Module):
         self.dec = Generator(hp=hp)
 
     def remove_weight_norm(self):
-        self.flow.remove_weight_norm()
         self.dec.remove_weight_norm()
 
     def pitch2source(self, f0):
