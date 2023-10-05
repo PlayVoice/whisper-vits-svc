@@ -180,48 +180,25 @@ https://github.com/jaywalnut310/vits
 
 https://github.com/openai/whisper
 
-https://github.com/NVIDIA/BigVGAN
-
 https://github.com/mindslab-ai/univnet
-
-https://github.com/maxrmorrison/torchcrepe
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
 
-https://github.com/huawei-noah/Speech-Backbones/tree/main/Grad-TTS
-
 https://github.com/shivammehta25/Matcha-TTS
-
-https://github.com/brentspell/hifi-gan-bwe
 
 https://github.com/mozilla/TTS
 
 https://github.com/bshall/soft-vc
 
-https://github.com/OlaWod/FreeVC
-
 https://github.com/yl4579/HiFTNet
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
-
-[Adapter-Based Extension of Multi-Speaker Text-to-Speech Model for New Speakers](https://arxiv.org/abs/2211.00585)
-
-[AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
-
-[Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
-
-[Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
-
-[Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
-
-[Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
 
 [VITS2: Improving Quality and Efficiency of Single-Stage Text-to-Speech with Adversarial Learning and Architecture Design](https://arxiv.org/abs/2307.16430)
 
 [HiFTNet: A Fast High-Quality Neural Vocoder with Harmonic-plus-Noise Filter and Inverse Short Time Fourier Transform](https://arxiv.org/abs/2309.09493)
 
 [RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
-
 
 ## Contributors
 
