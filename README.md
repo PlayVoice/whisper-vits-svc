@@ -7,8 +7,6 @@
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/so-vits-svc-5.0">
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
-[中文文档](./README_ZH.md)
-
 WIP Ver
  
 </div>
@@ -19,16 +17,6 @@ WIP Ver
 - This project will not develop one-click packages for other purposes;
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
-
-- 6GB low minimum VRAM requirement for training 
-
-- support for multiple speakers
-
-- create unique speakers through speaker mixing
-
-- even voices with light accompaniment can also be converted
-
-- F0 can be edited using Excel
 
 ## Model properties
 
@@ -50,9 +38,7 @@ WIP Ver
 | USP infer | this project | ✅ | Improve conversion stability |
 | ~~VITS2~~ | SK Telecom | ~~✅~~ | ~~Overuse of resources~~ |
 | HiFTNet | Columbia University | ✅ | NSF-iSTFTNet for speed up |
-| RoFormer | Zhuiyi Technology | TODO | |
-
-due to the use of data perturbation, it takes longer to train than other projects.
+| RoFormer | Zhuiyi Technology | ✅ | Rotary Positional Embeddings |
 
 ## Setup Environment
 
