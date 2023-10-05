@@ -8,7 +8,11 @@
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
 [中文文档](./README_ZH.md)
- 
+
+The tree [bigvgan-mix-v2](https://github.com/PlayVoice/whisper-vits-svc/tree/bigvgan-mix-v2) has good audio quality
+
+The tree [RoFormer-HiFTNet](https://github.com/PlayVoice/whisper-vits-svc/tree/RoFormer-HiFTNet) has fast infer speed
+
 </div>
 
 - This project targets deep learning beginners, basic knowledge of Python and PyTorch are the prerequisites for this project;
@@ -50,6 +54,8 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | VAE perturbation | this project | ✅ | Improve sound quality |
 | MIX encoder | this project | ✅ | Improve conversion stability |
 | USP infer | this project | ✅ | Improve conversion stability |
+| HiFTNet | Columbia University | ✅ | NSF-iSTFTNet for speed up |
+| RoFormer | Zhuiyi Technology | ✅ | Rotary Positional Embeddings |
 
 due to the use of data perturbation, it takes longer to train than other projects.
 
@@ -340,6 +346,8 @@ https://github.com/maxrmorrison/torchcrepe
 
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
+https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
+
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
 [Adapter-Based Extension of Multi-Speaker Text-to-Speech Model for New Speakers](https://arxiv.org/abs/2211.00585)
@@ -353,6 +361,8 @@ https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 [Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
 
 [Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
+
+[RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
 
 ## Method of Preventing Timbre Leakage Based on Data Perturbation
 
