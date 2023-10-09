@@ -226,7 +226,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             loss_g = loss_g / hp.train.accum_step
             loss_g.backward()
 
-            if step % hp.train.accum_step == 0:
+            if (step + 1) % hp.train.accum_step == 0:
                 clip_grad_value_(model_g.parameters(),  None)
                 optim_g.step()
                 optim_g.zero_grad()
@@ -243,7 +243,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
             loss_d = loss_d / hp.train.accum_step
             loss_d.backward()
 
-            if step % hp.train.accum_step == 0:
+            if (step + 1) % hp.train.accum_step == 0:
                 clip_grad_value_(model_d.parameters(),  None)
                 optim_d.step()
                 optim_d.zero_grad()
