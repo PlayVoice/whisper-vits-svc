@@ -182,6 +182,8 @@ def train(rank, args, chkpt_path, hp, hp_str):
             audio_l = audio_l.to(device)
 
             # generator
+            optim_g.zero_grad()
+
             fake_audio, ids_slice, z_mask, \
                 (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q, logdet_f, logdet_r), spk_preds = model_g(
                     ppg, vec, pit, spec, spk, ppg_l, spec_l)
@@ -223,15 +225,12 @@ def train(rank, args, chkpt_path, hp, hp_str):
 
             # Loss
             loss_g = score_loss + feat_loss + mel_loss + stft_loss + loss_kl_f + loss_kl_r * 0.5 + spk_loss * 2
-            loss_g = loss_g / hp.train.accum_step
             loss_g.backward()
-
-            if (step + 1) % hp.train.accum_step == 0:
-                clip_grad_value_(model_g.parameters(),  None)
-                optim_g.step()
-                optim_g.zero_grad()
+            clip_grad_value_(model_g.parameters(),  None)
+            optim_g.step()
 
             # discriminator
+            optim_d.zero_grad()
             disc_fake = model_d(fake_audio.detach())
             disc_real = model_d(audio)
 
@@ -240,13 +239,10 @@ def train(rank, args, chkpt_path, hp, hp_str):
                 loss_d += torch.mean(torch.pow(score_real - 1.0, 2))
                 loss_d += torch.mean(torch.pow(score_fake, 2))
             loss_d = loss_d / len(disc_fake)
-            loss_d = loss_d / hp.train.accum_step
-            loss_d.backward()
 
-            if (step + 1) % hp.train.accum_step == 0:
-                clip_grad_value_(model_d.parameters(),  None)
-                optim_d.step()
-                optim_d.zero_grad()
+            loss_d.backward()
+            clip_grad_value_(model_d.parameters(),  None)
+            optim_d.step()
 
             step += 1
             # logging
