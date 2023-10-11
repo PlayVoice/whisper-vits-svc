@@ -189,20 +189,20 @@ data_svc/
 
 ## 训练
 0. 参数调整  
-  如果基于预训练模型微调，需要下载预训练模型[sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0)并且放在项目根目录下面  
-  并且修改`configs/base.yaml`的参数`pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"`，并适当调小学习率（建议从5e-5开始尝试）
+  如果基于预训练模型微调，需要下载预训练模型[sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0)并且放在项目根目录下面<br>
+  并且修改`configs/base.yaml`的参数`pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"`，并适当调小学习率（建议从5e-5开始尝试）<br>
   **learning_rate & batch_size & accum_step 为三个紧密相关的参数，需要仔细调节**<br>
   **batch_size 乘以 accum_step 通常等于 16 或 32，对于低显存GPU，可以尝试 batch_size = 4，accum_step = 4**
 
-2. 开始训练  
+1. 开始训练  
    ```
    python svc_trainer.py -c configs/base.yaml -n sovits5.0
    ```
-3. 恢复训练
+2. 恢复训练
    ```
    python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/sovits5.0_***.pt
    ```
-4. 训练日志可视化
+3. 训练日志可视化
    ```
    tensorboard --logdir logs/
    ```
