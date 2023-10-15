@@ -51,6 +51,10 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 **USP : 即使unvoice和silence在推理的时候，也有Pitch，这个Pitch平滑链接voice段**
 ![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ba733b48-8a89-4612-83e0-a0745587d150)
 
+## 为什么要mix
+
+![mix_frame](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/3ffa1be0-1a21-4752-96b5-6220f98f2313)
+
 ## 安装环境
 
 1. 安装[PyTorch](https://pytorch.org/get-started/locally/)
