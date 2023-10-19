@@ -66,6 +66,10 @@ due to the use of data perturbation, it takes longer to train than other project
 
 ![mix_frame](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/3ffa1be0-1a21-4752-96b5-6220f98f2313)
 
+![mix_encoder](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/12700d60-e7a3-4d11-a604-2dc1d7aa07bd)
+
+[Leveraging Content-based Features from Multiple Acoustic Models for Singing Voice Conversion](https://www.zhangxueyao.com/data/MultipleContentsSVC/index.html)
+
 ## Plug-In-Diffusion
 
 ![plug-in-diffusion](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/54a61c90-a97b-404d-9cc9-a2151b2db28f)
