@@ -13,6 +13,8 @@ The tree [bigvgan-mix-v2](https://github.com/PlayVoice/whisper-vits-svc/tree/big
 
 The tree [RoFormer-HiFTNet](https://github.com/PlayVoice/whisper-vits-svc/tree/RoFormer-HiFTNet) has fast infer speed
 
+No More Upgrade
+
 </div>
 
 - This project targets deep learning beginners, basic knowledge of Python and PyTorch are the prerequisites for this project;
@@ -397,5 +399,3 @@ https://github.com/Francis-Komizu/Sovits
 ## Relevant Projects
 - [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
 - [Grad-SVC](https://github.com/PlayVoice/Grad-SVC): diffusion based svc
-- [NSF-BigVGAN](https://github.com/PlayVoice/NSF-BigVGAN): vocoder for more work
-- [X-SING](https://github.com/PlayVoice/X-SING): more work
