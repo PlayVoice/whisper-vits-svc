@@ -106,7 +106,7 @@ Necessary pre-processing:
 1. Separate vocie and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
 2. Cut audio input to shorter length with [slicer](https://github.com/flutydeer/audio-slicer), whisper takes input less than 30 seconds.
 3. Manually check generated audio input, remove inputs shorter than 2 seconds or with obivous noise.
-4. Adjust loudness if necessary, recommand Adobe Audiiton.
+4. Adjust loudness if necessary, recommend Adobe Audiiton.
 5. Put the dataset into the `dataset_raw` directory following the structure below.
 ```
 dataset_raw
