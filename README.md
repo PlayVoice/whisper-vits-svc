@@ -24,15 +24,15 @@ No More Upgrade
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
-- 6GB low minimum VRAM requirement for training 
+- A minimum VRAM requirement of 6GB for training
 
-- support for multiple speakers
+- Support for multiple speakers
 
-- create unique speakers through speaker mixing
+- Create unique speakers through speaker mixing
 
-- even voices with light accompaniment can also be converted
+- It can even convert voices with light accompaniment
 
-- F0 can be edited using Excel
+- You can edit F0 using Excel
 
 https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-9a14-9cbc1e0e7c3a
 
@@ -103,7 +103,7 @@ due to the use of data perturbation, it takes longer to train than other project
 ## Dataset preparation
 
 Necessary pre-processing:
-1. Separate vocie and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
+1. Separate voice and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
 2. Cut audio input to shorter length with [slicer](https://github.com/flutydeer/audio-slicer), whisper takes input less than 30 seconds.
 3. Manually check generated audio input, remove inputs shorter than 2 seconds or with obivous noise.
 4. Adjust loudness if necessary, recommend Adobe Audiiton.
@@ -219,7 +219,7 @@ data_svc/
     ```
 
 ## Train
-1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
+1. If fine-tuning is based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
     ```
     pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"
     ```
