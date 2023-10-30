@@ -26,7 +26,7 @@ No More Upgrade
 
 - A minimum VRAM requirement of 6GB for training
 
-- Support for multiple Speakers
+- Support for multiple speakers
 
 - Create unique speakers through speaker mixing
 
