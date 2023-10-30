@@ -377,6 +377,8 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 https://github.com/Francis-Komizu/Sovits
 
 ## 原创举证
+2022年04月12日 https://mp.weixin.qq.com/s/autNBYCsG4_SvWt2-Ll_zA
+
 2022年07月26日 https://mp.weixin.qq.com/s/qC4TJy-4EVdbpvK2cQb1TA
 
 2022年09月08日 https://github.com/PlayVoice/lora-svc/tree/vi-svc
