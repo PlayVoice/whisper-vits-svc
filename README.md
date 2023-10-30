@@ -364,6 +364,8 @@ https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
 
 [AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
 
+[AdaVITS: Tiny VITS for Low Computing Resource Speaker Adaptation](https://arxiv.org/pdf/2206.00208.pdf)
+
 [Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
 
 [Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
@@ -399,3 +401,8 @@ https://github.com/Francis-Komizu/Sovits
 ## Relevant Projects
 - [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
 - [Grad-SVC](https://github.com/PlayVoice/Grad-SVC): diffusion based svc
+
+## Original evidence
+2022年07月26日 https://mp.weixin.qq.com/s/qC4TJy-4EVdbpvK2cQb1TA
+
+2022年09月08日 https://github.com/PlayVoice/lora-svc/tree/vi-svc
