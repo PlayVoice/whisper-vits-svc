@@ -336,7 +336,11 @@ https://github.com/bshall/soft-vc
 
 https://github.com/maxrmorrison/torchcrepe
 
+https://github.com/MoonInTheRiver/DiffSinger
+
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
+
+[One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
