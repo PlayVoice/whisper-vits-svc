@@ -205,7 +205,7 @@ data_svc/
     ```
     python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
     ``` 
-7. use 32k audio to extract the linear spectrum
+7. Use 32k audio to extract the linear spectrum
     ```
     python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
     ``` 
