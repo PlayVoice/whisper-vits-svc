@@ -446,4 +446,4 @@ class FeatureInput(object):
         )
         return f0_coarse
 ```
-
+**本项目修改过的Whisper和BigVGAN代码也被svc-develop-team/so-vits-svc直接拷贝了，svc-develop-team的理由是Whisper和BigVGAN本身是开源的，svc-develop-team可以直接拷贝本项目修改后的代码！**
