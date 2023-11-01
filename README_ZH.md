@@ -385,7 +385,7 @@ https://github.com/Francis-Komizu/Sovits
 
 2022.07.26 https://mp.weixin.qq.com/s/qC4TJy-4EVdbpvK2cQb1TA
 
-2022.09.08 https://github.com/PlayVoice/lora-svc/tree/vi-svc
+2022.09.08 https://github.com/PlayVoice/VI-SVC
 
 ## 被svc-develop-team/so-vits-svc抄袭举证
 ![coarse_f0_1](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/e2f5e5d3-d169-42c1-953f-4e1648b6da37)
