@@ -472,3 +472,4 @@ class FeatureInput(object):
         )
         return f0_coarse
 ```
+## Whisper and BigVGAN modified are also copied by svc-develop-team/so-vits-svc
