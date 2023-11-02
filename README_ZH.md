@@ -387,63 +387,13 @@ https://github.com/Francis-Komizu/Sovits
 
 2022.09.08 https://github.com/PlayVoice/VI-SVC
 
-## 被svc-develop-team/so-vits-svc抄袭举证
+## 被这个项目抄袭：svc-develop-team/so-vits-svc
 ![coarse_f0_1](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/e2f5e5d3-d169-42c1-953f-4e1648b6da37)
 
 ![coarse_f0_2](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/f3539c83-7c8a-425e-bf20-2c402132f0f4)
 
 ![coarse_f0_3](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/f3cee94a-0eeb-4189-b9bb-7043d06e62ef)
 
+## Rcell对抄袭的真实回应
 
-```python
-import os
-import librosa
-import pyworld
-import utils
-import numpy as np
-from scipy.io import wavfile
-
-
-class FeatureInput(object):
-    def __init__(self, samplerate=16000, hop_size=160):
-        self.fs = samplerate
-        self.hop = hop_size
-
-        self.f0_bin = 256
-        self.f0_max = 1100.0
-        self.f0_min = 50.0
-        self.f0_mel_min = 1127 * np.log(1 + self.f0_min / 700)
-        self.f0_mel_max = 1127 * np.log(1 + self.f0_max / 700)
-
-    def compute_f0(self, path):
-        x, sr = librosa.load(path, sr=self.fs)
-        assert sr == self.fs
-        f0, t = pyworld.dio(
-            x.astype(np.double),
-            fs=sr,
-            f0_ceil=800,
-            frame_period=1000 * self.hop / sr,
-        )
-        f0 = pyworld.stonemask(x.astype(np.double), f0, t, self.fs)
-        for index, pitch in enumerate(f0):
-            f0[index] = round(pitch, 1)
-        return f0
-
-    # for numpy # code from diffsinger
-    def coarse_f0(self, f0):
-        f0_mel = 1127 * np.log(1 + f0 / 700)
-        f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - self.f0_mel_min) * (
-            self.f0_bin - 2
-        ) / (self.f0_mel_max - self.f0_mel_min) + 1
-
-        # use 0 or 1
-        f0_mel[f0_mel <= 1] = 1
-        f0_mel[f0_mel > self.f0_bin - 1] = self.f0_bin - 1
-        f0_coarse = np.rint(f0_mel).astype(np.int)
-        assert f0_coarse.max() <= 255 and f0_coarse.min() >= 1, (
-            f0_coarse.max(),
-            f0_coarse.min(),
-        )
-        return f0_coarse
-```
-**本项目修改过的Whisper和BigVGAN代码也被svc-develop-team/so-vits-svc直接拷贝了，svc-develop-team的理由是Whisper和BigVGAN本身是开源的，svc-develop-team可以直接拷贝本项目修改后的代码！**
+![Rcell](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/8ebb236d-e233-4cea-9359-8e44029b5af5)
