@@ -378,6 +378,8 @@ https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
 
 [Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
 
+[Multilingual Speech Synthesis and Cross-Language Voice Cloning: GRL](https://arxiv.org/abs/1907.04448)
+
 [RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
 
 ## Method of Preventing Timbre Leakage Based on Data Perturbation
