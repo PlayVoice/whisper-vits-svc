@@ -376,8 +376,6 @@ https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
 
 [Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
 
-[Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
-
 [Multilingual Speech Synthesis and Cross-Language Voice Cloning: GRL](https://arxiv.org/abs/1907.04448)
 
 [RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
@@ -410,6 +408,8 @@ https://github.com/Francis-Komizu/Sovits
 
 ## Original evidence
 2022.04.12 https://mp.weixin.qq.com/s/autNBYCsG4_SvWt2-Ll_zA
+
+2022.04.22 https://github.com/PlayVoice/VI-SVS
 
 2022.07.26 https://mp.weixin.qq.com/s/qC4TJy-4EVdbpvK2cQb1TA
 
