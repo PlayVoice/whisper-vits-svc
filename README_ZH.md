@@ -472,7 +472,7 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 
 https://github.com/Francis-Komizu/Sovits
 
-## 原创举证
+## 原创过程
 2022.04.12 https://mp.weixin.qq.com/s/autNBYCsG4_SvWt2-Ll_zA
 
 2022.04.22 https://github.com/PlayVoice/VI-SVS
