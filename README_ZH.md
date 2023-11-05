@@ -316,47 +316,7 @@ eva_conf = {
 
 ## 代码来源和参考文献
 
-[https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
-
-https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
-
-https://github.com/openai/whisper/ [paper](https://arxiv.org/abs/2212.04356)
-
-https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
-
-https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
-
-https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
-
-https://github.com/brentspell/hifi-gan-bwe
-
-https://github.com/mozilla/TTS
-
-https://github.com/bshall/soft-vc
-
-https://github.com/maxrmorrison/torchcrepe
-
-https://github.com/MoonInTheRiver/DiffSinger
-
-https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
-
-[One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
-
-[SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
-
-[Adapter-Based Extension of Multi-Speaker Text-to-Speech Model for New Speakers](https://arxiv.org/abs/2211.00585)
-
-[AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
-
-[AdaVITS: Tiny VITS for Low Computing Resource Speaker Adaptation](https://arxiv.org/pdf/2206.00208.pdf)
-
-[Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
-
-[Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
-
-[Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
-
-[Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)](https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
+https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
 https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
 
@@ -403,52 +363,6 @@ https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
 [Multilingual Speech Synthesis and Cross-Language Voice Cloning: GRL](https://arxiv.org/abs/1907.04448)
 
 [RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864))https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
-
-https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
-
-https://github.com/openai/whisper/ [paper](https://arxiv.org/abs/2212.04356)
-
-https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
-
-https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
-
-https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
-
-https://github.com/huawei-noah/Speech-Backbones/tree/main/Grad-TTS
-
-https://github.com/brentspell/hifi-gan-bwe
-
-https://github.com/mozilla/TTS
-
-https://github.com/bshall/soft-vc
-
-https://github.com/maxrmorrison/torchcrepe
-
-https://github.com/MoonInTheRiver/DiffSinger
-
-https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
-
-https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
-
-[One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
-
-[SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
-
-[Adapter-Based Extension of Multi-Speaker Text-to-Speech Model for New Speakers](https://arxiv.org/abs/2211.00585)
-
-[AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
-
-[AdaVITS: Tiny VITS for Low Computing Resource Speaker Adaptation](https://arxiv.org/pdf/2206.00208.pdf)
-
-[Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
-
-[Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
-
-[Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
-
-[Multilingual Speech Synthesis and Cross-Language Voice Cloning: GRL](https://arxiv.org/abs/1907.04448)
-
-[RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
 
 ## 基于数据扰动防止音色泄露的方法
 
