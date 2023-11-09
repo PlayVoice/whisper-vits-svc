@@ -395,13 +395,13 @@ https://github.com/Francis-Komizu/Sovits
 
 2022.09.08 https://github.com/PlayVoice/VI-SVC
 
-## 被这个项目抄袭：svc-develop-team/so-vits-svc
+## 被这个项目拷贝：svc-develop-team/so-vits-svc
 ![coarse_f0_1](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/e2f5e5d3-d169-42c1-953f-4e1648b6da37)
 
 ![coarse_f0_2](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/f3539c83-7c8a-425e-bf20-2c402132f0f4)
 
 ![coarse_f0_3](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/f3cee94a-0eeb-4189-b9bb-7043d06e62ef)
 
-## Rcell对抄袭的真实回应
+## Rcell对拷贝的真实回应
 
 ![Rcell](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/8ebb236d-e233-4cea-9359-8e44029b5af5)
