@@ -44,7 +44,7 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath, device):
             mel = mel.half()
         with torch.no_grad():
             mel = mel + torch.randn_like(mel) * 0.1
-            ppg = whisper.encoder(mel.unsqueeze(0)).squeeze().data.cpu().float().numpy()
+            ppg = whisper.encoder(mel.unsqueeze(0))[:,:,:,None].squeeze().transpose(1,2).permute(0,2,1).reshape(-1, whisper.output_dim).data.cpu().numpy()
             ppg = ppg[:ppgln,]  # [length, dim=1024]
             ppg_a.extend(ppg)
     if (idx_s < audln):
@@ -64,8 +64,9 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath, device):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
-    parser.add_argument("-p", "--ppg", help="ppg", dest="ppg", required=True)
+    parser.description = 'please enter embed parameter ...'
+    parser.add_argument("-w", "--wav", help="wav", dest="wav")
+    parser.add_argument("-p", "--ppg", help="ppg", dest="ppg")
     args = parser.parse_args()
     print(args.wav)
     print(args.ppg)
