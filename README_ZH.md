@@ -9,12 +9,23 @@
 
 </div>
 
-### 本项目使用简洁明了的代码结构，用于深度学习技术的研究；基于学习的目的，本项目并不追求效果极限、而更多的为学生笔记本考虑，采用了低配置参数、最终预训练模型为202M（包括生成器和判别器，且为float32模型），远远小于同类项目模型大小；如果你寻找的是直接可用的项目，本项目并不适合你。
+### 本项目使用简洁明了的代码结构，用于深度学习技术的研究
+### 基于学习的目的，本项目并不追求效果极限、而更多的为学生笔记本考虑，采用了低配置参数、最终预训练模型为202M（包括生成器和判别器，且为float32模型），远远小于同类项目模型大小
+### 如果你寻找的是直接可用的项目，本项目并不适合你
 
 - 本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
 - 本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
 - 本项目不支持实时变声；（支持需要换掉whisper）
 - 本项目不会开发用于其他用途的一键包
+### 代码详解课程
+- 1-整体框架 https://www.bilibili.com/video/BV1Tj411e7pQ
+- 2-数据准备和预处理 https://www.bilibili.com/video/BV1uj411v7zW
+- 3-先验后验编码器 https://www.bilibili.com/video/BV1Be411Q7r5
+- 4-decoder部分 https://www.bilibili.com/video/BV19u4y1b73U
+- 5-蛇形激活函数 https://www.bilibili.com/video/BV1HN4y1D7AR
+- 6-Flow部分 https://www.bilibili.com/video/BV1ju411F7Fs
+- 7-训练及损失函数部分 https://www.bilibili.com/video/BV1qw411W73B
+- 8-训练推理以及基频矫正 https://www.bilibili.com/video/BV1eb4y1u7ER
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
