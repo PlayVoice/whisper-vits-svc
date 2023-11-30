@@ -316,7 +316,7 @@ class ResidualCouplingLayer(nn.Module):
             x1 = (speaker_m + x1 * torch.exp(speaker_v)) * x_mask
             x = torch.cat([x0, x1], 1)
             # speaker var to logdet
-            logdet = torch.sum(logs * x_mask, [1, 2]) + torch.sum(
+            logdet = torch.sum(-logs * x_mask, [1, 2]) + torch.sum(
                 speaker_v.expand(-1, -1, logs.size(-1)) * x_mask, [1, 2])
             return x, logdet
 

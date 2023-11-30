@@ -8,8 +8,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributed import init_process_group
 from torch.nn.parallel import DistributedDataParallel
-import itertools
-import traceback
 
 from vits_extend.dataloader import create_dataloader_train
 from vits_extend.dataloader import create_dataloader_eval
@@ -79,7 +77,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
     optim_g = torch.optim.AdamW(model_g.parameters(),
                                 lr=hp.train.learning_rate, betas=hp.train.betas, eps=hp.train.eps)
     optim_d = torch.optim.AdamW(model_d.parameters(),
-                                lr=hp.train.learning_rate, betas=hp.train.betas, eps=hp.train.eps)
+                                lr=(hp.train.learning_rate / hp.train.accum_step), betas=hp.train.betas, eps=hp.train.eps)
 
     init_epoch = 1
     step = 0
@@ -182,12 +180,9 @@ def train(rank, args, chkpt_path, hp, hp_str):
             audio_l = audio_l.to(device)
 
             # generator
-            optim_g.zero_grad()
-
             fake_audio, ids_slice, z_mask, \
                 (z_f, z_r, z_p, m_p, logs_p, z_q, m_q, logs_q, logdet_f, logdet_r), spk_preds = model_g(
                     ppg, vec, pit, spec, spk, ppg_l, spec_l)
-
 
             audio = commons.slice_segments(
                 audio, ids_slice * hp.data.hop_length, hp.data.segment_size)  # slice
@@ -226,8 +221,15 @@ def train(rank, args, chkpt_path, hp, hp_str):
             # Loss
             loss_g = score_loss + feat_loss + mel_loss + stft_loss + loss_kl_f + loss_kl_r * 0.5 + spk_loss * 2
             loss_g.backward()
-            clip_grad_value_(model_g.parameters(),  None)
-            optim_g.step()
+
+            if ((step + 1) % hp.train.accum_step == 0) or (step + 1 == len(loader)):
+                # accumulate gradients for accum steps
+                for param in model_g.parameters():
+                    param.grad /= hp.train.accum_step
+                clip_grad_value_(model_g.parameters(),  None)
+                # update model
+                optim_g.step()
+                optim_g.zero_grad()
 
             # discriminator
             optim_d.zero_grad()
@@ -274,34 +276,33 @@ def train(rank, args, chkpt_path, hp, hp_str):
             }, save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
 
-
-        def clean_checkpoints(path_to_models=f'{pth_dir}', n_ckpts_to_keep=hp.log.keep_ckpts, sort_by_time=True):
-            """Freeing up space by deleting saved ckpts
-            Arguments:
-            path_to_models    --  Path to the model directory
-            n_ckpts_to_keep   --  Number of ckpts to keep, excluding sovits5.0_0.pth
-                                  If n_ckpts_to_keep == 0, do not delete any ckpts
-            sort_by_time      --  True -> chronologically delete ckpts
-                                  False -> lexicographically delete ckpts
-            """
-            assert isinstance(n_ckpts_to_keep, int) and n_ckpts_to_keep >= 0
-            ckpts_files = [f for f in os.listdir(path_to_models) if os.path.isfile(os.path.join(path_to_models, f))]
-            name_key = (lambda _f: int(re.compile(f'{args.name}_(\d+)\.pt').match(_f).group(1)))
-            time_key = (lambda _f: os.path.getmtime(os.path.join(path_to_models, _f)))
-            sort_key = time_key if sort_by_time else name_key
-            x_sorted = lambda _x: sorted(
-                [f for f in ckpts_files if f.startswith(_x) and not f.endswith('sovits5.0_0.pth')], key=sort_key)
-            if n_ckpts_to_keep == 0:
-                to_del = []
-            else:
-                to_del = [os.path.join(path_to_models, fn) for fn in x_sorted(f'{args.name}')[:-n_ckpts_to_keep]]
-            del_info = lambda fn: logger.info(f"Free up space by deleting ckpt {fn}")
-            del_routine = lambda x: [os.remove(x), del_info(x)]
-            rs = [del_routine(fn) for fn in to_del]
-
-        clean_checkpoints()
-
         if rank == 0:
+            def clean_checkpoints(path_to_models=f'{pth_dir}', n_ckpts_to_keep=hp.log.keep_ckpts, sort_by_time=True):
+                """Freeing up space by deleting saved ckpts
+                Arguments:
+                path_to_models    --  Path to the model directory
+                n_ckpts_to_keep   --  Number of ckpts to keep, excluding sovits5.0_0.pth
+                                      If n_ckpts_to_keep == 0, do not delete any ckpts
+                sort_by_time      --  True -> chronologically delete ckpts
+                                      False -> lexicographically delete ckpts
+                """
+                assert isinstance(n_ckpts_to_keep, int) and n_ckpts_to_keep >= 0
+                ckpts_files = [f for f in os.listdir(path_to_models) if os.path.isfile(os.path.join(path_to_models, f))]
+                name_key = (lambda _f: int(re.compile(f'{args.name}_(\d+)\.pt').match(_f).group(1)))
+                time_key = (lambda _f: os.path.getmtime(os.path.join(path_to_models, _f)))
+                sort_key = time_key if sort_by_time else name_key
+                x_sorted = lambda _x: sorted(
+                    [f for f in ckpts_files if f.startswith(_x) and not f.endswith('sovits5.0_0.pth')], key=sort_key)
+                if n_ckpts_to_keep == 0:
+                    to_del = []
+                else:
+                    to_del = [os.path.join(path_to_models, fn) for fn in x_sorted(f'{args.name}')[:-n_ckpts_to_keep]]
+                del_info = lambda fn: logger.info(f"Free up space by deleting ckpt {fn}")
+                del_routine = lambda x: [os.remove(x), del_info(x)]
+                rs = [del_routine(fn) for fn in to_del]
+
+            clean_checkpoints()
+
             os.makedirs(f'{pth_dir}', exist_ok=True)
             keep_ckpts = getattr(hp.log, 'keep_ckpts', 0)
             if keep_ckpts > 0:

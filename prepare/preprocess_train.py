@@ -6,6 +6,7 @@ def print_error(info):
     print(f"\033[31m File isn't existed: {info}\033[0m")
 
 
+IndexBySinger = False
 if __name__ == "__main__":
     os.makedirs("./files/", exist_ok=True)
 
@@ -18,7 +19,12 @@ if __name__ == "__main__":
         for file in os.listdir(f"./{rootPath}/{spks}"):
             if file.endswith(".wav"):
                 file = file[:-4]
-                path_spk = f"./data_svc/speaker/{spks}/{file}.spk.npy"
+
+                if (IndexBySinger == False):
+                    path_spk = f"./data_svc/speaker/{spks}/{file}.spk.npy"
+                else:
+                    path_spk = f"./data_svc/singer/{spks}.spk.npy"
+
                 path_wave = f"./data_svc/waves-32k/{spks}/{file}.wav"
                 path_spec = f"./data_svc/specs/{spks}/{file}.pt"
                 path_pitch = f"./data_svc/pitch/{spks}/{file}.pit.npy"

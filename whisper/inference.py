@@ -8,8 +8,7 @@ from whisper.model import Whisper, ModelDimensions
 from whisper.audio import load_audio, pad_or_trim, log_mel_spectrogram
 
 
-def load_model(path) -> Whisper:
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+def load_model(path, device) -> Whisper:
     checkpoint = torch.load(path, map_location="cpu")
     dims = ModelDimensions(**checkpoint["dims"])
     # print(dims)
@@ -20,7 +19,8 @@ def load_model(path) -> Whisper:
     del model.encoder.blocks[cut:]
     model.load_state_dict(checkpoint["model_state_dict"], strict=False)
     model.eval()
-    model.half()
+    if not (device == "cpu"):
+        model.half()
     model.to(device)
     # torch.save({
     #     'dims': checkpoint["dims"],
@@ -29,7 +29,7 @@ def load_model(path) -> Whisper:
     return model
 
 
-def pred_ppg(whisper: Whisper, wavPath, ppgPath):
+def pred_ppg(whisper: Whisper, wavPath, ppgPath, device):
     audio = load_audio(wavPath)
     audln = audio.shape[0]
     ppg_a = []
@@ -39,8 +39,11 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
         idx_s = idx_s + 15 * 16000
         ppgln = 15 * 16000 // 320
         # short = pad_or_trim(short)
-        mel = log_mel_spectrogram(short).half().to(whisper.device)
+        mel = log_mel_spectrogram(short).to(device)
+        if not (device == "cpu"):
+            mel = mel.half()
         with torch.no_grad():
+            mel = mel + torch.randn_like(mel) * 0.1
             ppg = whisper.encoder(mel.unsqueeze(0)).squeeze().data.cpu().float().numpy()
             ppg = ppg[:ppgln,]  # [length, dim=1024]
             ppg_a.extend(ppg)
@@ -48,8 +51,11 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
         short = audio[idx_s:audln]
         ppgln = (audln - idx_s) // 320
         # short = pad_or_trim(short)
-        mel = log_mel_spectrogram(short).half().to(whisper.device)
+        mel = log_mel_spectrogram(short).to(device)
+        if not (device == "cpu"):
+            mel = mel.half()
         with torch.no_grad():
+            mel = mel + torch.randn_like(mel) * 0.1
             ppg = whisper.encoder(mel.unsqueeze(0)).squeeze().data.cpu().float().numpy()
             ppg = ppg[:ppgln,]  # [length, dim=1024]
             ppg_a.extend(ppg)
@@ -58,9 +64,8 @@ def pred_ppg(whisper: Whisper, wavPath, ppgPath):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.description = 'please enter embed parameter ...'
-    parser.add_argument("-w", "--wav", help="wav", dest="wav")
-    parser.add_argument("-p", "--ppg", help="ppg", dest="ppg")
+    parser.add_argument("-w", "--wav", help="wav", dest="wav", required=True)
+    parser.add_argument("-p", "--ppg", help="ppg", dest="ppg", required=True)
     args = parser.parse_args()
     print(args.wav)
     print(args.ppg)
@@ -68,5 +73,6 @@ if __name__ == "__main__":
     wavPath = args.wav
     ppgPath = args.ppg
 
-    whisper = load_model(os.path.join("whisper_pretrain", "large-v2.pt"))
-    pred_ppg(whisper, wavPath, ppgPath)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    whisper = load_model(os.path.join("whisper_pretrain", "large-v2.pt"), device)
+    pred_ppg(whisper, wavPath, ppgPath, device)

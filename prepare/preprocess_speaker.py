@@ -3,13 +3,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import numpy as np
 import argparse
-import multiprocessing
 
+from tqdm import tqdm
 from functools import partial
-from multiprocessing.pool import ThreadPool
-from tqdm import tqdm
-from tqdm import tqdm
 from argparse import RawTextHelpFormatter
+from multiprocessing.pool import ThreadPool
+
 from speaker.models.lstm import LSTMSpeakerEncoder
 from speaker.config import SpeakerEncoderConfig
 from speaker.utils.audio import AudioProcessor
@@ -29,6 +28,7 @@ def get_spk_wavs(dataset_path, output_path):
             wav_files.append(f"./{dataset_path}/{spks}")
     return wav_files
 
+
 def process_wav(wav_file, dataset_path, output_path, args, speaker_encoder_ap, speaker_encoder):
     waveform = speaker_encoder_ap.load_wav(
         wav_file, sr=speaker_encoder_ap.sample_rate
@@ -44,11 +44,13 @@ def process_wav(wav_file, dataset_path, output_path, args, speaker_encoder_ap, s
     embed_path = embed_path.replace(".wav", ".spk")
     np.save(embed_path, embed, allow_pickle=False)
 
+
 def extract_speaker_embeddings(wav_files, dataset_path, output_path, args, speaker_encoder_ap, speaker_encoder, concurrency):
     bound_process_wav = partial(process_wav, dataset_path=dataset_path, output_path=output_path, args=args, speaker_encoder_ap=speaker_encoder_ap, speaker_encoder=speaker_encoder)
 
     with ThreadPool(concurrency) as pool:
         list(tqdm(pool.imap(bound_process_wav, wav_files), total=len(wav_files)))
+
 
 if __name__ == "__main__":
 

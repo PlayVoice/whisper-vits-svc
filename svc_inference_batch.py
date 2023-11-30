@@ -1,6 +1,7 @@
 import sys,os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import tqdm
+import torch
 import argparse
 
 from whisper.inference import load_model, pred_ppg
@@ -29,10 +30,10 @@ if __name__ == '__main__':
     waves = [file for file in os.listdir(wave_path) if file.endswith(".wav")]
     for file in waves:
         print(file)
-
-    whisper = load_model(os.path.join("whisper_pretrain", "large-v2.pt"))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    whisper = load_model(os.path.join("whisper_pretrain", "large-v2.pt"), device=device)
     for file in tqdm.tqdm(waves, desc="whisper"):
-        pred_ppg(whisper, f"{wave_path}/{file}", f"{out_path}/{file}.ppg.npy")
+        pred_ppg(whisper, f"{wave_path}/{file}", f"{out_path}/{file}.ppg.npy", device=device)
     del whisper
 
     for file in tqdm.tqdm(waves, desc="svc"):

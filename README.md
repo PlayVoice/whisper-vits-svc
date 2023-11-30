@@ -8,7 +8,13 @@
 <img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/so-vits-svc-5.0">
 
 [中文文档](./README_ZH.md)
- 
+
+The tree [bigvgan-mix-v2](https://github.com/PlayVoice/whisper-vits-svc/tree/bigvgan-mix-v2) has good audio quality
+
+The tree [RoFormer-HiFTNet](https://github.com/PlayVoice/whisper-vits-svc/tree/RoFormer-HiFTNet) has fast infer speed
+
+No More Upgrade
+
 </div>
 
 - This project targets deep learning beginners, basic knowledge of Python and PyTorch are the prerequisites for this project;
@@ -18,15 +24,15 @@
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
-- 6GB low minimum VRAM requirement for training 
+- A minimum VRAM requirement of 6GB for training
 
-- support for multiple speakers
+- Support for multiple speakers
 
-- create unique speakers through speaker mixing
+- Create unique speakers through speaker mixing
 
-- even voices with light accompaniment can also be converted
+- It can even convert voices with light accompaniment
 
-- F0 can be edited using Excel
+- You can edit F0 using Excel
 
 https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-9a14-9cbc1e0e7c3a
 
@@ -44,17 +50,31 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | GRL for speaker | Ubisoft |✅ | Preventing Encoder Leakage Timbre |
 | SNAC |  Samsung | ✅ | One Shot Clone of VITS |
 | SCLN |  Microsoft | ✅ | Improve Clone |
+| Diffusion |  HuaWei | ✅ | Improve sound quality |
 | PPG perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | HuBERT perturbation | this project | ✅ | Improved noise immunity and de-timbre |
 | VAE perturbation | this project | ✅ | Improve sound quality |
 | MIX encoder | this project | ✅ | Improve conversion stability |
 | USP infer | this project | ✅ | Improve conversion stability |
+| HiFTNet | Columbia University | ✅ | NSF-iSTFTNet for speed up |
+| RoFormer | Zhuiyi Technology | ✅ | Rotary Positional Embeddings |
 
 due to the use of data perturbation, it takes longer to train than other projects.
 
 **USP : Unvoice and Silence with Pitch when infer**
 ![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ba733b48-8a89-4612-83e0-a0745587d150)
 
+## Why mix
+
+![mix_frame](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/3ffa1be0-1a21-4752-96b5-6220f98f2313)
+
+![mix_encoder](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/12700d60-e7a3-4d11-a604-2dc1d7aa07bd)
+
+[Leveraging Content-based Features from Multiple Acoustic Models for Singing Voice Conversion](https://www.zhangxueyao.com/data/MultipleContentsSVC/index.html)
+
+## Plug-In-Diffusion
+
+![plug-in-diffusion](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/54a61c90-a97b-404d-9cc9-a2151b2db28f)
 
 ## Setup Environment
 
@@ -73,6 +93,8 @@ due to the use of data perturbation, it takes longer to train than other project
 
 6. Download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`.
 
+   **Note: crepe full.pth is 84.9 MB, not 6kb**
+   
 7. Download pretrain model [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0/), and put it into `vits_pretrain/`.
     ```shell
     python svc_inference.py --config configs/base.yaml --model ./vits_pretrain/sovits5.0.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
@@ -81,10 +103,10 @@ due to the use of data perturbation, it takes longer to train than other project
 ## Dataset preparation
 
 Necessary pre-processing:
-1. Separate vocie and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
+1. Separate voice and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
 2. Cut audio input to shorter length with [slicer](https://github.com/flutydeer/audio-slicer), whisper takes input less than 30 seconds.
 3. Manually check generated audio input, remove inputs shorter than 2 seconds or with obivous noise.
-4. Adjust loudness if necessary, recommand Adobe Audiiton.
+4. Adjust loudness if necessary, recommend Adobe Audiiton.
 5. Put the dataset into the `dataset_raw` directory following the structure below.
 ```
 dataset_raw
@@ -100,7 +122,7 @@ dataset_raw
 
 ## Data preprocessing
 ```shell
-python sve_preprocessing.py -t 2
+python svc_preprocessing.py -t 2
 ```
 `-t`: threading, max number should not exceed CPU core count, usually 2 is enough.
 After preprocessing you will get an output with following structure.
@@ -183,7 +205,7 @@ data_svc/
     ```
     python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
     ``` 
-7. use 32k audio to extract the linear spectrum
+7. Use 32k audio to extract the linear spectrum
     ```
     python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
     ``` 
@@ -197,7 +219,7 @@ data_svc/
     ```
 
 ## Train
-1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
+1. If fine-tuning is based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
     ```
     pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"
     ```
@@ -210,7 +232,7 @@ data_svc/
    ``` 
 3. Resume training
    ```
-   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/***.pth
+   python svc_trainer.py -c configs/base.yaml -n sovits5.0 -p chkpt/sovits5.0/sovits5.0_***.pt
    ```
 4. Log visualization
    ```
@@ -265,6 +287,11 @@ data_svc/
     | :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
     | name | config path | model path | speaker | wave input | wave ppg | wave hubert | wave pitch | pitch shift |
 
+5. post by vad
+```
+python svc_inference_post.py --ref test.wav --svc svc_out.wav --out svc_out_post.wav
+```
+
 ## Creat singer
 named by pure coincidence：average -> ave -> eva，eve(eva) represents conception and reproduction
 
@@ -301,6 +328,7 @@ the generated singer file will be `eva.spk.npy`.
 |DSD100         |https://sigsep.github.io/datasets/dsd100.html|
 |Aishell-3      |http://www.aishelltech.com/aishell_3|
 |VCTK           |https://datashare.ed.ac.uk/handle/10283/2651|
+|Korean Songs   |http://urisori.co.kr/urisori-en/doku.php/|
 
 ## Code sources and references
 
@@ -316,6 +344,8 @@ https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
 
+https://github.com/huawei-noah/Speech-Backbones/tree/main/Grad-TTS
+
 https://github.com/brentspell/hifi-gan-bwe
 
 https://github.com/mozilla/TTS
@@ -324,7 +354,13 @@ https://github.com/bshall/soft-vc
 
 https://github.com/maxrmorrison/torchcrepe
 
+https://github.com/MoonInTheRiver/DiffSinger
+
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
+
+https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
+
+[One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
@@ -332,13 +368,17 @@ https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 [AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
 
+[AdaVITS: Tiny VITS for Low Computing Resource Speaker Adaptation](https://arxiv.org/pdf/2206.00208.pdf)
+
 [Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
 
 [Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
 
 [Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
 
-[Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
+[Multilingual Speech Synthesis and Cross-Language Voice Cloning: GRL](https://arxiv.org/abs/1907.04448)
+
+[RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
 
 ## Method of Preventing Timbre Leakage Based on Data Perturbation
 
@@ -358,7 +398,22 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
   <img src="https://contrib.rocks/image?repo=PlayVoice/so-vits-svc" />
 </a>
 
+## Thanks to
+
+https://github.com/Francis-Komizu/Sovits
+
 ## Relevant Projects
 - [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
-- [NSF-BigVGAN](https://github.com/PlayVoice/NSF-BigVGAN): vocoder for more work
-- [X-Sing](https://github.com/PlayVoice/X-Sing): more work
+- [Grad-SVC](https://github.com/PlayVoice/Grad-SVC): diffusion based svc
+
+## Original evidence
+2022.04.12 https://mp.weixin.qq.com/s/autNBYCsG4_SvWt2-Ll_zA
+
+2022.04.22 https://github.com/PlayVoice/VI-SVS
+
+2022.07.26 https://mp.weixin.qq.com/s/qC4TJy-4EVdbpvK2cQb1TA
+
+2022.09.08 https://github.com/PlayVoice/VI-SVC
+
+## Be copied by svc-develop-team/so-vits-svc
+![coarse_f0_1](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/e2f5e5d3-d169-42c1-953f-4e1648b6da37)
