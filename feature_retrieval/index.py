@@ -130,7 +130,7 @@ class FaissIVFTrainableFeatureIndex(FaissFeatureIndex[IndexIVF]):
         logger.info("adding %s batches to index", n_batches)
         start = time.monotonic()
         for batch in tqdm(self._split_matrix_by_batch(feature_matrix), total=n_batches):
-            self._index.add(batch)
+            self._trained_index.add(batch)
         took = time.monotonic() - start
         logger.info("all batches added. Took %.2f seconds", took)
 
