@@ -302,8 +302,9 @@ python svc_inference_post.py --ref test.wav --svc svc_out.wav --out svc_out_post
 
 ## Train Feature Retrieval Index (Optional)
 
-To increase the stability of the generated timbre, you can use the method described in the Retrieval-based-Voice-Conversion repository.
-This method consists of 2 steps: 
+To increase the stability of the generated timbre, you can use the method described in the 
+[Retrieval-based-Voice-Conversion](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/blob/main/docs/en/README.en.md) 
+repository. This method consists of 2 steps: 
 
 1. Training the retrieval index on hubert and whisper features
     Run training with default settings:
