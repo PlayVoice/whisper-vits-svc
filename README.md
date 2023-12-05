@@ -171,8 +171,16 @@ data_svc/
 │           ├── 000001.spk.npy
 │           └── 000xxx.spk.npy
 └── singer
-    ├── speaker0.spk.npy
-    └── speaker1.spk.npy
+│   ├── speaker0.spk.npy
+│   └── speaker1.spk.npy
+|
+└── indexes
+    ├── speaker0
+    │   ├── some_prefix_hubert.index
+    │   └── some_prefix_whisper.index
+    └── speaker1
+        ├── hubert.index
+        └── whisper.index
 ```
 
 1.  Re-sampling
@@ -292,7 +300,68 @@ data_svc/
 python svc_inference_post.py --ref test.wav --svc svc_out.wav --out svc_out_post.wav
 ```
 
-## Creat singer
+## Train Feature Retrieval Index (Optional)
+
+To increase the stability of the generated timbre, you can use the method described in the 
+[Retrieval-based-Voice-Conversion](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/blob/main/docs/en/README.en.md) 
+repository. This method consists of 2 steps: 
+
+1. Training the retrieval index on hubert and whisper features
+    Run training with default settings:
+    ```
+    python svc_train_retrieval.py
+    ```
+   
+    If the number of vectors is more than 200_000 they will be compressed to 10_000 using the MiniBatchKMeans algorithm.
+    You can change these settings using command line options:
+    ```
+    usage: crate faiss indexes for feature retrieval [-h] [--debug] [--prefix PREFIX] [--speakers SPEAKERS [SPEAKERS ...]] [--compress-features-after COMPRESS_FEATURES_AFTER]
+                                                     [--n-clusters N_CLUSTERS] [--n-parallel N_PARALLEL]
+
+    options:
+      -h, --help            show this help message and exit
+      --debug
+      --prefix PREFIX       add prefix to index filename
+      --speakers SPEAKERS [SPEAKERS ...]
+                            speaker names to create an index. By default all speakers are from data_svc
+      --compress-features-after COMPRESS_FEATURES_AFTER
+                            If the number of features is greater than the value compress feature vectors using MiniBatchKMeans.
+      --n-clusters N_CLUSTERS
+                            Number of centroids to which features will be compressed
+      --n-parallel N_PARALLEL
+                            Nuber of parallel job of MinibatchKmeans. Default is cpus-1
+    ``` 
+    Compression of training vectors can speed up index inference, but reduces the quality of the retrieve.
+    Use vector count compression if you really have a lot of them.
+ 
+    The resulting indexes will be stored in the "indexes" folder as:
+    ``` 
+    data_svc
+    ...
+    └── indexes
+        ├── speaker0
+        │   ├── some_prefix_hubert.index
+        │   └── some_prefix_whisper.index
+        └── speaker1
+            ├── hubert.index
+            └── whisper.index
+    ```
+2. At the inference stage adding the n closest features in a certain proportion of the vits model
+    Enable Feature Retrieval with settings:
+    ```
+    python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/your_singer.spk.npy --wave test.wav --shift 0 \
+    --enable-retrieval \
+    --retrieval-ratio 0.5 \
+    --n-retrieval-vectors 3
+    ``` 
+    For a better retrieval effect, you can try to cycle through different parameters: `--retrieval-ratio` and `--n-retrieval-vectors`
+ 
+    If you have multiple sets of indexes, you can specify a specific set via the parameter: `--retrieval-index-prefix`
+ 
+    You can explicitly specify the paths to the hubert and whisper indexes using the parameters: `--hubert-index-path` and `--whisper-index-path`
+    
+
+## Create singer
 named by pure coincidence：average -> ave -> eva，eve(eva) represents conception and reproduction
 
 ```
