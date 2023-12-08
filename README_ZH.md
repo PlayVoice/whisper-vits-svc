@@ -9,12 +9,23 @@
 
 </div>
 
-### 本项目使用简洁明了的代码结构，用于深度学习技术的研究；基于学习的目的，本项目并不追求效果极限、而更多的为学生笔记本考虑，采用了低配置参数、最终预训练模型为202M（包括生成器和判别器，且为float32模型），远远小于同类项目模型大小；如果你寻找的是直接可用的项目，本项目并不适合你。
+### 本项目使用简洁明了的代码结构，用于深度学习技术的研究
+### 基于学习的目的，本项目并不追求效果极限、而更多的为学生笔记本考虑，采用了低配置参数、最终预训练模型为202M（包括生成器和判别器，且为float32模型），远远小于同类项目模型大小
+### 如果你寻找的是直接可用的项目，本项目并不适合你
 
 - 本项目的目标群体是：深度学习初学者，具备Python和PyTorch的基本操作是使用本项目的前置条件；
 - 本项目旨在帮助深度学习初学者，摆脱枯燥的纯理论学习，通过与实践结合，熟练掌握深度学习基本知识；
 - 本项目不支持实时变声；（支持需要换掉whisper）
 - 本项目不会开发用于其他用途的一键包
+### 代码详解课程
+- 1-整体框架 https://www.bilibili.com/video/BV1Tj411e7pQ
+- 2-数据准备和预处理 https://www.bilibili.com/video/BV1uj411v7zW
+- 3-先验后验编码器 https://www.bilibili.com/video/BV1Be411Q7r5
+- 4-decoder部分 https://www.bilibili.com/video/BV19u4y1b73U
+- 5-蛇形激活函数 https://www.bilibili.com/video/BV1HN4y1D7AR
+- 6-Flow部分 https://www.bilibili.com/video/BV1ju411F7Fs
+- 7-训练及损失函数部分 https://www.bilibili.com/video/BV1qw411W73B
+- 8-训练推理以及基频矫正 https://www.bilibili.com/video/BV1eb4y1u7ER
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
@@ -50,6 +61,10 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 
 **USP : 即使unvoice和silence在推理的时候，也有Pitch，这个Pitch平滑链接voice段**
 ![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ba733b48-8a89-4612-83e0-a0745587d150)
+
+## 为什么要mix
+
+![mix_frame](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/3ffa1be0-1a21-4752-96b5-6220f98f2313)
 
 ## 安装环境
 
@@ -324,6 +339,8 @@ https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
 
 https://github.com/nii-yamagishilab/project-NN-Pytorch-scripts/tree/master/project/01-nsf
 
+https://github.com/huawei-noah/Speech-Backbones/tree/main/Grad-TTS
+
 https://github.com/brentspell/hifi-gan-bwe
 
 https://github.com/mozilla/TTS
@@ -332,7 +349,13 @@ https://github.com/bshall/soft-vc
 
 https://github.com/maxrmorrison/torchcrepe
 
+https://github.com/MoonInTheRiver/DiffSinger
+
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
+
+https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
+
+[One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
@@ -340,13 +363,17 @@ https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 [AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
 
+[AdaVITS: Tiny VITS for Low Computing Resource Speaker Adaptation](https://arxiv.org/pdf/2206.00208.pdf)
+
 [Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
 
 [Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
 
 [Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
 
-[Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
+[Multilingual Speech Synthesis and Cross-Language Voice Cloning: GRL](https://arxiv.org/abs/1907.04448)
+
+[RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864))https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
 ## 基于数据扰动防止音色泄露的方法
 
@@ -369,3 +396,23 @@ https://github.com/OlaWod/FreeVC/blob/main/preprocess_sr.py
 ## 特别感谢
 
 https://github.com/Francis-Komizu/Sovits
+
+## 原创过程
+2022.04.12 https://mp.weixin.qq.com/s/autNBYCsG4_SvWt2-Ll_zA
+
+2022.04.22 https://github.com/PlayVoice/VI-SVS
+
+2022.07.26 https://mp.weixin.qq.com/s/qC4TJy-4EVdbpvK2cQb1TA
+
+2022.09.08 https://github.com/PlayVoice/VI-SVC
+
+## 被这个项目拷贝：svc-develop-team/so-vits-svc
+![coarse_f0_1](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/e2f5e5d3-d169-42c1-953f-4e1648b6da37)
+
+![coarse_f0_2](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/f3539c83-7c8a-425e-bf20-2c402132f0f4)
+
+![coarse_f0_3](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/f3cee94a-0eeb-4189-b9bb-7043d06e62ef)
+
+## Rcell对拷贝的真实回应
+
+![Rcell](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/8ebb236d-e233-4cea-9359-8e44029b5af5)

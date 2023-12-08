@@ -13,6 +13,8 @@ The tree [bigvgan-mix-v2](https://github.com/PlayVoice/whisper-vits-svc/tree/big
 
 The tree [RoFormer-HiFTNet](https://github.com/PlayVoice/whisper-vits-svc/tree/RoFormer-HiFTNet) has fast infer speed
 
+No More Upgrade
+
 </div>
 
 - This project targets deep learning beginners, basic knowledge of Python and PyTorch are the prerequisites for this project;
@@ -22,15 +24,15 @@ The tree [RoFormer-HiFTNet](https://github.com/PlayVoice/whisper-vits-svc/tree/R
 
 ![vits-5.0-frame](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/3854b281-8f97-4016-875b-6eb663c92466)
 
-- 6GB low minimum VRAM requirement for training 
+- A minimum VRAM requirement of 6GB for training
 
-- support for multiple speakers
+- Support for multiple speakers
 
-- create unique speakers through speaker mixing
+- Create unique speakers through speaker mixing
 
-- even voices with light accompaniment can also be converted
+- It can even convert voices with light accompaniment
 
-- F0 can be edited using Excel
+- You can edit F0 using Excel
 
 https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/6a09805e-ab93-47fe-9a14-9cbc1e0e7c3a
 
@@ -61,6 +63,14 @@ due to the use of data perturbation, it takes longer to train than other project
 
 **USP : Unvoice and Silence with Pitch when infer**
 ![vits_svc_usp](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/ba733b48-8a89-4612-83e0-a0745587d150)
+
+## Why mix
+
+![mix_frame](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/3ffa1be0-1a21-4752-96b5-6220f98f2313)
+
+![mix_encoder](https://github.com/PlayVoice/whisper-vits-svc/assets/16432329/12700d60-e7a3-4d11-a604-2dc1d7aa07bd)
+
+[Leveraging Content-based Features from Multiple Acoustic Models for Singing Voice Conversion](https://www.zhangxueyao.com/data/MultipleContentsSVC/index.html)
 
 ## Plug-In-Diffusion
 
@@ -93,10 +103,10 @@ due to the use of data perturbation, it takes longer to train than other project
 ## Dataset preparation
 
 Necessary pre-processing:
-1. Separate vocie and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
+1. Separate voice and accompaniment with [UVR](https://github.com/Anjok07/ultimatevocalremovergui) (skip if no accompaniment)
 2. Cut audio input to shorter length with [slicer](https://github.com/flutydeer/audio-slicer), whisper takes input less than 30 seconds.
 3. Manually check generated audio input, remove inputs shorter than 2 seconds or with obivous noise.
-4. Adjust loudness if necessary, recommand Adobe Audiiton.
+4. Adjust loudness if necessary, recommend Adobe Audiiton.
 5. Put the dataset into the `dataset_raw` directory following the structure below.
 ```
 dataset_raw
@@ -161,8 +171,16 @@ data_svc/
 │           ├── 000001.spk.npy
 │           └── 000xxx.spk.npy
 └── singer
-    ├── speaker0.spk.npy
-    └── speaker1.spk.npy
+│   ├── speaker0.spk.npy
+│   └── speaker1.spk.npy
+|
+└── indexes
+    ├── speaker0
+    │   ├── some_prefix_hubert.index
+    │   └── some_prefix_whisper.index
+    └── speaker1
+        ├── hubert.index
+        └── whisper.index
 ```
 
 1.  Re-sampling
@@ -195,7 +213,7 @@ data_svc/
     ```
     python prepare/preprocess_speaker_ave.py data_svc/speaker/ data_svc/singer
     ``` 
-7. use 32k audio to extract the linear spectrum
+7. Use 32k audio to extract the linear spectrum
     ```
     python prepare/preprocess_spec.py -w data_svc/waves-32k/ -s data_svc/specs
     ``` 
@@ -209,7 +227,7 @@ data_svc/
     ```
 
 ## Train
-1. If fine-tuning based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
+1. If fine-tuning is based on the pre-trained model, you need to download the pre-trained model: [sovits5.0.pretrain.pth](https://github.com/PlayVoice/so-vits-svc-5.0/releases/tag/5.0). Put pretrained model under project root, change this line
     ```
     pretrain: "./vits_pretrain/sovits5.0.pretrain.pth"
     ```
@@ -282,7 +300,68 @@ data_svc/
 python svc_inference_post.py --ref test.wav --svc svc_out.wav --out svc_out_post.wav
 ```
 
-## Creat singer
+## Train Feature Retrieval Index (Optional)
+
+To increase the stability of the generated timbre, you can use the method described in the 
+[Retrieval-based-Voice-Conversion](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/blob/main/docs/en/README.en.md) 
+repository. This method consists of 2 steps: 
+
+1. Training the retrieval index on hubert and whisper features
+    Run training with default settings:
+    ```
+    python svc_train_retrieval.py
+    ```
+   
+    If the number of vectors is more than 200_000 they will be compressed to 10_000 using the MiniBatchKMeans algorithm.
+    You can change these settings using command line options:
+    ```
+    usage: crate faiss indexes for feature retrieval [-h] [--debug] [--prefix PREFIX] [--speakers SPEAKERS [SPEAKERS ...]] [--compress-features-after COMPRESS_FEATURES_AFTER]
+                                                     [--n-clusters N_CLUSTERS] [--n-parallel N_PARALLEL]
+
+    options:
+      -h, --help            show this help message and exit
+      --debug
+      --prefix PREFIX       add prefix to index filename
+      --speakers SPEAKERS [SPEAKERS ...]
+                            speaker names to create an index. By default all speakers are from data_svc
+      --compress-features-after COMPRESS_FEATURES_AFTER
+                            If the number of features is greater than the value compress feature vectors using MiniBatchKMeans.
+      --n-clusters N_CLUSTERS
+                            Number of centroids to which features will be compressed
+      --n-parallel N_PARALLEL
+                            Nuber of parallel job of MinibatchKmeans. Default is cpus-1
+    ``` 
+    Compression of training vectors can speed up index inference, but reduces the quality of the retrieve.
+    Use vector count compression if you really have a lot of them.
+ 
+    The resulting indexes will be stored in the "indexes" folder as:
+    ``` 
+    data_svc
+    ...
+    └── indexes
+        ├── speaker0
+        │   ├── some_prefix_hubert.index
+        │   └── some_prefix_whisper.index
+        └── speaker1
+            ├── hubert.index
+            └── whisper.index
+    ```
+2. At the inference stage adding the n closest features in a certain proportion of the vits model
+    Enable Feature Retrieval with settings:
+    ```
+    python svc_inference.py --config configs/base.yaml --model sovits5.0.pth --spk ./data_svc/singer/your_singer.spk.npy --wave test.wav --shift 0 \
+    --enable-retrieval \
+    --retrieval-ratio 0.5 \
+    --n-retrieval-vectors 3
+    ``` 
+    For a better retrieval effect, you can try to cycle through different parameters: `--retrieval-ratio` and `--n-retrieval-vectors`
+ 
+    If you have multiple sets of indexes, you can specify a specific set via the parameter: `--retrieval-index-prefix`
+ 
+    You can explicitly specify the paths to the hubert and whisper indexes using the parameters: `--hubert-index-path` and `--whisper-index-path`
+    
+
+## Create singer
 named by pure coincidence：average -> ave -> eva，eve(eva) represents conception and reproduction
 
 ```
@@ -344,9 +423,13 @@ https://github.com/bshall/soft-vc
 
 https://github.com/maxrmorrison/torchcrepe
 
+https://github.com/MoonInTheRiver/DiffSinger
+
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
+
+[One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
 
 [SNAC : Speaker-normalized Affine Coupling Layer in Flow-based Architecture for Zero-Shot Multi-Speaker Text-to-Speech](https://github.com/hcy71o/SNAC)
 
@@ -354,13 +437,15 @@ https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
 
 [AdaSpeech: Adaptive Text to Speech for Custom Voice](https://arxiv.org/pdf/2103.00993.pdf)
 
+[AdaVITS: Tiny VITS for Low Computing Resource Speaker Adaptation](https://arxiv.org/pdf/2206.00208.pdf)
+
 [Cross-Speaker Prosody Transfer on Any Text for Expressive Speech Synthesis](https://github.com/ubisoft/ubisoft-laforge-daft-exprt)
 
 [Learn to Sing by Listening: Building Controllable Virtual Singer by Unsupervised Learning from Voice Recordings](https://arxiv.org/abs/2305.05401)
 
 [Adversarial Speaker Disentanglement Using Unannotated External Data for Self-supervised Representation Based Voice Conversion](https://arxiv.org/pdf/2305.09167.pdf)
 
-[Speaker normalization (GRL) for self-supervised speech emotion recognition](https://arxiv.org/abs/2202.01252)
+[Multilingual Speech Synthesis and Cross-Language Voice Cloning: GRL](https://arxiv.org/abs/1907.04448)
 
 [RoFormer: Enhanced Transformer with rotary position embedding](https://arxiv.org/abs/2104.09864)
 
@@ -389,5 +474,15 @@ https://github.com/Francis-Komizu/Sovits
 ## Relevant Projects
 - [LoRA-SVC](https://github.com/PlayVoice/lora-svc): decoder only svc
 - [Grad-SVC](https://github.com/PlayVoice/Grad-SVC): diffusion based svc
-- [NSF-BigVGAN](https://github.com/PlayVoice/NSF-BigVGAN): vocoder for more work
-- [X-SING](https://github.com/PlayVoice/X-SING): more work
+
+## Original evidence
+2022.04.12 https://mp.weixin.qq.com/s/autNBYCsG4_SvWt2-Ll_zA
+
+2022.04.22 https://github.com/PlayVoice/VI-SVS
+
+2022.07.26 https://mp.weixin.qq.com/s/qC4TJy-4EVdbpvK2cQb1TA
+
+2022.09.08 https://github.com/PlayVoice/VI-SVC
+
+## Be copied by svc-develop-team/so-vits-svc
+![coarse_f0_1](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/e2f5e5d3-d169-42c1-953f-4e1648b6da37)
