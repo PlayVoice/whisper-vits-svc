@@ -114,8 +114,8 @@ def svc_infer(model, retrieval: IRetrieval, spk, pit, ppg, vec, hp, device):
                 cut_e = out_index + out_chunk + hop_frame
                 cut_e_out = -1 * hop_frame * hop_size
 
-            sub_ppg = retrieval.retriv_hubert(ppg[cut_s:cut_e, :])
-            sub_vec = retrieval.retriv_whisper(vec[cut_s:cut_e, :])
+            sub_ppg = retrieval.retriv_whisper(ppg[cut_s:cut_e, :])
+            sub_vec = retrieval.retriv_hubert(vec[cut_s:cut_e, :])
             sub_ppg = sub_ppg.unsqueeze(0).to(device)
             sub_vec = sub_vec.unsqueeze(0).to(device)
             sub_pit = pit[cut_s:cut_e].unsqueeze(0).to(device)
