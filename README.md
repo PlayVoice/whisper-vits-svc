@@ -85,7 +85,7 @@ due to the use of data perturbation, it takes longer to train than other project
 
 4. Download whisper model [whisper-large-v2](https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt). Make sure to download `large-v2.pt`，put it into `whisper_pretrain/`.
 
-5. Download [hubert_soft model](https://github.com/bshall/hubert/releases/tag/v0.1)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`.
+5. Download [hubert_soft model](https://openi.pcl.ac.cn/neuro/sovits5.0/modelmanage/f7dacfe0-034a-4a14-a2f0-a0a429b737d4/downloadsingle?parentDir=&fileName=hubert-soft-0d54a1f4.pt)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`.
 
 6. Download pitch extractor [crepe full](https://github.com/maxrmorrison/torchcrepe/tree/master/torchcrepe/assets)，put `full.pth` into `crepe/assets`.
 
