@@ -229,7 +229,7 @@ data_svc/
     ```
     in `configs/base.yaml`，and adjust the learning rate appropriately, eg 5e-5.
    
-   `batch_szie`: for GPU with 6G VRAM, 6 is the recommended value, 8 will work but step speed will be much slower.
+   `batch_size`: for GPU with 6G VRAM, 6 is the recommended value, 8 will work but step speed will be much slower.
 2. Start training
    ```
    python svc_trainer.py -c configs/base.yaml -n sovits5.0
