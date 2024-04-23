@@ -45,7 +45,8 @@ Powered by [@ShadowVap](https://space.bilibili.com/491283091)
 | whisper | OpenAI | ✅ | strong noise immunity |
 | bigvgan  | NVIDA | ✅ | alias and snake | The formant is clearer and the sound quality is obviously improved |
 | natural speech | Microsoft | ✅ | reduce mispronunciation |
-| neural source-filter | NII | ✅ | solve the problem of audio F0 discontinuity |
+| neural source-filter | Xin Wang | ✅ | solve the problem of audio F0 discontinuity |
+| pitch quantization | Xin Wang | ✅ | quantize the F0 for embedding |
 | speaker encoder | Google | ✅ | Timbre Encoding and Clustering |
 | GRL for speaker | Ubisoft |✅ | Preventing Encoder Leakage Timbre |
 | SNAC |  Samsung | ✅ | One Shot Clone of VITS |
@@ -424,6 +425,8 @@ https://github.com/MoonInTheRiver/DiffSinger
 https://github.com/OlaWod/FreeVC [paper](https://arxiv.org/abs/2210.15418)
 
 https://github.com/yl4579/HiFTNet [paper](https://arxiv.org/abs/2309.09493)
+
+[Autoregressive neural f0 model for statistical parametric speech synthesis](https://web.archive.org/web/20210718024752id_/https://ieeexplore.ieee.org/ielx7/6570655/8356719/08341752.pdf)
 
 [One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
 
