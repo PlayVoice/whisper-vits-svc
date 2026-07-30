@@ -1,3 +1,4 @@
+import ast
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -49,7 +50,7 @@ class DiscriminatorR(torch.nn.Module):
 class MultiResolutionDiscriminator(torch.nn.Module):
     def __init__(self, hp):
         super(MultiResolutionDiscriminator, self).__init__()
-        self.resolutions = eval(hp.mrd.resolutions)
+        self.resolutions = ast.literal_eval(hp.mrd.resolutions)
         self.discriminators = nn.ModuleList(
             [DiscriminatorR(hp, resolution) for resolution in self.resolutions]
         )
