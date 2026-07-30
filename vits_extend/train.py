@@ -1,3 +1,4 @@
+import ast
 import os
 import time
 import logging
@@ -146,7 +147,7 @@ def train(rank, args, chkpt_path, hp, hp_str):
     scheduler_g = torch.optim.lr_scheduler.ExponentialLR(optim_g, gamma=hp.train.lr_decay, last_epoch=init_epoch-2)
     scheduler_d = torch.optim.lr_scheduler.ExponentialLR(optim_d, gamma=hp.train.lr_decay, last_epoch=init_epoch-2)
 
-    stft_criterion = MultiResolutionSTFTLoss(device, eval(hp.mrd.resolutions))
+    stft_criterion = MultiResolutionSTFTLoss(device, ast.literal_eval(hp.mrd.resolutions))
     spkc_criterion = nn.CosineEmbeddingLoss()
 
     trainloader = create_dataloader_train(hp, args.num_gpus, rank)
